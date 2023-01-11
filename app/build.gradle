@@ -84,5 +84,12 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
+
+    // Flipper
+    debugImplementation 'com.facebook.flipper:flipper:0.176.1'
+    debugImplementation 'com.facebook.soloader:soloader:0.10.4'
+    debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.176.1'
     
+    releaseImplementation 'com.facebook.flipper:flipper-noop:0.176.1'
+
 }
