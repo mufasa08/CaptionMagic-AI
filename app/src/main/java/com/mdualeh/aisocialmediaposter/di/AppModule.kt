@@ -19,14 +19,14 @@ object AppModule {
 
     private fun makeOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(AuthorizationInterceptor(BuildConfig.OpenApiSecret)) //<----HERE
+            .addInterceptor(AuthorizationInterceptor(BuildConfig.OpenApiSecret))
             .build()
     }
     @Provides
     @Singleton
     fun provideOpenAIApi(): OpenAIApi {
         return Retrofit.Builder()
-            .baseUrl("https://api.openai.com/v1/completions")
+            .baseUrl("https://api.openai.com/v1/")
             .addConverterFactory(MoshiConverterFactory.create())
             .client(makeOkHttpClient())
             .build()
