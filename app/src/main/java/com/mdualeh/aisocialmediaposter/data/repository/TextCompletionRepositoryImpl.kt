@@ -1,4 +1,4 @@
-package com.plcoding.weatherapp.data.repository
+package com.mdualeh.aisocialmediaposter.data.repository
 
 import com.mdualeh.aisocialmediaposter.data.mappers.toTextCompletion
 import com.mdualeh.aisocialmediaposter.data.request.TextCompletionRequestBody

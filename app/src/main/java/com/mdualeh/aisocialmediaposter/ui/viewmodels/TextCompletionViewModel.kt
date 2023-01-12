@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
 import com.mdualeh.aisocialmediaposter.ui.TextCompletionState
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TextCompletionViewModel @Inject constructor(
-    private val repository: TextCompletionRepository,
+    private val textCompletionRepository: TextCompletionRepository,
+    private val imageDetectorRepository: ImageDetectorRepository,
 ) : ViewModel() {
 
     var state by mutableStateOf(TextCompletionState())
@@ -25,7 +27,7 @@ class TextCompletionViewModel @Inject constructor(
     fun testGeneratorApi() {
         viewModelScope.launch {
             when (
-                val result = repository.getReplyFromTextCompletionAPI(
+                val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = listOf(
                         "instagram post",
                         "ramen",
@@ -56,7 +58,24 @@ class TextCompletionViewModel @Inject constructor(
 
     fun processBitmap(resizedBitmap: Bitmap) {
         // TODO
-        val height = resizedBitmap.height
+        viewModelScope.launch {
+            when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
+                is Resource.Success -> {
+                    state = state.copy(
+                        loadedTags = result.data ?: emptyList(),
+                        isLoading = false,
+                        error = null
+                    )
+                }
+                is Resource.Error -> {
+                    state = state.copy(
+                        loadedTags = emptyList(),
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+            }
+        }
     }
 
     companion object {

@@ -68,6 +68,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
+    // coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     // image component
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation "com.github.skydoves:landscapist-coil:2.1.0"
