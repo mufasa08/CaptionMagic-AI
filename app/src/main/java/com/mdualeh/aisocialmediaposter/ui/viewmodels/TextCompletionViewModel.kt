@@ -1,5 +1,6 @@
 package com.mdualeh.aisocialmediaposter.ui.viewmodels
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -51,6 +52,11 @@ class TextCompletionViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun processBitmap(resizedBitmap: Bitmap) {
+        // TODO
+        val height = resizedBitmap.height
     }
 
     companion object {
