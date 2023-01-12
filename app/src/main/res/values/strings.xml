@@ -2,5 +2,6 @@
     <string name="app_name">Caption Magic AI</string>
     <string name="generator_screen">generator_screen</string>
     <string name="share_screen">share_screen</string>
-
+    <string name="generator_screen_header">What is the post about? Give me some ideas by uploading an image, typing out keywords, or both.</string>
+    <string name="generator_upload_text">Upload image</string>
 </resources>

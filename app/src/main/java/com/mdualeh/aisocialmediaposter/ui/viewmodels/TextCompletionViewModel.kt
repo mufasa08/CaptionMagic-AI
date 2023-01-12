@@ -26,6 +26,10 @@ class TextCompletionViewModel @Inject constructor(
 
     // delete this later
     fun testGeneratorApi() {
+        state = state.copy(
+            isLoading = true,
+            error = null
+        )
         viewModelScope.launch {
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
@@ -58,7 +62,12 @@ class TextCompletionViewModel @Inject constructor(
     }
 
     fun processBitmap(resizedBitmap: Bitmap) {
-        // TODO
+        state = state.copy(
+            loadedTags = emptyList(),
+            image = resizedBitmap,
+            isLoading = true,
+            error = null
+        )
         viewModelScope.launch {
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
                 is Resource.Success -> {
@@ -77,6 +86,14 @@ class TextCompletionViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun clearBitmap() {
+        state = state.copy(
+            image = null,
+            textCompletion = null,
+            loadedTags = emptyList(),
+        )
     }
 
     companion object {
