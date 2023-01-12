@@ -1,4 +1,4 @@
-package com.mdualeh.aisocialmediaposter.data.remote
+package com.mdualeh.aisocialmediaposter.data.source.remote
 
 data class TextCompletionDto(
     val created: Int = 0,

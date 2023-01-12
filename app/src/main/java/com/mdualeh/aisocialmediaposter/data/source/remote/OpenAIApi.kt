@@ -1,6 +1,6 @@
 package com.plcoding.weatherapp.data.remote
 
-import com.mdualeh.aisocialmediaposter.data.remote.TextCompletionDto
+import com.mdualeh.aisocialmediaposter.data.source.remote.TextCompletionDto
 import com.mdualeh.aisocialmediaposter.data.request.TextCompletionRequestBody
 import retrofit2.http.Body
 import retrofit2.http.POST

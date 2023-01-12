@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.mdualeh.aisocialmediaposter"
-        minSdk 23
-        targetSdk 32
+        minSdk 26
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -68,6 +68,11 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
+    // coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
+    // image component
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation "com.github.skydoves:landscapist-coil:2.1.0"
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
     kapt "com.google.dagger:hilt-android-compiler:2.40.5"
@@ -85,11 +90,14 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
 
+    // image detection
+    implementation 'com.google.mlkit:image-labeling:17.0.7'
+
     // Flipper
     debugImplementation 'com.facebook.flipper:flipper:0.176.1'
     debugImplementation 'com.facebook.soloader:soloader:0.10.4'
     debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.176.1'
-    
+
     releaseImplementation 'com.facebook.flipper:flipper-noop:0.176.1'
 
 }
