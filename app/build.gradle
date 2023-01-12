@@ -73,6 +73,12 @@ dependencies {
     // image component
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation "com.github.skydoves:landscapist-coil:2.1.0"
+
+    // UI
+    implementation 'com.github.compose-museum:SimpleTags:1.4.2'
+    implementation "com.google.accompanist:accompanist-flowlayout:0.28.0"
+
+
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
     kapt "com.google.dagger:hilt-android-compiler:2.40.5"

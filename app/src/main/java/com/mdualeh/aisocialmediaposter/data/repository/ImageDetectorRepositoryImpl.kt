@@ -20,8 +20,6 @@ class ImageDetectorRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             Resource.Error(e.message ?: "An unknown error occurred.")
-        } finally {
-            imageProcessor.stop()
         }
     }
 }

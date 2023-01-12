@@ -1,22 +1,23 @@
 package com.mdualeh.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
-import android.net.Uri
-import android.util.Log
-import android.util.Pair
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.flowlayout.FlowRow
 import com.mdualeh.aisocialmediaposter.ui.components.ImagePicker
-import com.mdualeh.aisocialmediaposter.ui.utils.BitmapUtils
 import com.mdualeh.aisocialmediaposter.ui.viewmodels.TextCompletionViewModel
-import java.io.IOException
+import org.compose.museum.simpletags.SimpleTags
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -29,8 +30,34 @@ fun GeneratorScreen(navController: NavController) {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Text(text = "${viewModel.state.textCompletion?.choices?.first()?.text}", modifier = Modifier.padding(6.dp))
-        // viewModel.testGeneratorApi()
-        ImagePicker(viewModel)
+        Column(
+            modifier = Modifier
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            ImagePicker(modifier = Modifier.height(400.dp).fillMaxWidth(), viewModel)
+            ListOfTags(list = viewModel.state.loadedTags)
+            Button(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = {
+                    // generate post
+                },
+            ) {
+                Text(
+                    text = "Generate Post"
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ListOfTags(list: List<String>) {
+    FlowRow {
+        list.forEach { tag ->
+            SimpleTags(modifier = Modifier.wrapContentWidth().padding(4.dp), text = tag, onClick = {
+            })
+        }
     }
 }

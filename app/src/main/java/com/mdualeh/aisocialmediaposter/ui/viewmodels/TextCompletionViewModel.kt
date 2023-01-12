@@ -1,6 +1,7 @@
 package com.mdualeh.aisocialmediaposter.ui.viewmodels
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
-import com.mdualeh.aisocialmediaposter.ui.TextCompletionState
+import com.mdualeh.aisocialmediaposter.ui.GeneratorScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class TextCompletionViewModel @Inject constructor(
     private val imageDetectorRepository: ImageDetectorRepository,
 ) : ViewModel() {
 
-    var state by mutableStateOf(TextCompletionState())
+    var state by mutableStateOf(GeneratorScreenState())
         private set
 
     // delete this later
