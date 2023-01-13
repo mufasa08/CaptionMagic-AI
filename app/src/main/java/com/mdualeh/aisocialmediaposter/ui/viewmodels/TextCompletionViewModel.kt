@@ -1,7 +1,6 @@
 package com.mdualeh.aisocialmediaposter.ui.viewmodels
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -63,7 +62,6 @@ class TextCompletionViewModel @Inject constructor(
 
     fun processBitmap(resizedBitmap: Bitmap) {
         state = state.copy(
-            loadedTags = emptyList(),
             image = resizedBitmap,
             isLoading = true,
             error = null
@@ -71,15 +69,17 @@ class TextCompletionViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
                 is Resource.Success -> {
-                    state = state.copy(
-                        loadedTags = result.data ?: emptyList(),
-                        isLoading = false,
-                        error = null
-                    )
+                    result.data?.let {
+                        state.loadedTags.addAll(it)
+                        state = state.copy(
+                            isLoading = false,
+                            error = null
+                        )
+                    }
                 }
                 is Resource.Error -> {
+                    state.loadedTags.clear()
                     state = state.copy(
-                        loadedTags = emptyList(),
                         isLoading = false,
                         error = result.message
                     )
@@ -89,11 +89,19 @@ class TextCompletionViewModel @Inject constructor(
     }
 
     fun clearBitmap() {
+        state.loadedTags.clear()
         state = state.copy(
             image = null,
             textCompletion = null,
-            loadedTags = emptyList(),
         )
+    }
+
+    fun addTag(tag: String) {
+        state.loadedTags.add(tag)
+    }
+
+    fun removeTag(tag: String) {
+        state.loadedTags.remove(tag)
     }
 
     companion object {

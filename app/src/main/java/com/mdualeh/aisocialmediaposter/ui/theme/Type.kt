@@ -29,25 +29,27 @@ val poppins = FontFamily(Font(googleFont = poppinsFontName, fontProvider = provi
 val Typography = Typography(
     defaultFontFamily = poppins,
     body1 = TextStyle(
-        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
+    ),
+    body2 = TextStyle(
+        fontWeight = FontWeight.W400,
+        fontSize = 14.sp
     ),
     h6 = TextStyle(
         fontWeight = FontWeight.W600,
         fontSize = 20.sp
     ),
     caption = TextStyle(
-        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.W400,
-        fontSize = 12.sp
-    )
-    /* Other default text styles to override
-    button = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.W500,
         fontSize = 14.sp
     ),
+    button = TextStyle(
+        fontWeight = FontWeight.W600,
+        fontSize = 14.sp
+    ),
+    /* Other default text styles to override
+
 
     */
 )

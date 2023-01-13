@@ -2,17 +2,30 @@ package com.mdualeh.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.view.KeyEvent.KEYCODE_ENTER
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -23,6 +36,7 @@ import com.mdualeh.aisocialmediaposter.ui.utils.BitmapUtils
 import com.mdualeh.aisocialmediaposter.ui.viewmodels.TextCompletionViewModel
 import org.compose.museum.simpletags.SimpleTags
 
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GeneratorScreen(navController: NavController) {
@@ -44,11 +58,14 @@ fun GeneratorScreen(navController: NavController) {
         onResult = { uri ->
             // 3
             hasImage = uri != null
-            imageUri = uri
 
-            val imageBitmap = BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
-            if (imageBitmap != null) {
-                viewModel.processBitmap(imageBitmap)
+            if (hasImage) {
+                imageUri = uri
+                val imageBitmap =
+                    BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
+                if (imageBitmap != null) {
+                    viewModel.processBitmap(imageBitmap)
+                }
             }
         }
     )
@@ -69,7 +86,7 @@ fun GeneratorScreen(navController: NavController) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Start,
             ) {
                 Text(
                     modifier = Modifier.padding(bottom = 16.dp),
@@ -101,25 +118,75 @@ fun GeneratorScreen(navController: NavController) {
                         viewModel.state.image!!
                     )
                 }
-                ListOfTags(list = viewModel.state.loadedTags)
-                Button(
-                    modifier = Modifier.padding(top = 16.dp),
-                    onClick = {
-                        // generate post
-                    },
-                ) {
-                    Text(
-                        text = "Generate Post"
-                    )
-                }
+            }
+
+            ListOfTags(list = viewModel.state.loadedTags)
+
+            KeywordInputTextField(viewModel)
+            Button(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                onClick = {
+                    // generate post
+                },
+                enabled = viewModel.state.loadedTags.isNotEmpty()
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_magic_wand),
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = context.getString(R.string.generator_generate_post_button)
+                )
             }
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun KeywordInputTextField(viewModel: TextCompletionViewModel) {
+    val context = LocalContext.current
+    val (focusRequester) = FocusRequester.createRefs()
+    var text by rememberSaveable { mutableStateOf("") }
+
+    Box(modifier = Modifier.focusRequester(focusRequester).padding(start = 4.dp)) {
+        TextField(
+            value = text,
+            onValueChange = {
+                text = it
+            },
+            placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
+            textStyle = MaterialTheme.typography.body2,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { focusRequester.requestFocus() }
+            ),
+            modifier = Modifier.padding(0.dp).onKeyEvent {
+                if (it.nativeKeyEvent.keyCode == KEYCODE_ENTER) {
+                    focusRequester.requestFocus()
+                    true
+                    viewModel.addTag(text)
+                    Toast.makeText(context, "ENTER", Toast.LENGTH_LONG).show()
+                    text = ""
+                }
+                false
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                textColor = MaterialTheme.colors.onSurface,
+            )
+        )
+    }
+}
+
 @Composable
 fun ListOfTags(list: List<String>) {
-    FlowRow {
+    FlowRow(modifier = Modifier.padding(horizontal = 16.dp)) {
         list.forEach { tag ->
             SimpleTags(modifier = Modifier.wrapContentWidth().padding(4.dp), text = tag, onClick = {
             })
