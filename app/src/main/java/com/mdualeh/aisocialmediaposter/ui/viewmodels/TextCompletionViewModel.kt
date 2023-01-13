@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
+import com.mdualeh.aisocialmediaposter.domain.weather.SocialMedia
 import com.mdualeh.aisocialmediaposter.ui.GeneratorScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -29,17 +30,12 @@ class TextCompletionViewModel @Inject constructor(
             isLoading = true,
             error = null
         )
-        /*viewModelScope.launch {
+        viewModelScope.launch {
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
-                    keywords = listOf(
-                        "instagram post",
-                        "ramen",
-                        "developer in japan",
-                        "nature",
-                        "mountains"
-                    ),
-                    maxWords = INSTAGRAM_MAX_CHAR_LIMIT
+                    keywords = state.loadedTags,
+                    maxWords = INSTAGRAM_MAX_CHAR_LIMIT,
+                    type = SocialMedia.INSTAGRAM,
                 )
             ) {
                 is Resource.Success -> {
@@ -57,7 +53,7 @@ class TextCompletionViewModel @Inject constructor(
                     )
                 }
             }
-        }*/
+        }
     }
 
     fun processBitmap(resizedBitmap: Bitmap) {
@@ -102,6 +98,20 @@ class TextCompletionViewModel @Inject constructor(
 
     fun removeTag(tag: String) {
         state.loadedTags.remove(tag)
+    }
+
+    fun clearGeneratedText() {
+        state = state.copy(
+            textCompletion = null
+        )
+    }
+
+    fun updateModifiedText(text: String) {
+        state.modifiedText = text
+    }
+
+    fun resetEverything() {
+        state = GeneratorScreenState()
     }
 
     companion object {

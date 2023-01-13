@@ -9,6 +9,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,14 +35,14 @@ fun ImagePicker(
     ) {
         AsyncImage(
             model = imageBitmap,
-            modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
+            modifier = Modifier.fillMaxWidth().fillMaxHeight().align(Alignment.TopCenter),
             contentScale = ContentScale.Fit,
             contentDescription = "Selected image",
         )
         IconButton(modifier = Modifier.align(Alignment.TopEnd).padding(4.dp), onClick = {
             viewModel.clearBitmap()
         }) {
-            Icon(Icons.Filled.Close, null)
+            Icon(Icons.Rounded.Close, null)
         }
     }
 }

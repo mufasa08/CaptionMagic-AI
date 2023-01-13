@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.KeyEvent.KEYCODE_ENTER
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -22,30 +24,33 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.mdualeh.aisocialmediaposter.R
+import com.mdualeh.aisocialmediaposter.ui.components.GeneratingDialog
 import com.mdualeh.aisocialmediaposter.ui.components.ImagePicker
 import com.mdualeh.aisocialmediaposter.ui.utils.BitmapUtils
 import com.mdualeh.aisocialmediaposter.ui.viewmodels.TextCompletionViewModel
+import kotlinx.coroutines.launch
 import org.compose.museum.simpletags.SimpleTags
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun GeneratorScreen(navController: NavController) {
+fun GeneratorScreen(navController: NavController, viewModel: TextCompletionViewModel) {
     val context = LocalContext.current
-    val viewModel = hiltViewModel<TextCompletionViewModel>()
     val contentResolver = LocalContext.current.contentResolver
     // 1
     var hasImage by remember {
@@ -74,6 +79,12 @@ fun GeneratorScreen(navController: NavController) {
         }
     )
 
+    if (viewModel.state.textCompletion != null) {
+        LaunchedEffect(Unit) {
+            navController.navigate(context.getString(R.string.share_screen))
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +94,7 @@ fun GeneratorScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Column() {
+            Column(verticalArrangement = Arrangement.Top) {
                 TopAppBar(
                     elevation = 0.dp,
                     title = {
@@ -125,7 +136,7 @@ fun GeneratorScreen(navController: NavController) {
                         }
                     } else {
                         ImagePicker(
-                            modifier = Modifier.height(400.dp).fillMaxWidth(), viewModel,
+                            modifier = Modifier.height(246.dp).fillMaxWidth(), viewModel,
                             viewModel.state.image!!
                         )
                     }
@@ -153,35 +164,22 @@ fun GeneratorScreen(navController: NavController) {
                 }
             }
             if (viewModel.state.isLoading) {
-                Column(
-                    Modifier.background(color = Color.Black.copy(alpha = 0.32f)).fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_magic_wand_large),
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        context.getString(R.string.generator_screen_loading),
-                        style = MaterialTheme.typography.h6.copy(
-                            color = if (isSystemInDarkTheme()) Color.Black else Color.White
-                        ),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                GeneratingDialog()
             }
         }
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun KeywordInputTextField(viewModel: TextCompletionViewModel) {
     val context = LocalContext.current
     val (focusRequester) = FocusRequester.createRefs()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     var text by rememberSaveable { mutableStateOf("") }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.focusRequester(focusRequester).padding(start = 4.dp)) {
         TextField(
@@ -194,18 +192,19 @@ fun KeywordInputTextField(viewModel: TextCompletionViewModel) {
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
-                onDone = { focusRequester.requestFocus() }
-            ),
-            modifier = Modifier.padding(0.dp).onKeyEvent {
-                if (it.nativeKeyEvent.keyCode == KEYCODE_ENTER) {
-                    focusRequester.requestFocus()
-                    true
+                onDone = {
                     viewModel.addTag(text)
-                    Toast.makeText(context, "ENTER", Toast.LENGTH_LONG).show()
                     text = ""
                 }
-                false
-            },
+            ),
+            modifier = Modifier.padding(0.dp).bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusEvent { focusState ->
+                    if (focusState.isFocused) {
+                        coroutineScope.launch {
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
@@ -226,15 +225,14 @@ fun ListOfTags(list: List<String>, viewModel: TextCompletionViewModel) {
         }
     } else {
         FlowRow(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             mainAxisSpacing = 4.dp,
             crossAxisSpacing = 4.dp,
             mainAxisAlignment = MainAxisAlignment.Center,
-            crossAxisAlignment = FlowCrossAxisAlignment.Center
         ) {
             list.forEach { tag ->
                 SimpleTags(
-                    modifier = Modifier.height(32.dp).padding(horizontal = 4.dp),
+                    modifier = Modifier.wrapContentHeight().padding(horizontal = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
                         textAlign = TextAlign.Start,

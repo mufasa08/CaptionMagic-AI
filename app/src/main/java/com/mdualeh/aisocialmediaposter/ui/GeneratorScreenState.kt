@@ -7,6 +7,7 @@ import com.mdualeh.aisocialmediaposter.domain.weather.TextCompletion
 data class GeneratorScreenState(
     val image: Bitmap? = null,
     val textCompletion: TextCompletion? = null,
+    var modifiedText: String? = null,
     val loadedTags: MutableList<String> = mutableStateListOf(),
     val isLoading: Boolean = false,
     val isLoadingTags: Boolean = false,

@@ -7,4 +7,8 @@
     <string name="generator_keyword_hint">Add keywords...</string>
     <string name="generator_generate_post_button">GENERATE DESCRIPTION</string>
     <string name="generator_screen_loading">Generating...</string>
+    <string name="share_screen_copy_button">COPY</string>
+    <string name="share_screen_header_text">Here\'s what I came up with. Make changes as necessary before sharing 😁 </string>
+    <string name="share_screen_generate_new_one">Or start over</string>
+    <string name="copied_to_clipboard">Copied to clipboard! 😉</string>
 </resources>
