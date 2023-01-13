@@ -6,7 +6,9 @@ import android.view.KeyEvent.KEYCODE_ENTER
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,11 +27,13 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.mdualeh.aisocialmediaposter.R
 import com.mdualeh.aisocialmediaposter.ui.components.ImagePicker
 import com.mdualeh.aisocialmediaposter.ui.utils.BitmapUtils
@@ -75,70 +79,98 @@ fun GeneratorScreen(navController: NavController) {
             .fillMaxSize()
             .background(Color.White),
     ) {
-        Column() {
-            TopAppBar(
-                elevation = 0.dp,
-                title = {
-                    Text(context.getString(R.string.app_name), style = MaterialTheme.typography.h6)
-                },
-                backgroundColor = MaterialTheme.colors.surface,
-            )
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.Start,
-            ) {
-                Text(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    text = context.getString(R.string.generator_screen_header),
-                    style = MaterialTheme.typography.caption
-                )
-                if (viewModel.state.image == null) {
-                    TextButton(
-                        onClick = {
-                            imagePicker.launch("image/*")
-                        },
-                        modifier = Modifier.align(alignment = Alignment.Start),
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_add_photo),
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                            tint = MaterialTheme.colors.secondary,
-                        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Column() {
+                TopAppBar(
+                    elevation = 0.dp,
+                    title = {
                         Text(
-                            modifier = Modifier.padding(start = 16.dp),
-                            text = context.getString(R.string.generator_upload_text),
-                            color = MaterialTheme.colors.secondary,
+                            context.getString(R.string.app_name),
+                            style = MaterialTheme.typography.h6
+                        )
+                    },
+                    backgroundColor = MaterialTheme.colors.surface,
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        text = context.getString(R.string.generator_screen_header),
+                        style = MaterialTheme.typography.caption
+                    )
+                    if (viewModel.state.image == null) {
+                        TextButton(
+                            onClick = {
+                                imagePicker.launch("image/*")
+                            },
+                            modifier = Modifier.align(alignment = Alignment.Start),
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_add_photo),
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                                tint = MaterialTheme.colors.secondary,
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 16.dp),
+                                text = context.getString(R.string.generator_upload_text),
+                                color = MaterialTheme.colors.secondary,
+                            )
+                        }
+                    } else {
+                        ImagePicker(
+                            modifier = Modifier.height(400.dp).fillMaxWidth(), viewModel,
+                            viewModel.state.image!!
                         )
                     }
-                } else {
-                    ImagePicker(
-                        modifier = Modifier.height(400.dp).fillMaxWidth(), viewModel,
-                        viewModel.state.image!!
+                }
+
+                ListOfTags(list = viewModel.state.loadedTags, viewModel)
+
+                KeywordInputTextField(viewModel)
+                Button(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    onClick = {
+                        viewModel.testGeneratorApi()
+                    },
+                    enabled = viewModel.state.loadedTags.isNotEmpty()
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_magic_wand),
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = context.getString(R.string.generator_generate_post_button)
                     )
                 }
             }
-
-            ListOfTags(list = viewModel.state.loadedTags)
-
-            KeywordInputTextField(viewModel)
-            Button(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                onClick = {
-                    // generate post
-                },
-                enabled = viewModel.state.loadedTags.isNotEmpty()
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_magic_wand),
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = context.getString(R.string.generator_generate_post_button)
-                )
+            if (viewModel.state.isLoading) {
+                Column(
+                    Modifier.background(color = Color.Black.copy(alpha = 0.32f)).fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_magic_wand_large),
+                        contentDescription = null,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        context.getString(R.string.generator_screen_loading),
+                        style = MaterialTheme.typography.h6.copy(
+                            color = if (isSystemInDarkTheme()) Color.Black else Color.White
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
@@ -185,11 +217,40 @@ fun KeywordInputTextField(viewModel: TextCompletionViewModel) {
 }
 
 @Composable
-fun ListOfTags(list: List<String>) {
-    FlowRow(modifier = Modifier.padding(horizontal = 16.dp)) {
-        list.forEach { tag ->
-            SimpleTags(modifier = Modifier.wrapContentWidth().padding(4.dp), text = tag, onClick = {
-            })
+fun ListOfTags(list: List<String>, viewModel: TextCompletionViewModel) {
+    if (viewModel.state.isLoadingTags) {
+        Box(Modifier.fillMaxWidth().padding(16.dp)) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    } else {
+        FlowRow(
+            modifier = Modifier.padding(16.dp),
+            mainAxisSpacing = 4.dp,
+            crossAxisSpacing = 4.dp,
+            mainAxisAlignment = MainAxisAlignment.Center,
+            crossAxisAlignment = FlowCrossAxisAlignment.Center
+        ) {
+            list.forEach { tag ->
+                SimpleTags(
+                    modifier = Modifier.height(32.dp).padding(horizontal = 4.dp),
+                    text = tag,
+                    textStyle = MaterialTheme.typography.body2.copy(
+                        textAlign = TextAlign.Start,
+                    ),
+                    onClick = {
+                        viewModel.removeTag(tag)
+                    },
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_remove_tag),
+                            contentDescription = null,
+                            modifier = Modifier.padding(start = 4.dp),
+                        )
+                    }
+                )
+            }
         }
     }
 }

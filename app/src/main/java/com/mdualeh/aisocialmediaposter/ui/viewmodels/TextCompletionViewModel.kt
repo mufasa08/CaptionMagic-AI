@@ -29,7 +29,7 @@ class TextCompletionViewModel @Inject constructor(
             isLoading = true,
             error = null
         )
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = listOf(
@@ -57,13 +57,13 @@ class TextCompletionViewModel @Inject constructor(
                     )
                 }
             }
-        }
+        }*/
     }
 
     fun processBitmap(resizedBitmap: Bitmap) {
         state = state.copy(
             image = resizedBitmap,
-            isLoading = true,
+            isLoadingTags = true,
             error = null
         )
         viewModelScope.launch {
@@ -72,7 +72,7 @@ class TextCompletionViewModel @Inject constructor(
                     result.data?.let {
                         state.loadedTags.addAll(it)
                         state = state.copy(
-                            isLoading = false,
+                            isLoadingTags = false,
                             error = null
                         )
                     }
@@ -80,7 +80,7 @@ class TextCompletionViewModel @Inject constructor(
                 is Resource.Error -> {
                     state.loadedTags.clear()
                     state = state.copy(
-                        isLoading = false,
+                        isLoadingTags = false,
                         error = result.message
                     )
                 }

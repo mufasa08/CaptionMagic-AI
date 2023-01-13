@@ -9,5 +9,6 @@ data class GeneratorScreenState(
     val textCompletion: TextCompletion? = null,
     val loadedTags: MutableList<String> = mutableStateListOf(),
     val isLoading: Boolean = false,
+    val isLoadingTags: Boolean = false,
     val error: String? = null
 )

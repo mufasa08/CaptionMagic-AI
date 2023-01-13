@@ -6,4 +6,5 @@
     <string name="generator_upload_text">Upload image</string>
     <string name="generator_keyword_hint">Add keywords...</string>
     <string name="generator_generate_post_button">GENERATE DESCRIPTION</string>
+    <string name="generator_screen_loading">Generating...</string>
 </resources>
