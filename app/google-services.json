@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "503223042163",
+    "project_id": "caption-magic-ai",
+    "storage_bucket": "caption-magic-ai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503223042163:android:9e5b930a8ca546eea32a06",
+        "android_client_info": {
+          "package_name": "com.mdualeh.aisocialmediaposter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "503223042163-qhas8gqqs6kvj2jjl620sh3arelt4fmf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE-XN7xTttrqfbdCRz0G7-9XPCKOgYgbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "503223042163-qhas8gqqs6kvj2jjl620sh3arelt4fmf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
