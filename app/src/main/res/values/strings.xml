@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">AISocialMediaPoster</string>
+    <string name="app_name">Caption Magic AI</string>
+    <string name="generator_screen">generator_screen</string>
+    <string name="share_screen">share_screen</string>
+    <string name="generator_screen_header">What is the post about? Give me some ideas by uploading an image, typing out keywords, or both.</string>
+    <string name="generator_upload_text">Upload image</string>
+    <string name="generator_keyword_hint">Add keywords...</string>
+    <string name="generator_generate_post_button">GENERATE DESCRIPTION</string>
+    <string name="generator_screen_loading">Generating...</string>
+    <string name="share_screen_copy_button">COPY</string>
+    <string name="share_screen_header_text">Here\'s what I came up with. Make changes as necessary before sharing 😁 </string>
+    <string name="share_screen_generate_new_one">Or start over</string>
+    <string name="copied_to_clipboard">Copied to clipboard! 😉</string>
 </resources>
