@@ -1,4 +1,4 @@
-package com.mdualeh.aisocialmediaposter.ui
+package com.mdualeh.aisocialmediaposter.ui.state
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf

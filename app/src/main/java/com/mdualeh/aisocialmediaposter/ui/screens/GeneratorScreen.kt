@@ -49,6 +49,7 @@ fun GeneratorScreen(navController: NavController, viewModel: CaptionGeneratorVie
     val context = LocalContext.current
     val contentResolver = LocalContext.current.contentResolver
     // 1
+
     var hasImage by remember {
         mutableStateOf(false)
     }
