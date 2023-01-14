@@ -36,7 +36,8 @@ fun ImagePicker(
             viewModel.clearBitmap()
         }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_close_round), null)
+                painter = painterResource(id = R.drawable.ic_close_round), null
+            )
         }
     }
 }

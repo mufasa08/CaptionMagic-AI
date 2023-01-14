@@ -13,9 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -179,13 +177,29 @@ fun GeneratorScreen(navController: NavController, viewModel: CaptionGeneratorVie
 fun SelectSocialMediaSpinner(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val options = listOf(
-        SocialMediaItem(context.getString(R.string.instagram), R.drawable.ic_instagram, SocialMedia.INSTAGRAM),
-        SocialMediaItem(context.getString(R.string.twitter), R.drawable.ic_twitter, SocialMedia.TWITTER),
-        SocialMediaItem(context.getString(R.string.other), R.drawable.ic_social_media, SocialMedia.OTHER),
+        SocialMediaItem(
+            context.getString(R.string.instagram),
+            R.drawable.ic_instagram,
+            SocialMedia.INSTAGRAM
+        ),
+        SocialMediaItem(
+            context.getString(R.string.twitter),
+            R.drawable.ic_twitter,
+            SocialMedia.TWITTER
+        ),
+        SocialMediaItem(
+            context.getString(R.string.other),
+            R.drawable.ic_social_media,
+            SocialMedia.OTHER
+        ),
 
     )
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf(viewModel.state.selectedSocialMediaItem ?: options[0]) }
+    var selectedItem by remember {
+        mutableStateOf(
+            viewModel.state.selectedSocialMediaItem ?: options[0]
+        )
+    }
 
     Box(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 16.dp),
@@ -331,7 +345,7 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                     textStyle = MaterialTheme.typography.body2.copy(
                         textAlign = TextAlign.Start,
                     ),
-                    backgroundColor = if (isSystemInDarkTheme())Color.DarkGray else Color.LightGray,
+                    backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray,
                     onClick = {
                         viewModel.removeTag(tag)
                     },

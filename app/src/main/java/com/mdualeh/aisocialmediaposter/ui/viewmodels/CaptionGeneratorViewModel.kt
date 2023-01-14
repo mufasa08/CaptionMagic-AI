@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
-import com.mdualeh.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.mdualeh.aisocialmediaposter.ui.model.SocialMediaItem
+import com.mdualeh.aisocialmediaposter.ui.state.GeneratorScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

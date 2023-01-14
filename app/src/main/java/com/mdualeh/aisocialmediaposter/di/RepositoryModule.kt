@@ -1,9 +1,9 @@
 package com.mdualeh.aisocialmediaposter.di
 
-import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
-import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.data.repository.ImageDetectorRepositoryImpl
 import com.mdualeh.aisocialmediaposter.data.repository.TextCompletionRepositoryImpl
+import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
+import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

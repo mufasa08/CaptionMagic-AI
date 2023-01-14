@@ -48,7 +48,8 @@ class LabelDetectorProcessor(context: Context) :
         .build()
 
     private val foodImageLabeler: ImageLabeler = ImageLabeling.getClient(foodImageLabelerOptions)
-    private val imageLabeler: ImageLabeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+    private val imageLabeler: ImageLabeler =
+        ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
 
     override fun stop() {
         stopProcess()
@@ -63,7 +64,10 @@ class LabelDetectorProcessor(context: Context) :
         }
     }
 
-    override fun detectInImage(image: InputImage, detectorType: DetectorType): Task<List<ImageLabel>> {
+    override fun detectInImage(
+        image: InputImage,
+        detectorType: DetectorType
+    ): Task<List<ImageLabel>> {
         return when (detectorType) {
             DetectorType.FOOD -> foodImageLabeler.process(image)
             else -> imageLabeler.process(image)

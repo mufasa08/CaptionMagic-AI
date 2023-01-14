@@ -88,7 +88,10 @@ fun NotConnectedScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Icon(painter = painterResource(id = R.drawable.ic_wifi_offline), contentDescription = null)
+            Icon(
+                painter = painterResource(id = R.drawable.ic_wifi_offline),
+                contentDescription = null
+            )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
                 modifier = Modifier.padding(bottom = 16.dp),

@@ -107,10 +107,15 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
                     onClick = {
-                        val text = viewModel.state.modifiedText ?: viewModel.state.textCompletion?.choices?.first()?.text?.trim()
+                        val text = viewModel.state.modifiedText
+                            ?: viewModel.state.textCompletion?.choices?.first()?.text?.trim()
                         if (text != null) {
                             clipboardManager.setText(AnnotatedString(text))
-                            Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.copied_to_clipboard),
+                                Toast.LENGTH_SHORT
+                            )
                         }
                     },
                     enabled = viewModel.state.loadedTags.isNotEmpty()
@@ -149,7 +154,8 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
 fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val (focusRequester) = FocusRequester.createRefs()
-    val initialText: String = viewModel.state.textCompletion?.choices?.first()?.text?.trim() ?: "no text"
+    val initialText: String =
+        viewModel.state.textCompletion?.choices?.first()?.text?.trim() ?: "no text"
     var text by rememberSaveable { mutableStateOf(initialText) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
