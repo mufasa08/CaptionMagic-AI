@@ -5,7 +5,6 @@ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.mdualeh.aisocialmediaposter.BuildConfig
 import com.mdualeh.aisocialmediaposter.data.interceptors.AuthorizationInterceptor
 import com.plcoding.weatherapp.data.remote.OpenAIApi
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

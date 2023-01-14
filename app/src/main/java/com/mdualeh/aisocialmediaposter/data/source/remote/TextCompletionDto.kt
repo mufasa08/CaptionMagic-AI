@@ -12,6 +12,7 @@ data class TextCompletionDto(
         val promptTokens: Int = 0,
         val totalTokens: Int = 0
     )
+
     data class ChoicesItem(
         val index: Int = 0,
         val text: String = "",

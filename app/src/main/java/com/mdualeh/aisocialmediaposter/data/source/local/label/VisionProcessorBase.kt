@@ -25,7 +25,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.android.odml.image.MlImage
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
-import com.mdualeh.aisocialmediaposter.data.source.local.ImageProcessorDataSource
+import com.mdualeh.aisocialmediaposter.data.utils.DetectorType
 import com.mdualeh.aisocialmediaposter.data.utils.ScopedExecutor
 import com.mdualeh.aisocialmediaposter.ui.utils.FrameMetadata
 import java.nio.ByteBuffer
@@ -67,11 +67,16 @@ abstract class VisionProcessorBase<T>(context: Context) {
     private var framesPerSecond = 0
 
     // To keep the latest images and its metadata.
-    @GuardedBy("this") private var latestImage: ByteBuffer? = null
-    @GuardedBy("this") private var latestImageMetaData: FrameMetadata? = null
+    @GuardedBy("this")
+    private var latestImage: ByteBuffer? = null
+    @GuardedBy("this")
+    private var latestImageMetaData: FrameMetadata? = null
+
     // To keep the images and metadata in process.
-    @GuardedBy("this") private var processingImage: ByteBuffer? = null
-    @GuardedBy("this") private var processingMetaData: FrameMetadata? = null
+    @GuardedBy("this")
+    private var processingImage: ByteBuffer? = null
+    @GuardedBy("this")
+    private var processingMetaData: FrameMetadata? = null
 
     init {
         fpsTimer.scheduleAtFixedRate(
@@ -103,9 +108,9 @@ abstract class VisionProcessorBase<T>(context: Context) {
         minDetectorMs = Long.MAX_VALUE
     }
 
-    protected abstract fun detectInImage(image: InputImage): Task<T>
+    protected abstract fun detectInImage(image: InputImage, detectorType: DetectorType): Task<T>
 
-    protected open fun detectInImage(image: MlImage): Task<T> {
+    protected open fun detectInImage(image: MlImage, detectorType: DetectorType): Task<T> {
         return Tasks.forException(
             MlKitException(
                 "MlImage is currently not demonstrated for this feature",

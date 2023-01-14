@@ -20,24 +20,41 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabel
 import com.google.mlkit.vision.label.ImageLabeler
-import com.google.mlkit.vision.label.ImageLabelerOptionsBase
 import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import com.mdualeh.aisocialmediaposter.data.source.local.ImageProcessorDataSource
+import com.mdualeh.aisocialmediaposter.data.utils.DetectorType
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
 /** Custom InputImage Classifier Demo.  */
-class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase) :
+class LabelDetectorProcessor(context: Context) :
     VisionProcessorBase<List<ImageLabel>>(context), ImageProcessorDataSource {
 
-    private val imageLabeler: ImageLabeler = ImageLabeling.getClient(options)
+    private val localModel = LocalModel.Builder()
+        .setAssetFilePath("food_v1.tflite")
+        // or .setAbsoluteFilePath(absolute file path to model file)
+        // or .setUri(URI to model file)
+        .build()
+
+    private val foodImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
+        .setConfidenceThreshold(0.5f)
+        .setMaxResultCount(5)
+        .build()
+
+    private val foodImageLabeler: ImageLabeler = ImageLabeling.getClient(foodImageLabelerOptions)
+    private val imageLabeler: ImageLabeler =
+        ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
 
     override fun stop() {
         stopProcess()
         try {
+            foodImageLabeler.close()
             imageLabeler.close()
         } catch (e: IOException) {
             Log.e(
@@ -47,12 +64,19 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
         }
     }
 
-    override fun detectInImage(image: InputImage): Task<List<ImageLabel>> {
-        return imageLabeler.process(image)
+    override fun detectInImage(
+        image: InputImage,
+        detectorType: DetectorType
+    ): Task<List<ImageLabel>> {
+        return when (detectorType) {
+            DetectorType.FOOD -> foodImageLabeler.process(image)
+            else -> imageLabeler.process(image)
+        }
     }
 
     companion object {
         private const val TAG = "LabelDetectorProcessor"
+        private const val KEYWORD_FOOD = "Food"
 
         private fun logExtrasForTesting(labels: List<ImageLabel>?) {
             if (labels == null) {
@@ -69,8 +93,16 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
     }
 
     override suspend fun processBitmap(bitmap: Bitmap?): List<String> {
-        return detectInImage(
-            InputImage.fromBitmap(bitmap!!, 0)
-        ).await().map { it.text }.slice(0..5)
+        val baseList = detectInImage(
+            InputImage.fromBitmap(bitmap!!, 0), DetectorType.BASIC
+        ).await().map { it.text }
+
+        if (baseList.contains(KEYWORD_FOOD)) {
+            val foodList = detectInImage(
+                InputImage.fromBitmap(bitmap, 0), DetectorType.FOOD
+            ).await().map { it.text }
+            return foodList + baseList
+        }
+        return baseList
     }
 }

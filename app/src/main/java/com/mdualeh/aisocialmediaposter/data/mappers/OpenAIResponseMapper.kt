@@ -1,7 +1,7 @@
 package com.mdualeh.aisocialmediaposter.data.mappers
 
 import com.mdualeh.aisocialmediaposter.data.source.remote.TextCompletionDto
-import com.mdualeh.aisocialmediaposter.domain.weather.TextCompletion
+import com.mdualeh.aisocialmediaposter.domain.model.TextCompletion
 
 fun TextCompletionDto.toTextCompletion(): TextCompletion {
     return TextCompletion(

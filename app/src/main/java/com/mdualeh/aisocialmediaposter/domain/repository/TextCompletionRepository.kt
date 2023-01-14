@@ -1,8 +1,8 @@
 package com.mdualeh.aisocialmediaposter.domain.repository
 
-import com.mdualeh.aisocialmediaposter.domain.weather.TextCompletion
+import com.mdualeh.aisocialmediaposter.domain.model.SocialMedia
+import com.mdualeh.aisocialmediaposter.domain.model.TextCompletion
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
-import com.mdualeh.aisocialmediaposter.domain.weather.SocialMedia
 
 interface TextCompletionRepository {
     suspend fun getReplyFromTextCompletionAPI(
