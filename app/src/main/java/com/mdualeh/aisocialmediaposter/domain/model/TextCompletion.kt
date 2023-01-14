@@ -1,4 +1,4 @@
-package com.mdualeh.aisocialmediaposter.domain.weather
+package com.mdualeh.aisocialmediaposter.domain.model
 
 data class TextCompletion(
     val choices: List<ChoicesItem>?,

@@ -9,14 +9,16 @@ import androidx.lifecycle.viewModelScope
 import com.mdualeh.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
-import com.mdualeh.aisocialmediaposter.domain.weather.SocialMedia
+import com.mdualeh.aisocialmediaposter.domain.model.SocialMedia
+import com.mdualeh.aisocialmediaposter.domain.model.SocialMedia.*
 import com.mdualeh.aisocialmediaposter.ui.GeneratorScreenState
+import com.mdualeh.aisocialmediaposter.ui.model.SocialMediaItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TextCompletionViewModel @Inject constructor(
+class CaptionGeneratorViewModel @Inject constructor(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
 ) : ViewModel() {
@@ -34,8 +36,8 @@ class TextCompletionViewModel @Inject constructor(
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = state.loadedTags,
-                    maxWords = INSTAGRAM_MAX_CHAR_LIMIT,
-                    type = SocialMedia.INSTAGRAM,
+                    maxWords = state.selectedSocialMedia.maxTokenLimit,
+                    type = state.selectedSocialMedia,
                 )
             ) {
                 is Resource.Success -> {
@@ -114,7 +116,10 @@ class TextCompletionViewModel @Inject constructor(
         state = GeneratorScreenState()
     }
 
-    companion object {
-        const val INSTAGRAM_MAX_CHAR_LIMIT = 2200
+    fun updateSelectedSocialMedia(socialMediaItem: SocialMediaItem) {
+        state = state.copy(
+            selectedSocialMedia = socialMediaItem.type,
+            selectedSocialMediaItem = socialMediaItem,
+        )
     }
 }

@@ -1,6 +1,6 @@
 package com.mdualeh.aisocialmediaposter.data.utils
 
-import com.mdualeh.aisocialmediaposter.domain.weather.SocialMedia
+import com.mdualeh.aisocialmediaposter.domain.model.SocialMedia
 
 // todo add support for multiple languages
 fun SocialMedia.toChatGPTUnderstandableString(keywords: List<String>): String {

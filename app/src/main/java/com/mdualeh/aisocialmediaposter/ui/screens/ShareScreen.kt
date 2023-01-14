@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,13 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.mdualeh.aisocialmediaposter.R
-import com.mdualeh.aisocialmediaposter.ui.viewmodels.TextCompletionViewModel
+import com.mdualeh.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ShareScreen(navController: NavController, viewModel: TextCompletionViewModel) {
+fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
@@ -57,7 +59,7 @@ fun ShareScreen(navController: NavController, viewModel: TextCompletionViewModel
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Column() {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 TopAppBar(
                     elevation = 0.dp,
                     title = {
@@ -144,7 +146,7 @@ fun ShareScreen(navController: NavController, viewModel: TextCompletionViewModel
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun DescriptionInputTextField(viewModel: TextCompletionViewModel) {
+fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val (focusRequester) = FocusRequester.createRefs()
     val initialText: String = viewModel.state.textCompletion?.choices?.first()?.text?.trim() ?: "no text"

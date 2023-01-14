@@ -6,8 +6,8 @@ import com.mdualeh.aisocialmediaposter.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
 import com.mdualeh.aisocialmediaposter.data.utils.toChatGPTUnderstandableString
 import com.mdualeh.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.mdualeh.aisocialmediaposter.domain.util.Resource
-import com.mdualeh.aisocialmediaposter.domain.weather.SocialMedia
-import com.mdualeh.aisocialmediaposter.domain.weather.TextCompletion
+import com.mdualeh.aisocialmediaposter.domain.model.SocialMedia
+import com.mdualeh.aisocialmediaposter.domain.model.TextCompletion
 import com.plcoding.weatherapp.data.remote.OpenAIApi
 import javax.inject.Inject
 

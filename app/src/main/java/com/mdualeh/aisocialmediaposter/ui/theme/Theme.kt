@@ -42,7 +42,7 @@ fun AISocialMediaPosterTheme(
         // Update all of the system bar colors to be transparent, and use
         // dark icons if we're in light theme
         systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
+            color = if (!darkTheme) Color.Transparent else Color.Black.copy(alpha = 0.93f),
             darkIcons = useDarkIcons
         )
 
