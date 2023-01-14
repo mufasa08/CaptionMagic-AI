@@ -15,9 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.mdualeh.aisocialmediaposter.R
 import com.mdualeh.aisocialmediaposter.ui.utils.BitmapUtils
 import com.mdualeh.aisocialmediaposter.ui.viewmodels.TextCompletionViewModel
 import java.io.IOException
@@ -42,7 +44,8 @@ fun ImagePicker(
         IconButton(modifier = Modifier.align(Alignment.TopEnd).padding(4.dp), onClick = {
             viewModel.clearBitmap()
         }) {
-            Icon(Icons.Rounded.Close, null)
+            Icon(
+                painter = painterResource(id = R.drawable.ic_close_round), null)
         }
     }
 }
