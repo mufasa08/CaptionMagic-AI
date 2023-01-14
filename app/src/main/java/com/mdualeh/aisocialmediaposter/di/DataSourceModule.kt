@@ -17,6 +17,7 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideLabelDetectorDataSource(@ApplicationContext appContext: Context): ImageProcessorDataSource =
-        LabelDetectorProcessor(appContext, ImageLabelerOptions.DEFAULT_OPTIONS)
+    fun provideLabelDetectorDataSource(@ApplicationContext appContext: Context): ImageProcessorDataSource{
+        return LabelDetectorProcessor(appContext)
+    }
 }
