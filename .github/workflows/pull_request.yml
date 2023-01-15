@@ -39,7 +39,6 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/gc.properties
 
   ktlint:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -93,7 +92,6 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/gc.properties
 
   android-lint:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -147,7 +145,6 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/gc.properties
 
   unit-test:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -201,7 +198,6 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/gc.properties
 
   github-lint:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
