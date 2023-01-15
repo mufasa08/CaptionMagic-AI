@@ -30,8 +30,8 @@ jobs:
       - name: Overwrite gradle properties
         run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
       - name: Access OPEN_API_SECRET
-            env:
-              OPEN_API_SECRET: ${secrets.GITHUB_TOKEN}
+        env:
+          OPEN_API_SECRET: ${secrets.GITHUB_TOKEN}
         run: echo OPEN_API_SECRET=\"$OPEN_API_SECRET\" > ./local.properties
       # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
       - name: Uninstall Android NDK
