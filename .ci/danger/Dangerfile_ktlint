@@ -1,0 +1,5 @@
+# ktlint
+checkstyle_format.base_path = Dir.pwd
+Dir.glob('**/ktlint*.xml') do |file|
+  checkstyle_format.report file
+end

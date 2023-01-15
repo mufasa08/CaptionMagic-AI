@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -ex
+
+mkdir -p "${HOME}/.gradle"
+cp "${CI_SCRIPTS_DIR}/gradle.properties" "${HOME}/.gradle"
