@@ -24,7 +24,10 @@ android {
         }
 
         Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        File file  = project.rootProject.file("local.properties")
+        if(file.exists()) {
+            properties.load(file.newDataInputStream())
+        }
     }
 
     buildTypes {
@@ -35,7 +38,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', "OpenApiSecret", "\"${properties.get("RELEASE_OPEN_API_SECRET")}\""
+            buildConfigField 'String', "OpenApiSecret", "\"${properties.get("OPEN_API_SECRET")}\""
         }
     }
     compileOptions {
