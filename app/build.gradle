@@ -22,17 +22,20 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
     }
 
     buildTypes {
 
         debug {
-            buildConfigField 'String', "OpenApiSecret", "\"$OPEN_API_SECRET\""
+            buildConfigField 'String', "OpenApiSecret", "\"${properties.get("OPEN_API_SECRET")}\""
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', "OpenApiSecret", "\"$OPEN_API_SECRET\""
+            buildConfigField 'String', "OpenApiSecret", "\"${properties.get("RELEASE_OPEN_API_SECRET")}\""
         }
     }
     compileOptions {
