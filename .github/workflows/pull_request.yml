@@ -32,7 +32,7 @@ jobs:
       - name: Uninstall Android NDK
         run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
       - name: Assemble app
-        run: ./gradlew --stacktrace :app:assembleDevelopmentDebug -PleakCanary.enabled=false
+        run: ./gradlew --stacktrace :app:assembleDebug -PleakCanary.enabled=false
       - name: Cleanup gradle cache
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
@@ -127,7 +127,7 @@ jobs:
         with:
           ruby-version: 2.6
       - name: Run Android lint
-        run: ./gradlew --stacktrace :app:lintDevelopmentDebug -Plint.ignoreFailures=true
+        run: ./gradlew --stacktrace :app:lintDebug -Plint.ignoreFailures=true
       - name: Remove empty report files
         run: find . -size 0 -a -path '*/build/reports/*' -delete
       - name: Run Danger
@@ -180,7 +180,7 @@ jobs:
         with:
           ruby-version: 2.6
       - name: Run unit tests
-        run: ./gradlew --stacktrace testDevelopmentDebugUnitTest -Ptest.ignoreFailures=true
+        run: ./gradlew --stacktrace testDebugUnitTest -Ptest.ignoreFailures=true
       - name: Remove empty report files
         run: find . -size 0 -a -path '*/build/reports/*' -delete
       - name: Run Danger
