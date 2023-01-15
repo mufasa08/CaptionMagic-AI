@@ -69,10 +69,10 @@ jobs:
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-
-      - name: Set up Ruby 2.6
+      - name: Set up Ruby 3.0
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.0
       - name: Run ktlint
         run: ./gradlew --stacktrace ktlintCheck -Plint.ignoreFailures=true
       - name: Remove empty report files
@@ -122,10 +122,10 @@ jobs:
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-
-      - name: Set up Ruby 2.6
+      - name: Set up Ruby 3.0
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.0
       - name: Run Android lint
         run: ./gradlew --stacktrace :app:lintDebug -Plint.ignoreFailures=true
       - name: Remove empty report files
@@ -175,10 +175,10 @@ jobs:
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-
-      - name: Set up Ruby 2.6
+      - name: Set up Ruby 3.0
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.0
       - name: Run unit tests
         run: ./gradlew --stacktrace testDebugUnitTest -Ptest.ignoreFailures=true
       - name: Remove empty report files
