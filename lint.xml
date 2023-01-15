@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+  <!-- Disable 'ContentDescription' inspection for now -->
+  <issue id="ContentDescription" severity="ignore" />
+
+  <!-- Disable 'IconDuplicates' inspection because same contents are used for some temporary icons now -->
+  <issue id="IconDuplicates" severity="ignore" />
+
+  <!-- Disable 'LockedOrientationActivity' inspection because we supports only portrait layout now -->
+  <issue id="LockedOrientationActivity" severity="ignore" />
+
+  <!-- Disable 'ObsoleteLintCustomCheck' inspection because Timber still uses obsolete lint API -->
+  <issue id="ObsoleteLintCustomCheck" severity="ignore" />
+
+  <!-- Disable 'PluralsCandidate' inspection because it can cause false-positive results -->
+  <issue id="PluralsCandidate" severity="ignore" />
+
+  <!-- Disable 'RtlSymmetry' inspection because asymmetric margin/padding is intentional in most case -->
+  <issue id="RtlSymmetry" severity="ignore" />
+
+  <!-- Ignore unused attribute inspection for specific attributes -->
+  <issue id="UnusedAttribute">
+    <ignore
+      regexp="fillType" /> <!-- We can safely use fillType because it's supported by AndroidX VectorDrawableCompat -->
+  </issue>
+
+  <!-- Ignore unused resources inspection for now because there are a lot of resources for future use -->
+  <issue id="UnusedResources" severity="ignore" />
+
+  <!-- Disable 'VectorPath' inspection because some drawables have no choice but to contain long vector paths -->
+  <issue id="VectorPath" severity="ignore" />
+
+  <!-- Disable 'NullSafeMutableLiveData' for now because it doesn't recognize Kotlin smart cast and raises many false-positive warnings as of Livecycle 2.3.0-beta01 -->
+  <issue id="NullSafeMutableLiveData" severity="ignore" />
+
+  <!-- Ignore 'LintError' becuase These errors are not errors in your own code, but they are shown to make it clear that some checks were not completed.-->
+  <issue id="LintError" severity="ignore" />
+</lint>
