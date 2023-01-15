@@ -65,6 +65,10 @@ jobs:
           java-version: '11'
       - name: Overwrite gradle properties
         run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=\"$OPEN_API_SECRET\" > ./local.properties
       # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
       - name: Uninstall Android NDK
         run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
@@ -119,6 +123,10 @@ jobs:
           java-version: '11'
       - name: Overwrite gradle properties
         run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=\"$OPEN_API_SECRET\" > ./local.properties
       # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
       - name: Uninstall Android NDK
         run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
@@ -173,6 +181,10 @@ jobs:
           java-version: '11'
       - name: Overwrite gradle properties
         run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=\"$OPEN_API_SECRET\" > ./local.properties
       # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
       - name: Uninstall Android NDK
         run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
