@@ -24,8 +24,7 @@ android {
         }
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        String OPEN_API_SECRET = properties.getProperty("OPEN_API_SECRET")
-        buildConfigField("String", "OpenApiSecret", "\"${OPEN_API_SECRET}\"")
+        buildConfigField("String", "OpenApiSecret", "\"${properties.getProperty("OPEN_API_SECRET")}\"")
 
     }
 
