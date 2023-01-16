@@ -1,4 +1,4 @@
-package com.mdualeh.aisocialmediaposter.services
+package com.devinjapan.aisocialmediaposter.services
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -8,10 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.mdualeh.aisocialmediaposter.R
-import com.mdualeh.aisocialmediaposter.ui.MainActivity
 
 class NotificationService : FirebaseMessagingService() {
     companion object {
