@@ -1,0 +1,244 @@
+name: Pull request CI
+
+on:
+  pull_request:
+
+env:
+  CI_SCRIPTS_DIR: ${{ github.workspace }}/.ci
+
+jobs:
+  assemble-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt' # See 'Supported distributions' for available options
+          java-version: '11'
+
+      - name: Overwrite gradle properties
+        run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=$OPEN_API_SECRET > ./local.properties
+      # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
+      - name: Uninstall Android NDK
+        run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
+      - name: Assemble app
+        run: ./gradlew --stacktrace :app:assembleDebug -PleakCanary.enabled=false
+      - name: Cleanup gradle cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+
+  ktlint:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt' # See 'Supported distributions' for available options
+          java-version: '11'
+      - name: Overwrite gradle properties
+        run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=$OPEN_API_SECRET > ./local.properties
+      # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
+      - name: Uninstall Android NDK
+        run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
+      - name: Cache Ruby gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Set up Ruby 3.0
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+      - name: Run ktlint
+        run: ./gradlew --stacktrace ktlintCheck -Plint.ignoreFailures=true
+      - name: Remove empty report files
+        run: find . -size 0 -a -path '*/build/reports/*' -delete
+      - name: Run Danger
+        uses: MeilCli/danger-action@v5
+        with:
+          plugins_file: ${{ env.CI_SCRIPTS_DIR }}/danger/Gemfile
+          install_path: vendor/bundle
+          danger_file: ${{ env.CI_SCRIPTS_DIR }}/danger/Dangerfile_ktlint
+          danger_id: danger-ktlint
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cleanup gradle cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+
+  android-lint:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt' # See 'Supported distributions' for available options
+          java-version: '11'
+      - name: Overwrite gradle properties
+        run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=$OPEN_API_SECRET > ./local.properties
+      # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
+      - name: Uninstall Android NDK
+        run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
+      - name: Cache Ruby gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Set up Ruby 3.0
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+      - name: Run Android lint
+        run: ./gradlew --stacktrace :app:lintDebug -Plint.ignoreFailures=true
+      - name: Remove empty report files
+        run: find . -size 0 -a -path '*/build/reports/*' -delete
+      - name: Run Danger
+        uses: MeilCli/danger-action@v5
+        with:
+          plugins_file: ${{ env.CI_SCRIPTS_DIR }}/danger/Gemfile
+          install_path: vendor/bundle
+          danger_file: ${{ env.CI_SCRIPTS_DIR }}/danger/Dangerfile_android_lint
+          danger_id: danger-android-lint
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cleanup gradle cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+
+  unit-test:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ hashFiles('gradle/dependencies/src/main/kotlin/*Libs.kt') }}-
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt' # See 'Supported distributions' for available options
+          java-version: '11'
+      - name: Overwrite gradle properties
+        run: ${CI_SCRIPTS_DIR}/scripts/overwrite_gradle_properties
+      - name: Access OPEN_API_SECRET
+        env:
+          OPEN_API_SECRET: ${secrets.OPEN_API_SECRET}
+        run: echo OPEN_API_SECRET=$OPEN_API_SECRET > ./local.properties
+      # https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
+      - name: Uninstall Android NDK
+        run: sudo ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --uninstall 'ndk-bundle'
+      - name: Cache Ruby gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Set up Ruby 3.0
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+      - name: Run unit tests
+        run: ./gradlew --stacktrace testDebugUnitTest -Ptest.ignoreFailures=true
+      - name: Remove empty report files
+        run: find . -size 0 -a -path '*/build/reports/*' -delete
+      - name: Run Danger
+        uses: MeilCli/danger-action@v5
+        with:
+          plugins_file: ${{ env.CI_SCRIPTS_DIR }}/danger/Gemfile
+          install_path: vendor/bundle
+          danger_file: ${{ env.CI_SCRIPTS_DIR }}/danger/Dangerfile_unit_test
+          danger_id: danger-unit-test
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cleanup gradle cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+
+  github-lint:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Remove files which should be ignored by linter
+        run: |
+          rm -f gradlew*
+          rm -fr gradle
+      - name: Lint code base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: /
+          VALIDATE_BASH: true
+          VALIDATE_CSS: true
+          VALIDATE_ENV: true
+          VALIDATE_GROOVY: true
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_MD: true
+          VALIDATE_XML: true
+          VALIDATE_YAML: true
+          YAML_CONFIG_FILE: .yamllint.yml

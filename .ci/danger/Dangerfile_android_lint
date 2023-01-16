@@ -1,0 +1,6 @@
+# Android lint
+android_lint.skip_gradle_task = true # Skip `lint` gradle task because it's been already executed 
+Dir.glob('**/lint-results-*.xml') do |file|
+  android_lint.report_file = file
+  android_lint.lint(inline_mode: true) # Make Danger comment directly on the line
+end

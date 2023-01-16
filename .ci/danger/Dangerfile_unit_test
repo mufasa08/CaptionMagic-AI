@@ -1,0 +1,5 @@
+# JUnit results
+Dir.glob('**/TEST-*.xml') do |file|
+  junit.parse(file)
+  junit.report
+end
