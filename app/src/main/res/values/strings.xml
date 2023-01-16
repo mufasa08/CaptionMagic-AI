@@ -16,4 +16,5 @@
     <string name="other">Unspecified</string>
     <string name="social_media_selector_label">Which social media are you targeting?</string>
     <string name="offline">Please check\nyour network connection.</string>
+    <string name="not_showing_notifications">Showing notifications disabled</string>
 </resources>
