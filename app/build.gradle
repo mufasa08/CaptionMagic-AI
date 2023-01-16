@@ -32,10 +32,12 @@ android {
 
         debug {
             applicationIdSuffix ".debug"
+            testCoverageEnabled true
         }
         release {
             minifyEnabled true
             shrinkResources true
+            testCoverageEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

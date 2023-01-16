@@ -20,5 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.facebook.jni.** { *; }
 -keep class com.devinjapan.aisocialmediaposter.data.request.*
+-keep class androidx.compose.ui.*

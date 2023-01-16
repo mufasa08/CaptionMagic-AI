@@ -1,6 +1,5 @@
 package com.devinjapan.aisocialmediaposter
 
-import android.app.Application
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -11,7 +10,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class AISocialMediaPosterApp : Application() {
+class DebugApp : App() {
 
     @Inject
     lateinit var networkFlipperPlugin: NetworkFlipperPlugin

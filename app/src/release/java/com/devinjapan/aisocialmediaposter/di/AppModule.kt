@@ -2,8 +2,6 @@ package com.devinjapan.aisocialmediaposter.di
 
 import com.devinjapan.aisocialmediaposter.BuildConfig
 import com.devinjapan.aisocialmediaposter.data.interceptors.AuthorizationInterceptor
-import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.plcoding.weatherapp.data.remote.OpenAIApi
 import dagger.Module
 import dagger.Provides
@@ -20,18 +18,9 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideNetworkFlipperPlugin(): NetworkFlipperPlugin = NetworkFlipperPlugin()
-
-    @Singleton
-    @Provides
-    fun makeOkHttpClient(
-        networkFlipperPlugin: NetworkFlipperPlugin,
-    ): OkHttpClient {
+    fun makeOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(AuthorizationInterceptor(BuildConfig.OpenApiSecret))
-            .addInterceptor(
-                FlipperOkhttpInterceptor(networkFlipperPlugin)
-            )
             .build()
     }
 
