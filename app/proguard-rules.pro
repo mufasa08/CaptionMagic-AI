@@ -21,3 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.facebook.jni.** { *; }
+-keep class com.mdualeh.aisocialmediaposter.data.request.*
