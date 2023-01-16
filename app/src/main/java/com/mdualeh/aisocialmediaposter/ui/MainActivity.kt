@@ -84,7 +84,7 @@ fun NotConnectedScreen() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize().padding(it),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
