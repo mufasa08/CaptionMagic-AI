@@ -7,9 +7,38 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:503223042163:android:9e5b930a8ca546eea32a06",
+        "mobilesdk_app_id": "1:503223042163:android:3863f07dc6220ec7a32a06",
         "android_client_info": {
-          "package_name": "com.mdualeh.aisocialmediaposter"
+          "package_name": "com.devinjapan.aisocialmediaposter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "503223042163-qhas8gqqs6kvj2jjl620sh3arelt4fmf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE-XN7xTttrqfbdCRz0G7-9XPCKOgYgbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "503223042163-qhas8gqqs6kvj2jjl620sh3arelt4fmf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503223042163:android:e3315333d304adf5a32a06",
+        "android_client_info": {
+          "package_name": "com.devinjapan.aisocialmediaposter.debug"
         }
       },
       "oauth_client": [
