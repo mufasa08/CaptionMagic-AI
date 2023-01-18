@@ -34,6 +34,7 @@ import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
 import com.devinjapan.aisocialmediaposter.ui.model.SocialMediaItem
+import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -43,7 +44,11 @@ import org.compose.museum.simpletags.SimpleTags
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun GeneratorScreen(navController: NavController, viewModel: CaptionGeneratorViewModel) {
+fun GeneratorScreen(
+    navController: NavController,
+    viewModel: CaptionGeneratorViewModel,
+    startingImageUri: Uri? = null
+) {
     val context = LocalContext.current
     val contentResolver = LocalContext.current.contentResolver
     // 1
@@ -55,6 +60,11 @@ fun GeneratorScreen(navController: NavController, viewModel: CaptionGeneratorVie
     // 2
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
+    }
+
+    if (startingImageUri != null && imageUri == null) {
+        preLoadInitialImageAndTags(context, viewModel, startingImageUri)
+        imageUri = startingImageUri
     }
 
     val imagePicker = rememberLauncherForActivityResult(

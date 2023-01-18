@@ -1,9 +1,13 @@
 package com.devinjapan.aisocialmediaposter.ui
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,6 +35,7 @@ import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
+import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
@@ -53,12 +58,23 @@ class MainActivity : ComponentActivity() {
 
                 if (isConnected) {
                     // Show UI when connectivity is available
-                    Navigation()
+                    val imageUri = shareImageHandleIntent()
+                    Navigation(imageUri)
                 } else {
                     NotConnectedScreen()
                 }
             }
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun shareImageHandleIntent(): Uri? {
+        if (intent?.action == Intent.ACTION_SEND) {
+            if (intent.type?.startsWith("image/") == true) {
+                return intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri
+            }
+        }
+        return null
     }
 
     // Declare the launcher at the top of your Activity/Fragment:
@@ -97,7 +113,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation() {
+fun Navigation(imageUri: Uri?) {
     val context = LocalContext.current
     val navController = rememberNavController()
 
@@ -108,11 +124,27 @@ fun Navigation() {
         startDestination = context.getString(R.string.generator_screen)
     ) {
         composable(context.getString(R.string.generator_screen)) {
-            GeneratorScreen(navController = navController, viewModel = viewModel)
+            GeneratorScreen(
+                navController = navController,
+                viewModel = viewModel,
+                startingImageUri = imageUri
+            )
         }
         composable(context.getString(R.string.share_screen)) {
             ShareScreen(navController = navController, viewModel = viewModel)
         }
+    }
+}
+
+fun preLoadInitialImageAndTags(
+    context: Context,
+    viewModel: CaptionGeneratorViewModel,
+    imageUri: Uri
+) {
+    val imageBitmap =
+        BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
+    if (imageBitmap != null) {
+        viewModel.processBitmap(imageBitmap)
     }
 }
 
