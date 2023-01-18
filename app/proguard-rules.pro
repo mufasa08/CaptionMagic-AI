@@ -20,5 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.devinjapan.aisocialmediaposter.data.request.*
+
+# Preserve RemoteMessage's name as RemoteMessage is used as Parcelable in Intent to `PushService`.
+# Its name can be used beyond app update and we need to keep same name between app versions.
+-keepnames class com.google.firebase.messaging.RemoteMessage
 -keep class androidx.compose.ui.*
