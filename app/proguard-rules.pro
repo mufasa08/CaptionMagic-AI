@@ -25,3 +25,6 @@
 # Its name can be used beyond app update and we need to keep same name between app versions.
 -keepnames class com.google.firebase.messaging.RemoteMessage
 -keep class androidx.compose.ui.*
+
+# issue with serialized fields being obfuscated
+-keepclassmembers class com.devinjapan.aisocialmediaposter.** { <fields>; }
