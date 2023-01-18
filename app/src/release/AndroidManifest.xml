@@ -14,6 +14,6 @@
   <application
       android:name=".AISocialMediaPosterApp"
       tools:ignore="GoogleAppIndexingWarning"
-      tools:replace="android:name"></application>
+      tools:replace="android:name" />
 </manifest>
 
