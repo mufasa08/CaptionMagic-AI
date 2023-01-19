@@ -8,10 +8,10 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,8 +33,8 @@ import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
-import com.devinjapan.aisocialmediaposter.ui.model.SocialMediaItem
 import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
+import com.devinjapan.aisocialmediaposter.ui.theme.*
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -191,31 +191,7 @@ fun GeneratorScreen(
 @Composable
 fun SelectSocialMediaSpinner(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
-    val options = listOf(
-        SocialMediaItem(
-            context.getString(R.string.instagram),
-            R.drawable.ic_instagram,
-            SocialMedia.INSTAGRAM
-        ),
-        SocialMediaItem(
-            context.getString(R.string.twitter),
-            R.drawable.ic_twitter,
-            SocialMedia.TWITTER
-        ),
-        SocialMediaItem(
-            context.getString(R.string.other),
-            R.drawable.ic_social_media,
-            SocialMedia.OTHER
-        ),
-
-    )
-    var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember {
-        mutableStateOf(
-            viewModel.state.selectedSocialMediaItem ?: options[0]
-        )
-    }
-
+    val selectedItem = viewModel.state.selectedSocialMedia
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -225,74 +201,75 @@ fun SelectSocialMediaSpinner(viewModel: CaptionGeneratorViewModel) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = context.getString(R.string.social_media_selector_label),
-                style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.primary)
+                style = MaterialTheme.typography.caption
             )
-            ExposedDropdownMenuBox(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp),
-                expanded = expanded,
-                onExpandedChange = {
-                    expanded = !expanded
-                }
-            ) {
-                TextField(
-                    readOnly = true,
-                    value = selectedItem.itemName,
-                    onValueChange = { },
-                    trailingIcon = {
-                        TrailingIcon(
-                            expanded = expanded
-                        )
-                    },
-                    leadingIcon = {
-                        if (selectedItem.iconResId != null) {
-                            Icon(
-                                painter = painterResource(id = selectedItem.iconResId!!),
-                                contentDescription = null,
-                                modifier = Modifier.padding(start = 4.dp),
-                            )
-                        }
-                    },
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        textColor = MaterialTheme.colors.onSurface,
-                    )
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = {
-                        expanded = false
-                    }
-                ) {
-                    options.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            onClick = {
-                                selectedItem = selectionOption
-                                expanded = false
-                                viewModel.updateSelectedSocialMedia(selectionOption)
-                            }
-                        ) {
-                            if (selectionOption.iconResId != null) {
-                                Icon(
-                                    painter = painterResource(id = selectionOption.iconResId),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(start = 4.dp),
-                                    tint = MaterialTheme.colors.onSurface,
-                                )
-                            }
 
-                            Text(
-                                text = selectionOption.itemName,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-                    }
-                }
+            Spacer(modifier = Modifier.padding(top = 4.dp))
+            Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+                GetButton(viewModel, selectedItem, SocialMedia.TWITTER, R.drawable.ic_twitter)
+                Spacer(modifier = Modifier.padding(start = 8.dp))
+                GetButton(viewModel, selectedItem, SocialMedia.INSTAGRAM, R.drawable.ic_instagram)
             }
         }
+    }
+}
+
+@Composable
+fun getButtonIconTintColor(selectedItem: SocialMedia, socialMedia: SocialMedia): Color {
+    return if (isSystemInDarkTheme()) {
+        if (selectedItem == socialMedia) TintSelectedDark else TintUnselectedDark
+    } else {
+        if (selectedItem == socialMedia) TintSelectedLight else TintUnselectedLight
+    }
+}
+
+@Composable
+fun getButtonBackgroundColor(selectedItem: SocialMedia, socialMedia: SocialMedia): Color {
+    return if (isSystemInDarkTheme()) {
+        if (selectedItem == socialMedia) ButtonBackgroundSelectedDark else ButtonBackgroundUnselectedDark
+    } else {
+        if (selectedItem == socialMedia) ButtonBackgroundSelectedLight else ButtonBackgroundUnselectedLight
+    }
+}
+
+@Composable
+fun GetButton(
+    viewModel: CaptionGeneratorViewModel,
+    selectedItem: SocialMedia,
+    socialMedia: SocialMedia,
+    icon: Int
+) {
+
+    val backgroundColor =
+        getButtonBackgroundColor(selectedItem = selectedItem, socialMedia = socialMedia)
+    val iconTintColor =
+        getButtonIconTintColor(selectedItem = selectedItem, socialMedia = socialMedia)
+
+    return OutlinedButton(
+        onClick = {
+            if (selectedItem == socialMedia) {
+                viewModel.updateSelectedSocialMedia(socialMedia = SocialMedia.OTHER)
+            } else {
+                viewModel.updateSelectedSocialMedia(socialMedia = socialMedia)
+            }
+        },
+        modifier = Modifier.size(40.dp),
+        shape = CircleShape,
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (isSystemInDarkTheme()) ButtonBorderDark else ButtonBorderLight
+        ),
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            backgroundColor = backgroundColor,
+        )
+    ) {
+        // Adding an Icon "Add" inside the Button
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            tint = iconTintColor,
+        )
     }
 }
 

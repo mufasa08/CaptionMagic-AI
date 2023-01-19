@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
-import com.devinjapan.aisocialmediaposter.ui.model.SocialMediaItem
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -114,10 +114,9 @@ class CaptionGeneratorViewModel @Inject constructor(
         state = GeneratorScreenState()
     }
 
-    fun updateSelectedSocialMedia(socialMediaItem: SocialMediaItem) {
+    fun updateSelectedSocialMedia(socialMedia: SocialMedia) {
         state = state.copy(
-            selectedSocialMedia = socialMediaItem.type,
-            selectedSocialMediaItem = socialMediaItem,
+            selectedSocialMedia = socialMedia,
         )
     }
 }
