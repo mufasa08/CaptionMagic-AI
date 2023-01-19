@@ -138,7 +138,7 @@ fun GeneratorScreen(
                     Text(
                         modifier = Modifier.padding(bottom = 16.dp),
                         text = context.getString(R.string.generator_screen_header),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.body2
                     )
                     if (viewModel.state.image == null) {
                         TextButton(
@@ -157,6 +157,7 @@ fun GeneratorScreen(
                                 modifier = Modifier.padding(start = 16.dp),
                                 text = context.getString(R.string.generator_upload_text),
                                 color = MaterialTheme.colors.secondary,
+                                style = MaterialTheme.typography.body1
                             )
                         }
                     } else {
@@ -218,11 +219,18 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
             .padding(horizontal = 4.dp),
     ) {
         Column {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = context.getString(R.string.social_media_selector_label),
-                style = MaterialTheme.typography.caption
-            )
+            Row(Modifier.wrapContentHeight()) {
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = context.getString(R.string.social_media_selector_label),
+                    style = MaterialTheme.typography.body2,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 4.dp, end = 16.dp),
+                    text = context.getString(R.string.social_media_selector_optional_label),
+                    style = MaterialTheme.typography.caption,
+                )
+            }
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {

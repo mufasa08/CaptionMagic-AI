@@ -42,7 +42,7 @@ val Typography = Typography(
     ),
     caption = TextStyle(
         fontWeight = FontWeight.W400,
-        fontSize = 14.sp
+        fontSize = 12.sp
     ),
     button = TextStyle(
         fontWeight = FontWeight.W600,
