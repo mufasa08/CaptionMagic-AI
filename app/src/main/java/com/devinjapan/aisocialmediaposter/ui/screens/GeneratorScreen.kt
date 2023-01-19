@@ -430,7 +430,7 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
             mainAxisSpacing = 4.dp,
             crossAxisSpacing = 4.dp,
         ) {
-            list.forEach { tag ->
+            list.slice(0..5).forEach { tag ->
                 SimpleTags(
                     modifier = Modifier
                         .wrapContentHeight()
