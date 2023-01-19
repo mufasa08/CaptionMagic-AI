@@ -6,27 +6,34 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.graphics.Color
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.onDarkHigh
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.onLightHigh
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.primary
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.primaryDark
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.secondary
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.secondaryDark
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.surface
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.surfaceDark
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = Pink,
-    secondary = Blue
+    primary = primaryDark,
+    secondary = secondaryDark,
+    surface = surfaceDark,
+    onPrimary = onDarkHigh,
+    onSecondary = onLightHigh,
+    onBackground = onDarkHigh,
+    onSurface = onDarkHigh,
 )
 
 private val LightColorPalette = lightColors(
-    primary = Pink,
-    secondary = Blue,
-    surface = Color.White,
-
-/* Other default colors to override
-background = Color.White,
-surface = Color.White,
-onPrimary = Color.White,
-onSecondary = Color.Black,
-onBackground = Color.Black,
-onSurface = Color.Black,
-*/
+    primary = primary,
+    secondary = secondary,
+    surface = surface,
+    onPrimary = onDarkHigh,
+    onSecondary = onDarkHigh,
+    onBackground = onLightHigh,
+    onSurface = onLightHigh,
 )
 
 @Composable
@@ -42,11 +49,9 @@ fun AISocialMediaPosterTheme(
         // Update all of the system bar colors to be transparent, and use
         // dark icons if we're in light theme
         systemUiController.setSystemBarsColor(
-            color = if (!darkTheme) Color.Transparent else Color.Black.copy(alpha = 0.93f),
+            color = if (!darkTheme) surface else surfaceDark,
             darkIcons = useDarkIcons
         )
-
-        // setStatusBarColor() and setNavigationBarColor() also exist
 
         onDispose {}
     }

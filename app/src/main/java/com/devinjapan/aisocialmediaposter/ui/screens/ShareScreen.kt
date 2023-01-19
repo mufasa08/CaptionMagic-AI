@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -53,7 +52,6 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
     ) {
         Box(
             modifier = Modifier

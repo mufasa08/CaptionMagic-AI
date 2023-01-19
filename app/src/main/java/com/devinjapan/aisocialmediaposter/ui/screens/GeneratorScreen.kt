@@ -34,7 +34,21 @@ import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
 import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
-import com.devinjapan.aisocialmediaposter.ui.theme.*
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundSelectedDark
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundSelectedLight
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundUnselectedDark
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundUnselectedLight
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBorderDark
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBorderLight
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.DarkChip
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.DarkChipCloseButton
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightChip
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightChipCloseButton
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintSelectedDark
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintSelectedLight
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedDark
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLight
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -92,8 +106,7 @@ fun GeneratorScreen(
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+            .fillMaxSize(),
     ) {
         Box(
             modifier = Modifier
@@ -111,11 +124,15 @@ fun GeneratorScreen(
                             style = MaterialTheme.typography.h6
                         )
                     },
-                    backgroundColor = MaterialTheme.colors.surface,
+                    backgroundColor =
+                    if (isSystemInDarkTheme())
+                        TopBarGray
+                    else
+                        Color.White,
                 )
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp),
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
@@ -157,9 +174,12 @@ fun GeneratorScreen(
 
                 KeywordInputTextField(viewModel)
 
-                Spacer(modifier = Modifier.height(16.dp))
-                SelectSocialMediaSpinner(viewModel)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(48.dp))
+
+                SelectSocialMedia(viewModel)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Button(
                     modifier = Modifier
                         .padding(16.dp)
@@ -189,13 +209,13 @@ fun GeneratorScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SelectSocialMediaSpinner(viewModel: CaptionGeneratorViewModel) {
+fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val selectedItem = viewModel.state.selectedSocialMedia
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 16.dp),
+            .padding(horizontal = 4.dp),
     ) {
         Column {
             Text(
@@ -318,7 +338,6 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                 backgroundColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                textColor = MaterialTheme.colors.onSurface,
             )
         )
     }
@@ -353,7 +372,7 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                     textStyle = MaterialTheme.typography.body2.copy(
                         textAlign = TextAlign.Start,
                     ),
-                    backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray,
+                    backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
                         viewModel.removeTag(tag)
                     },
@@ -362,6 +381,9 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                             painter = painterResource(id = R.drawable.ic_remove_tag),
                             contentDescription = null,
                             modifier = Modifier.padding(start = 4.dp),
+                            tint = if (isSystemInDarkTheme())
+                                DarkChipCloseButton else
+                                LightChipCloseButton
                         )
                     }
                 )
