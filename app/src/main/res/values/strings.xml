@@ -18,4 +18,5 @@
     <string name="social_media_selector_optional_label">Optional</string>
     <string name="offline">Please check\nyour network connection.</string>
     <string name="not_showing_notifications">Showing notifications disabled</string>
+    <string name="recent_list_items">Recent Keywords</string>
 </resources>

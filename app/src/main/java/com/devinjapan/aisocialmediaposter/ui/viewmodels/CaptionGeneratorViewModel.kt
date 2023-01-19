@@ -128,7 +128,8 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun resetEverything() {
-        state = GeneratorScreenState()
+        val recentList = state.recentList
+        state = GeneratorScreenState(recentList = recentList)
     }
 
     fun updateSelectedSocialMedia(socialMedia: SocialMedia) {
@@ -152,16 +153,8 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     private fun saveRecentList() {
-        state = state.copy(
-            isLoading = true,
-            error = null
-        )
         viewModelScope.launch {
             dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
-            state = state.copy(
-                isLoading = false,
-                error = null
-            )
         }
     }
 }

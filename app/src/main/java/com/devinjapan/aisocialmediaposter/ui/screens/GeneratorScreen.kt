@@ -413,38 +413,48 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
 
 @Composable
 fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) {
-    FlowRow(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        mainAxisSpacing = 4.dp,
-        crossAxisSpacing = 4.dp,
-    ) {
-        list.forEach { tag ->
-            SimpleTags(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                text = tag,
-                textStyle = MaterialTheme.typography.body2.copy(
-                    textAlign = TextAlign.Start,
-                ),
-                backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
-                onClick = {
-                    viewModel.addTag(tag)
-                },
-                trailingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_add_circle),
-                        contentDescription = null,
-                        modifier = Modifier.padding(start = 4.dp),
-                        tint = if (isSystemInDarkTheme())
-                            DarkChipCloseButton else
-                            LightChipCloseButton
-                    )
-                }
-            )
+    val context = LocalContext.current
+    if (list.isNotEmpty()) {
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = context.getString(R.string.recent_list_items),
+            style = MaterialTheme.typography.body2,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+        FlowRow(
+            modifier = Modifier
+                .padding(16.dp)
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            mainAxisSpacing = 4.dp,
+            crossAxisSpacing = 4.dp,
+        ) {
+            list.forEach { tag ->
+                SimpleTags(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(horizontal = 4.dp),
+                    text = tag,
+                    textStyle = MaterialTheme.typography.body2.copy(
+                        textAlign = TextAlign.Start,
+                    ),
+                    backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
+                    onClick = {
+                        viewModel.addTag(tag)
+                    },
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_add_circle),
+                            contentDescription = null,
+                            modifier = Modifier.padding(start = 4.dp),
+                            tint = if (isSystemInDarkTheme())
+                                DarkChipCloseButton else
+                                LightChipCloseButton
+                        )
+                    }
+                )
+            }
         }
     }
 }
