@@ -178,6 +178,17 @@ fun GeneratorScreen(
 
                 Spacer(modifier = Modifier.height(48.dp))
 
+                ListOfRecentItems(
+                    list = viewModel.state.recentList.filterNot {
+                        viewModel.state.loadedTags.contains(
+                            it
+                        )
+                    },
+                    viewModel
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
                 SelectSocialMedia(viewModel)
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -187,7 +198,7 @@ fun GeneratorScreen(
                         .padding(16.dp)
                         .fillMaxWidth(),
                     onClick = {
-                        viewModel.testGeneratorApi()
+                        viewModel.generateDescription()
                     },
                     enabled = viewModel.state.loadedTags.isNotEmpty()
                 ) {
@@ -328,6 +339,7 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             keyboardActions = KeyboardActions(
                 onDone = {
                     viewModel.addTag(text)
+                    viewModel.addToRecentList(text)
                     text = ""
                 }
             ),
@@ -395,6 +407,44 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) {
+    FlowRow(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        mainAxisSpacing = 4.dp,
+        crossAxisSpacing = 4.dp,
+    ) {
+        list.forEach { tag ->
+            SimpleTags(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp),
+                text = tag,
+                textStyle = MaterialTheme.typography.body2.copy(
+                    textAlign = TextAlign.Start,
+                ),
+                backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
+                onClick = {
+                    viewModel.addTag(tag)
+                },
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add_circle),
+                        contentDescription = null,
+                        modifier = Modifier.padding(start = 4.dp),
+                        tint = if (isSystemInDarkTheme())
+                            DarkChipCloseButton else
+                            LightChipCloseButton
+                    )
+                }
+            )
         }
     }
 }
