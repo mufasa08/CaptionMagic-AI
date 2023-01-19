@@ -21,7 +21,7 @@ import javax.inject.Inject
 class CaptionGeneratorViewModel @Inject constructor(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
 ) : ViewModel() {
 
     var state by mutableStateOf(GeneratorScreenState())
@@ -36,7 +36,7 @@ class CaptionGeneratorViewModel @Inject constructor(
             if (state.recentList.size >= 10) {
                 state.recentList.removeLast()
             }
-            state.recentList.add(item)
+            state.recentList.add(0, item)
         }
     }
 
@@ -52,7 +52,7 @@ class CaptionGeneratorViewModel @Inject constructor(
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = state.loadedTags,
                     maxWords = state.selectedSocialMedia.maxTokenLimit,
-                    type = state.selectedSocialMedia,
+                    type = state.selectedSocialMedia
                 )
             ) {
                 is Resource.Success -> {
@@ -105,7 +105,7 @@ class CaptionGeneratorViewModel @Inject constructor(
         state.loadedTags.clear()
         state = state.copy(
             image = null,
-            textCompletion = null,
+            textCompletion = null
         )
     }
 
@@ -134,7 +134,7 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     fun updateSelectedSocialMedia(socialMedia: SocialMedia) {
         state = state.copy(
-            selectedSocialMedia = socialMedia,
+            selectedSocialMedia = socialMedia
         )
     }
 
@@ -147,7 +147,7 @@ class CaptionGeneratorViewModel @Inject constructor(
             val result = dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST)
             state.recentList.addAll(result)
             state = state.copy(
-                isLoading = false,
+                isLoading = false
             )
         }
     }
