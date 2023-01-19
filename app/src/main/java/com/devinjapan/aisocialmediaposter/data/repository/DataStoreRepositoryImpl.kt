@@ -17,8 +17,8 @@ class DataStoreRepositoryImpl @Inject constructor(
 ) : DatastoreRepository {
     override suspend fun putList(key: String, value: List<String>) {
         val preferenceKey = stringPreferencesKey(key)
-        context.dataStore.edit {
-            it[preferenceKey] = value.joinToString("####")
+        context.dataStore.edit { preferences ->
+            preferences[preferenceKey] = value.filter { it.isEmpty() }.joinToString("####")
         }
     }
 
