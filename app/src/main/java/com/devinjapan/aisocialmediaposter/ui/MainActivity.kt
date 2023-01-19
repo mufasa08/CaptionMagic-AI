@@ -33,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
+import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
@@ -133,6 +134,9 @@ fun Navigation(imageUri: Uri?) {
         composable(context.getString(R.string.share_screen)) {
             ShareScreen(navController = navController, viewModel = viewModel)
         }
+        composable(context.getString(R.string.settings_screen)) {
+            SettingsScreen(navController = navController)
+        }
     }
 }
 
@@ -160,7 +164,7 @@ fun NotConnectedScreen() {
                 .fillMaxSize()
                 .padding(it),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_wifi_offline),

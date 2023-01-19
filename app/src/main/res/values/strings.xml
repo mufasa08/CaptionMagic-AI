@@ -2,6 +2,7 @@
     <string name="app_name">Caption Magic AI</string>
     <string name="generator_screen">generator_screen</string>
     <string name="share_screen">share_screen</string>
+    <string name="settings_screen">settings_screen</string>
     <string name="generator_screen_header">What is the post about? Give me some ideas by uploading an image, typing out keywords, or both.</string>
     <string name="generator_upload_text">Upload image</string>
     <string name="generator_keyword_hint">Add keywords...</string>
@@ -19,4 +20,5 @@
     <string name="offline">Please check\nyour network connection.</string>
     <string name="not_showing_notifications">Showing notifications disabled</string>
     <string name="recent_list_items">Recent Keywords</string>
+    <string name="settings_title">Settings</string>
 </resources>
