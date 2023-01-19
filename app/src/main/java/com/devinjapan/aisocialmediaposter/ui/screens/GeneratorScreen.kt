@@ -338,8 +338,10 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    viewModel.addTag(text)
-                    viewModel.addToRecentList(text)
+                    if (text.isNotEmpty()) {
+                        viewModel.addTag(text)
+                        viewModel.addToRecentList(text)
+                    }
                     text = ""
                 }
             ),
