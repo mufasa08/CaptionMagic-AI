@@ -49,6 +49,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintSelectedLigh
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedDark
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
+import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -219,18 +220,16 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
             .padding(horizontal = 4.dp),
     ) {
         Column {
-            Row(Modifier.wrapContentHeight()) {
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = context.getString(R.string.social_media_selector_label),
-                    style = MaterialTheme.typography.body2,
-                )
-                Text(
-                    modifier = Modifier.padding(start = 4.dp, end = 16.dp),
-                    text = context.getString(R.string.social_media_selector_optional_label),
-                    style = MaterialTheme.typography.caption,
-                )
-            }
+            Text(
+                modifier = Modifier.padding(start = 16.dp),
+                text = context.getString(R.string.social_media_selector_label),
+                style = MaterialTheme.typography.body2,
+            )
+            Text(
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+                text = context.getString(R.string.social_media_selector_optional_label),
+                style = MaterialTheme.typography.caption.copy(ThemeColors.onLightMedium),
+            )
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {
