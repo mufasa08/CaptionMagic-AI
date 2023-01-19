@@ -101,8 +101,8 @@ class LabelDetectorProcessor(context: Context) :
             val foodList = detectInImage(
                 InputImage.fromBitmap(bitmap, 0), DetectorType.FOOD
             ).await().map { it.text }
-            return foodList + baseList
+            return (foodList.take(3) + baseList.take(3))
         }
-        return baseList
+        return baseList.take(6)
     }
 }

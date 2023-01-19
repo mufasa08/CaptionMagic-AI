@@ -11,6 +11,7 @@ data class GeneratorScreenState(
     var modifiedText: String? = null,
     val loadedTags: MutableList<String> = mutableStateListOf(),
     val selectedSocialMedia: SocialMedia = SocialMedia.OTHER,
+    val recentList: MutableList<String> = mutableStateListOf(),
     val isLoading: Boolean = false,
     val isLoadingTags: Boolean = false,
     val error: String? = null
