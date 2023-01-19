@@ -150,10 +150,12 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
-    val context = LocalContext.current
     val (focusRequester) = FocusRequester.createRefs()
     val initialText: String =
-        viewModel.state.textCompletion?.choices?.first()?.text?.trim() ?: "no text"
+        (
+            viewModel.state.modifiedText
+                ?: viewModel.state.textCompletion?.choices?.first()?.text?.trim()
+            ) ?: ""
     var text by rememberSaveable { mutableStateOf(initialText) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
@@ -175,11 +177,11 @@ fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
             keyboardActions = KeyboardActions(
                 onDone = {
                     viewModel.updateModifiedText(text)
-                    text = ""
                 }
             ),
             modifier = Modifier
                 .padding(0.dp)
+                .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusEvent { focusState ->
                     if (focusState.isFocused) {
