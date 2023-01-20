@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
@@ -53,6 +54,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLi
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
+import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
@@ -82,6 +84,16 @@ fun GeneratorScreen(
     if (startingImageUri != null && imageUri == null) {
         preLoadInitialImageAndTags(context, viewModel, startingImageUri)
         imageUri = startingImageUri
+    }
+
+    ObserveLifecycleEvent { event ->
+        // 検出したイベントに応じた処理を実装する。
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                viewModel.getRecentList()
+            }
+            else -> {}
+        }
     }
 
     val imagePicker = rememberLauncherForActivityResult(
