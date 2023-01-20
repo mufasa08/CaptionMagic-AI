@@ -158,4 +158,11 @@ class CaptionGeneratorViewModel @Inject constructor(
             dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
         }
     }
+
+    fun signInAnonymouslyIfNecessary() {
+        /*val currentUser = auth.currentUser
+        if (currentUser == null) {
+            auth.signInAnonymously()
+        }*/
+    }
 }

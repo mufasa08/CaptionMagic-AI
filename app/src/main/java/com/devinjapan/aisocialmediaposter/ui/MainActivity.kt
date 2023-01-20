@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         // Initialize Firebase Auth
         // Should do this with Repository pattern tbh
         auth = Firebase.auth
-        signInIfNecessary(auth)
+        // signInIfNecessary(auth)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -79,12 +79,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun signInIfNecessary(auth: FirebaseAuth) {
+    private fun signInIfNecessary(viewModel: CaptionGeneratorViewModel, auth: FirebaseAuth) {
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
-            auth.signInAnonymously()
-        }
+        // viewModel.signInAnonymouslyIfNecessary()
+        // TODO implement this with Repository Pattern and Analytics
     }
 
     @Suppress("DEPRECATION")
