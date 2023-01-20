@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.AISocialMediaPoster" parent="android:Theme.Material.Light.NoActionBar"></style>
+
+    <style name="SplashTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+    </style>
 </resources>

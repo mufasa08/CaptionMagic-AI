@@ -22,10 +22,10 @@ fun ImagePicker(
     modifier: Modifier,
     // change this sometime.. don't pass viewmodel but pass a callback.
     viewModel: CaptionGeneratorViewModel,
-    imageBitmap: Bitmap,
+    imageBitmap: Bitmap
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier
     ) {
         AsyncImage(
             model = imageBitmap,
@@ -34,7 +34,7 @@ fun ImagePicker(
                 .fillMaxHeight()
                 .align(Alignment.TopCenter),
             contentScale = ContentScale.Fit,
-            contentDescription = "Selected image",
+            contentDescription = "Selected image"
         )
         IconButton(
             modifier = Modifier
@@ -45,7 +45,8 @@ fun ImagePicker(
             }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_close_round), null
+                painter = painterResource(id = R.drawable.ic_close_round),
+                null
             )
         }
     }
