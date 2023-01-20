@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -38,7 +37,9 @@ class NotificationService : FirebaseMessagingService() {
     private fun sendNotification(messageTitle: String, messageBody: String?) {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            0,
+            intent,
             PendingIntent.FLAG_IMMUTABLE
         )
 
@@ -48,7 +49,6 @@ class NotificationService : FirebaseMessagingService() {
             .setCategory(Notification.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setAutoCancel(true)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
 
         val notificationManager =
