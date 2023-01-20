@@ -24,6 +24,7 @@ private val DarkColorPalette = darkColors(
     onSecondary = onLightHigh,
     onBackground = onDarkHigh,
     onSurface = onDarkHigh,
+    onError = reddishBrown
 )
 
 private val LightColorPalette = lightColors(
@@ -34,6 +35,7 @@ private val LightColorPalette = lightColors(
     onSecondary = onDarkHigh,
     onBackground = onLightHigh,
     onSurface = onLightHigh,
+    onError = reddishBrown
 )
 
 @Composable
@@ -41,7 +43,6 @@ fun AISocialMediaPosterTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-
     val useDarkIcons = !isSystemInDarkTheme()
     val systemUiController = rememberSystemUiController()
 

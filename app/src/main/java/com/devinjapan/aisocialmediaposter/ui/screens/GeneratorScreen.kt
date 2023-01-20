@@ -198,11 +198,10 @@ fun GeneratorScreen(
                     }
                 }
 
-                ListOfTags(list = viewModel.state.loadedTags, viewModel)
-
-                KeywordInputTextField(viewModel)
-
-                Spacer(modifier = Modifier.height(48.dp))
+                Column(modifier = Modifier.defaultMinSize(minHeight = 60.dp)) {
+                    ListOfTags(list = viewModel.state.loadedTags, viewModel)
+                    KeywordInputTextField(viewModel)
+                }
 
                 ListOfRecentItems(
                     list = viewModel.state.recentList.filterNot {
