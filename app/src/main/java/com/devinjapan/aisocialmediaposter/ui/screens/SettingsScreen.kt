@@ -3,14 +3,13 @@ package com.devinjapan.aisocialmediaposter.ui.screens
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
+import com.devinjapan.aisocialmediaposter.BuildConfig
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
 import com.devinjapan.aisocialmediaposter.ui.utils.FEEDBACK_URL
@@ -102,6 +102,8 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 ).show()
             }
         }
+
+        Divider()
     }
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_other)) }) {
@@ -117,6 +119,8 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             // TODO log firebase uid analytics
             uriHandler.openUri(BUG_REPORT_BASE_URL)
         }
+
+        Divider()
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.settings_title_feedback)) },
             subtitle = { Text(text = context.getString(R.string.settings_subtitle_feedback)) },
@@ -131,64 +135,20 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             uriHandler.openUri(FEEDBACK_URL)
         }
     }
+    Divider()
 
-    Divider()
-    SettingsMenuLink(
-        title = { Text(text = "Menu 2") },
-        subtitle = { Text(text = "Without icon") },
-        action = {
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(message = "Action click")
-                    }
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = null
-                )
-            }
-        }
-    ) {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar(message = "Click on menu 2")
-        }
-    }
-    Divider()
-    SettingsMenuLink(
-        title = { Text(text = "Menu 3") },
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Menu 1"
-            )
-        }
-    ) {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar(message = "Click on menu 3")
-        }
-    }
-    Divider()
-    var rememberCheckBoxState by remember { mutableStateOf(true) }
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_about)) }) {
         SettingsMenuLink(
-            title = { Text(text = "Menu 4") },
-            action = {
-                Checkbox(checked = rememberCheckBoxState, onCheckedChange = { newState ->
-                    rememberCheckBoxState = newState
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Checkbox update to: $newState"
-                        )
-                    }
-                })
+            modifier = Modifier.clickable(enabled = false, onClick = {}),
+            title = { Text(text = context.getString(R.string.app_name)) },
+            subtitle = { Text(text = "Version: ${BuildConfig.VERSION_NAME}") },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = "About Menu"
+                )
             }
         ) {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(message = "Click on menu 4")
-            }
         }
-        // TODO App Version
     }
 }
