@@ -21,4 +21,9 @@
     <string name="not_showing_notifications">Showing notifications disabled</string>
     <string name="recent_list_items">Recent Keywords</string>
     <string name="settings_title">Settings</string>
+    <string name="settings_group_about">About</string>
+    <string name="settings_group_data">Data</string>
+    <string name="settings_group_other">Other</string>
+    <string name="settings_title_bug_report">Bug Report</string>
+    <string name="settings_subtitle_bug_report">Let us know of any issues.</string>
 </resources>

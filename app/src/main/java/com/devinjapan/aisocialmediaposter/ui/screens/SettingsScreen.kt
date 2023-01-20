@@ -13,12 +13,17 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -70,21 +75,30 @@ fun SettingsScreen(navController: NavController) {
 fun SettingsItems(viewModel: SettingsViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
 
-    SettingsMenuLink(
-        title = { Text(text = "Menu 1") },
-        subtitle = { Text(text = "Subtitle of menu 1") },
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Menu 1"
-            )
-        }
-    ) {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar(message = "Click on menu 1")
+    val currentFirebaseUid: String = FirebaseAuth.getInstance().currentUser?.uid ?: "no-id"
+
+    SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_data)) }) {
+    }
+
+    SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_other)) }) {
+        SettingsMenuLink(
+            title = { Text(text = context.getString(R.string.settings_title_bug_report)) },
+            subtitle = { Text(text = context.getString(R.string.settings_subtitle_bug_report)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_bug_report),
+                    contentDescription = "Menu 1"
+                )
+            }
+        ) {
+            // TODO log firebase uid analytics
+            uriHandler.openUri(BUG_REPORT_BASE_URL)
         }
     }
+
     Divider()
     SettingsMenuLink(
         title = { Text(text = "Menu 2") },
@@ -124,21 +138,23 @@ fun SettingsItems(viewModel: SettingsViewModel) {
     }
     Divider()
     var rememberCheckBoxState by remember { mutableStateOf(true) }
-    SettingsMenuLink(
-        title = { Text(text = "Menu 4") },
-        action = {
-            Checkbox(checked = rememberCheckBoxState, onCheckedChange = { newState ->
-                rememberCheckBoxState = newState
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = "Checkbox update to: $newState"
-                    )
-                }
-            })
-        }
-    ) {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar(message = "Click on menu 4")
+    SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_about)) }) {
+        SettingsMenuLink(
+            title = { Text(text = "Menu 4") },
+            action = {
+                Checkbox(checked = rememberCheckBoxState, onCheckedChange = { newState ->
+                    rememberCheckBoxState = newState
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Checkbox update to: $newState"
+                        )
+                    }
+                })
+            }
+        ) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(message = "Click on menu 4")
+            }
         }
     }
 }

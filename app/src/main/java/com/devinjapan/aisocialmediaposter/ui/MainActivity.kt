@@ -40,11 +40,22 @@ import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
+    override fun onStart() {
+        super.onStart()
+        // Initialize Firebase Auth
+        // Should do this with Repository pattern tbh
+        auth = Firebase.auth
+        signInIfNecessary(auth)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +76,14 @@ class MainActivity : ComponentActivity() {
                     NotConnectedScreen()
                 }
             }
+        }
+    }
+
+    private fun signInIfNecessary(auth: FirebaseAuth) {
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            auth.signInAnonymously()
         }
     }
 
