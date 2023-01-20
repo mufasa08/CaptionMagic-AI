@@ -7,8 +7,8 @@ import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.onLightMedium
 // Color list
 
 private val pink = Color(0xFFE91E63)
-private val blue = Color(0xFF303F9F)
-private val purple = Color(0xFF9FA8DA)
+private val blue = Color(0xFF0091EA)
+private val lightPink = Color(0xFFF8BBD0)
 
 // White
 private val white = Color(0xFFFFFFFF)
@@ -28,6 +28,8 @@ private val darkGray = Color(0xFF121212)
 private val mediumGray = Color(0x1FFFFFFF)
 private val lightGray = Color(0x146200EE)
 
+val reddishBrown = Color(0xFFBF360C)
+
 object ThemeColors {
     // TEXT
 // Dark
@@ -40,11 +42,13 @@ object ThemeColors {
     val onDarkMedium = whiteAlpha74
     val onDarkDisabled = whiteAlpha38
 
+    val error = reddishBrown
+
     // SURFACES
 // Dark
     val surfaceDark = darkGray
     val primaryDark = pink
-    val secondaryDark = purple
+    val secondaryDark = lightPink
 
     // Light
     val surface = white
