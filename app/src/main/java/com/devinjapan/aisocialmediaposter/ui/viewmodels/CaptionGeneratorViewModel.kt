@@ -138,11 +138,12 @@ class CaptionGeneratorViewModel @Inject constructor(
         )
     }
 
-    private fun getRecentList() {
+    fun getRecentList() {
         state = state.copy(
             isLoading = true,
             error = null
         )
+        state.recentList.clear()
         viewModelScope.launch {
             val result = dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST)
             state.recentList.addAll(result)
@@ -156,5 +157,12 @@ class CaptionGeneratorViewModel @Inject constructor(
         viewModelScope.launch {
             dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
         }
+    }
+
+    fun signInAnonymouslyIfNecessary() {
+        /*val currentUser = auth.currentUser
+        if (currentUser == null) {
+            auth.signInAnonymously()
+        }*/
     }
 }

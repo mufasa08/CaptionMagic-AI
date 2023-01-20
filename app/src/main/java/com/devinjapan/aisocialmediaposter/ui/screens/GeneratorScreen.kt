@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -28,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
@@ -51,6 +54,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLi
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
+import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
@@ -82,6 +86,16 @@ fun GeneratorScreen(
         imageUri = startingImageUri
     }
 
+    ObserveLifecycleEvent { event ->
+        // 検出したイベントに応じた処理を実装する。
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                viewModel.getRecentList()
+            }
+            else -> {}
+        }
+    }
+
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
@@ -107,7 +121,7 @@ fun GeneratorScreen(
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
     ) {
         Box(
             modifier = Modifier
@@ -126,15 +140,27 @@ fun GeneratorScreen(
                         )
                     },
                     backgroundColor =
-                    if (isSystemInDarkTheme())
+                    if (isSystemInDarkTheme()) {
                         TopBarGray
-                    else
-                        Color.White,
+                    } else {
+                        Color.White
+                    },
+
+                    actions = {
+                        IconButton(onClick = {
+                            navController.navigate(context.getString(R.string.settings_screen))
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings"
+                            )
+                        }
+                    }
                 )
                 Column(
                     modifier = Modifier
                         .padding(vertical = 8.dp, horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         modifier = Modifier.padding(bottom = 16.dp),
@@ -146,13 +172,13 @@ fun GeneratorScreen(
                             onClick = {
                                 imagePicker.launch("image/*")
                             },
-                            modifier = Modifier.align(alignment = Alignment.Start),
+                            modifier = Modifier.align(alignment = Alignment.Start)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_add_photo),
                                 contentDescription = null,
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
-                                tint = MaterialTheme.colors.secondary,
+                                tint = MaterialTheme.colors.secondary
                             )
                             Text(
                                 modifier = Modifier.padding(start = 16.dp),
@@ -205,7 +231,7 @@ fun GeneratorScreen(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_magic_wand),
                         contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
@@ -228,18 +254,18 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = 4.dp)
     ) {
         Column {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
                 text = context.getString(R.string.social_media_selector_label),
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.body2
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
                 text = context.getString(R.string.social_media_selector_optional_label),
-                style = MaterialTheme.typography.caption.copy(ThemeColors.onLightMedium),
+                style = MaterialTheme.typography.caption.copy(ThemeColors.onLightMedium)
             )
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
@@ -277,7 +303,6 @@ fun GetButton(
     socialMedia: SocialMedia,
     icon: Int
 ) {
-
     val backgroundColor =
         getButtonBackgroundColor(selectedItem = selectedItem, socialMedia = socialMedia)
     val iconTintColor =
@@ -299,14 +324,14 @@ fun GetButton(
         ),
         contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.outlinedButtonColors(
-            backgroundColor = backgroundColor,
+            backgroundColor = backgroundColor
         )
     ) {
         // Adding an Icon "Add" inside the Button
         Icon(
             painter = painterResource(id = icon),
             contentDescription = null,
-            tint = iconTintColor,
+            tint = iconTintColor
         )
     }
 }
@@ -358,7 +383,7 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             )
         )
     }
@@ -382,7 +407,7 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                 .padding(16.dp)
                 .fillMaxWidth(),
             mainAxisSpacing = 4.dp,
-            crossAxisSpacing = 4.dp,
+            crossAxisSpacing = 4.dp
         ) {
             list.forEach { tag ->
                 SimpleTags(
@@ -391,7 +416,7 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                         .padding(horizontal = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
-                        textAlign = TextAlign.Start,
+                        textAlign = TextAlign.Start
                     ),
                     backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
@@ -402,9 +427,11 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                             painter = painterResource(id = R.drawable.ic_remove_tag),
                             contentDescription = null,
                             modifier = Modifier.padding(start = 4.dp),
-                            tint = if (isSystemInDarkTheme())
-                                DarkChipCloseButton else
+                            tint = if (isSystemInDarkTheme()) {
+                                DarkChipCloseButton
+                            } else {
                                 LightChipCloseButton
+                            }
                         )
                     }
                 )
@@ -420,7 +447,7 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
         Text(
             modifier = Modifier.padding(start = 16.dp),
             text = context.getString(R.string.recent_list_items),
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.body2
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -430,7 +457,7 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                 .wrapContentHeight()
                 .fillMaxWidth(),
             mainAxisSpacing = 4.dp,
-            crossAxisSpacing = 4.dp,
+            crossAxisSpacing = 4.dp
         ) {
             list.take(6).forEach { tag ->
                 SimpleTags(
@@ -439,7 +466,7 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                         .padding(horizontal = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
-                        textAlign = TextAlign.Start,
+                        textAlign = TextAlign.Start
                     ),
                     backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
@@ -450,9 +477,11 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                             painter = painterResource(id = R.drawable.ic_add_circle),
                             contentDescription = null,
                             modifier = Modifier.padding(start = 4.dp),
-                            tint = if (isSystemInDarkTheme())
-                                DarkChipCloseButton else
+                            tint = if (isSystemInDarkTheme()) {
+                                DarkChipCloseButton
+                            } else {
                                 LightChipCloseButton
+                            }
                         )
                     }
                 )

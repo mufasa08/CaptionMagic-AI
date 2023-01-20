@@ -33,17 +33,29 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
+import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
+    override fun onStart() {
+        super.onStart()
+        // Initialize Firebase Auth
+        // Should do this with Repository pattern tbh
+        auth = Firebase.auth
+        // signInIfNecessary(auth)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +77,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun signInIfNecessary(viewModel: CaptionGeneratorViewModel, auth: FirebaseAuth) {
+        // Check if user is signed in (non-null) and update UI accordingly.
+        // viewModel.signInAnonymouslyIfNecessary()
+        // TODO implement this with Repository Pattern and Analytics
     }
 
     @Suppress("DEPRECATION")
@@ -133,6 +151,9 @@ fun Navigation(imageUri: Uri?) {
         composable(context.getString(R.string.share_screen)) {
             ShareScreen(navController = navController, viewModel = viewModel)
         }
+        composable(context.getString(R.string.settings_screen)) {
+            SettingsScreen(navController = navController)
+        }
     }
 }
 
@@ -160,7 +181,7 @@ fun NotConnectedScreen() {
                 .fillMaxSize()
                 .padding(it),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_wifi_offline),

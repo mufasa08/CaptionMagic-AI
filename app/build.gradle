@@ -95,12 +95,16 @@ dependencies {
     implementation 'com.airbnb.android:lottie-compose:5.2.0'
     implementation 'com.google.mlkit:image-labeling-custom:17.0.1'
 
+    // Settings
+    implementation 'com.github.alorma:compose-settings-ui:0.15.0'
+
     // Production related Libs
     // Firebase
     implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
     implementation 'com.google.firebase:firebase-crashlytics:18.3.2'
     implementation 'com.google.firebase:firebase-perf:20.3.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.42"
