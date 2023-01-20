@@ -27,4 +27,6 @@
     <string name="settings_title_bug_report">Bug Report</string>
     <string name="settings_subtitle_feedback">Let us know how we are doing.</string>
     <string name="settings_title_feedback">Submit Feedback</string>
+    <string name="settings_title_recent_keywords">Clear Recent Keywords</string>
+    <string name="settings_toast_keywords_cleared">Keywords Cleared</string>
 </resources>

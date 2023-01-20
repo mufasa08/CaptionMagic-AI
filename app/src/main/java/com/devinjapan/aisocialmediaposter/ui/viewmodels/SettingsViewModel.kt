@@ -20,26 +20,9 @@ class SettingsViewModel @Inject constructor(
     var state by mutableStateOf(SettingsState())
         private set
 
-    init {
-    }
-
-    private fun getRecentList() {
-        state = state.copy(
-            isLoading = true,
-            error = null
-        )
+    fun clearRecentList() {
         viewModelScope.launch {
-            val result = dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST)
-            // state.recentList.addAll(result)
-            state = state.copy(
-                isLoading = false
-            )
-        }
-    }
-
-    private fun saveRecentList() {
-        viewModelScope.launch {
-            // dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+            dataStoreRepositoryImpl.clearPreferences(RECENT_KEYWORD_LIST)
         }
     }
 }

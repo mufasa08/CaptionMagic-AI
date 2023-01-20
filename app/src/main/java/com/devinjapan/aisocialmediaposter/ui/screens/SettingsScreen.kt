@@ -1,6 +1,7 @@
 package com.devinjapan.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -82,6 +83,25 @@ fun SettingsItems(viewModel: SettingsViewModel) {
     val currentFirebaseUid: String = FirebaseAuth.getInstance().currentUser?.uid ?: "no-id"
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_data)) }) {
+        SettingsMenuLink(
+            title = { Text(text = context.getString(R.string.settings_title_recent_keywords)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_history),
+                    contentDescription = "Menu 1"
+                )
+            }
+        ) {
+            coroutineScope.launch {
+                // TODO log firebase uid analytics
+                viewModel.clearRecentList()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.settings_toast_keywords_cleared),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_other)) }) {
