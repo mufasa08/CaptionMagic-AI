@@ -22,6 +22,7 @@ import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
+import com.devinjapan.aisocialmediaposter.ui.utils.FEEDBACK_URL
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -86,7 +87,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_other)) }) {
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.settings_title_bug_report)) },
-            subtitle = { Text(text = context.getString(R.string.settings_subtitle_bug_report)) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_bug_report),
@@ -96,6 +96,19 @@ fun SettingsItems(viewModel: SettingsViewModel) {
         ) {
             // TODO log firebase uid analytics
             uriHandler.openUri(BUG_REPORT_BASE_URL)
+        }
+        SettingsMenuLink(
+            title = { Text(text = context.getString(R.string.settings_title_feedback)) },
+            subtitle = { Text(text = context.getString(R.string.settings_subtitle_feedback)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_feedback),
+                    contentDescription = "Menu 2"
+                )
+            }
+        ) {
+            // TODO log firebase uid analytics
+            uriHandler.openUri(FEEDBACK_URL)
         }
     }
 
@@ -156,5 +169,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 snackbarHostState.showSnackbar(message = "Click on menu 4")
             }
         }
+        // TODO App Version
     }
 }
