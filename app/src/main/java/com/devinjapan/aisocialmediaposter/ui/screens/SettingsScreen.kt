@@ -150,5 +150,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             }
         ) {
         }
+        Divider()
     }
 }
