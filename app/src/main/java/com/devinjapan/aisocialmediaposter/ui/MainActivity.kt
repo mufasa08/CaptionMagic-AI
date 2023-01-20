@@ -1,6 +1,7 @@
 package com.devinjapan.aisocialmediaposter.ui
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -57,10 +59,12 @@ class MainActivity : ComponentActivity() {
         // signInIfNecessary(auth)
     }
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        askNotificationPermission()
+        installSplashScreen()
+        // askNotificationPermission()
         setContent {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
@@ -68,12 +72,14 @@ class MainActivity : ComponentActivity() {
 
                 val isConnected = connection === ConnectionState.Available
 
-                if (isConnected) {
-                    // Show UI when connectivity is available
-                    val imageUri = shareImageHandleIntent()
-                    Navigation(imageUri)
-                } else {
-                    NotConnectedScreen()
+                Scaffold {
+                    if (isConnected) {
+                        // Show UI when connectivity is available
+                        val imageUri = shareImageHandleIntent()
+                        Navigation(imageUri)
+                    } else {
+                        NotConnectedScreen()
+                    }
                 }
             }
         }
