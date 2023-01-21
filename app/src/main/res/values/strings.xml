@@ -30,4 +30,13 @@
     <string name="settings_title_recent_keywords">Clear Recent Keywords</string>
     <string name="settings_toast_keywords_cleared">Keywords Cleared</string>
     <string name="splash_screen">splash_screen</string>
+    <string name="settings_customize">Customization</string>
+    <string name="setting_tone_humurous">Humorous</string>
+    <string name="setting_tone_neutral">Neutral</string>
+    <string name="setting_tone_poetic">Poetic</string>
+    <string name="setting_tone_gothic">Gothic</string>
+    <string name="setting_tone_energetic">Energetic</string>
+    <string name="setting_tone_professional">Professional</string>
+    <string name="setting_tone_flirty">Flirty</string>
+    <string name="setting_tone_select_preferred">Select Preferred Tone</string>
 </resources>

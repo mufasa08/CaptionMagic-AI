@@ -18,10 +18,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.alorma.compose.settings.storage.base.rememberIntSettingState
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.devinjapan.aisocialmediaposter.BuildConfig
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.ui.components.CustomSettingsList
+import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
 import com.devinjapan.aisocialmediaposter.ui.utils.FEEDBACK_URL
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
@@ -69,6 +72,10 @@ fun SettingsScreen(navController: NavController) {
 
                 //
             }
+
+            if (viewModel.state.isLoading) {
+                GeneratingDialog()
+            }
         }
     }
 }
@@ -82,6 +89,36 @@ fun SettingsItems(viewModel: SettingsViewModel) {
 
     val currentFirebaseUid: String = FirebaseAuth.getInstance().currentUser?.uid ?: "no-id"
 
+    SettingsGroup(title = { Text(text = context.getString(R.string.settings_customize)) }) {
+        val list = listOf<String>(
+            context.getString(R.string.setting_tone_neutral),
+
+            context.getString(R.string.setting_tone_humurous),
+
+            context.getString(R.string.setting_tone_poetic),
+
+            context.getString(R.string.setting_tone_professional),
+
+            context.getString(R.string.setting_tone_gothic),
+
+            context.getString(R.string.setting_tone_energetic),
+
+            context.getString(R.string.setting_tone_flirty)
+        )
+        var selectedNumber: Int = list.indexOf(viewModel.state.selectedCaptionTone)
+        if (selectedNumber == -1) selectedNumber = 0
+        val singleChoiceState = rememberIntSettingState(defaultValue = selectedNumber)
+        CustomSettingsList(
+            state = singleChoiceState,
+            title = { Text(text = context.getString(R.string.setting_tone_select_preferred)) },
+            items = list,
+            onClick = {
+                viewModel.updateSelectedTone(list[singleChoiceState.value])
+            }
+        )
+
+        Divider()
+    }
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_data)) }) {
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.settings_title_recent_keywords)) },
