@@ -170,7 +170,9 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     private fun saveRecentList() {
         viewModelScope.launch {
-            dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+            if (state.recentList.isNotEmpty()) {
+                dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+            }
         }
     }
 
