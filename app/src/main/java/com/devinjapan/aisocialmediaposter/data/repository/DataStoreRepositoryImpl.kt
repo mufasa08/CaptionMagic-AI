@@ -55,6 +55,17 @@ class DataStoreRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getBoolean(key: String): Boolean? {
+        return try {
+            val preferenceKey = booleanPreferencesKey(key)
+            val preference = context.dataStore.data.first()
+            preference[preferenceKey]
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     override suspend fun getString(key: String): String? {
         return try {
             val preferenceKey = stringPreferencesKey(key)

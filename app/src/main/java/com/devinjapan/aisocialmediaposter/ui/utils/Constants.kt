@@ -1,6 +1,8 @@
 package com.devinjapan.aisocialmediaposter.ui.utils
 
-const val RECENT_KEYWORD_LIST = "recent_keyword_list"
+const val DATASTORE_RECENT_KEYWORD_LIST = "recent_keyword_list"
+
+const val DATASTORE_IS_FIRST_LAUNCH = "IS_FIRST_LAUNCH"
 
 const val MAX_NUMBER_OF_KEYWORDS = 10
 

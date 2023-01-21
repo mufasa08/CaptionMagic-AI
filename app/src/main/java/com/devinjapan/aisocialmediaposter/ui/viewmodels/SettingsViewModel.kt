@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
-import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
+import com.devinjapan.aisocialmediaposter.ui.utils.DATASTORE_RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -40,7 +40,7 @@ class SettingsViewModel @Inject constructor(
 
     fun clearRecentList() {
         viewModelScope.launch {
-            dataStoreRepositoryImpl.clearPreferences(RECENT_KEYWORD_LIST)
+            dataStoreRepositoryImpl.clearPreferences(DATASTORE_RECENT_KEYWORD_LIST)
         }
     }
 

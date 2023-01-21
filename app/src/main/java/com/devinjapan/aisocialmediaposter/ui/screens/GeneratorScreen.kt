@@ -60,14 +60,34 @@ import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
-import com.svenjacobs.reveal.Reveal
-import com.svenjacobs.reveal.RevealOverlayArrangement
-import com.svenjacobs.reveal.RevealState
-import com.svenjacobs.reveal.rememberRevealState
+import com.svenjacobs.reveal.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.compose.museum.simpletags.SimpleTags
 
 enum class Keys { UploadImage, AddKeyWords, SocialMedia }
+
+fun launchNext(
+    key: Key,
+    localCoroutineScope: CoroutineScope,
+    revealState: RevealState,
+    viewModel: CaptionGeneratorViewModel
+) {
+    when (key) {
+        Keys.UploadImage -> {
+            localCoroutineScope.launch { revealState.reveal(Keys.AddKeyWords) }
+        }
+        Keys.AddKeyWords -> {
+            localCoroutineScope.launch { revealState.reveal(Keys.SocialMedia) }
+        }
+        Keys.SocialMedia -> {
+            localCoroutineScope.launch {
+                revealState.hide()
+                viewModel.onFirstLaunchCompleted()
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -135,9 +155,11 @@ fun GeneratorScreen(
         val revealState = rememberRevealState()
 
         val localCoroutineScope = rememberCoroutineScope()
-        LaunchedEffect(Unit) {
-            localCoroutineScope.launch {
-                revealState.reveal(Keys.UploadImage)
+        if (viewModel.state.isFirstLaunch) {
+            LaunchedEffect(Unit) {
+                localCoroutineScope.launch {
+                    revealState.reveal(Keys.UploadImage)
+                }
             }
         }
 
@@ -145,30 +167,10 @@ fun GeneratorScreen(
             modifier = Modifier.fillMaxSize(),
             revealState = revealState,
             onRevealableClick = { key ->
-                when (key) {
-                    Keys.UploadImage -> {
-                        localCoroutineScope.launch { revealState.reveal(Keys.AddKeyWords) }
-                    }
-                    Keys.AddKeyWords -> {
-                        localCoroutineScope.launch { revealState.reveal(Keys.SocialMedia) }
-                    }
-                    Keys.SocialMedia -> {
-                        localCoroutineScope.launch { revealState.hide() }
-                    }
-                }
+                launchNext(key, localCoroutineScope, revealState, viewModel)
             },
             onOverlayClick = { key ->
-                when (key) {
-                    Keys.UploadImage -> {
-                        localCoroutineScope.launch { revealState.reveal(Keys.AddKeyWords) }
-                    }
-                    Keys.AddKeyWords -> {
-                        localCoroutineScope.launch { revealState.reveal(Keys.SocialMedia) }
-                    }
-                    Keys.SocialMedia -> {
-                        localCoroutineScope.launch { revealState.hide() }
-                    }
-                }
+                launchNext(key, localCoroutineScope, revealState, viewModel)
             },
             overlayContent = { key ->
                 when (key) {
@@ -262,7 +264,6 @@ fun GeneratorScreen(
                             )
                         }
                     }
-
                     Column(
                         modifier = Modifier.defaultMinSize(minHeight = 60.dp)
                             .revealable(key = Keys.AddKeyWords)
@@ -270,6 +271,8 @@ fun GeneratorScreen(
                         ListOfTags(list = viewModel.state.loadedTags, viewModel)
                         KeywordInputTextField(viewModel)
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     ListOfRecentItems(
                         list = viewModel.state.recentList.filterNot {
@@ -315,10 +318,6 @@ fun GeneratorScreen(
             }
         }
     }
-}
-
-@Composable
-fun LaunchRevealTutorialIfNecessary(revealState: RevealState) {
 }
 
 @OptIn(ExperimentalMaterialApi::class)

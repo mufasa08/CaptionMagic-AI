@@ -12,8 +12,9 @@ import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorReposit
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
+import com.devinjapan.aisocialmediaposter.ui.utils.DATASTORE_IS_FIRST_LAUNCH
+import com.devinjapan.aisocialmediaposter.ui.utils.DATASTORE_RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
-import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -28,6 +29,10 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     var state by mutableStateOf(GeneratorScreenState())
         private set
+
+    init {
+        checkIfIsFirstLaunch()
+    }
 
     fun addToRecentList(item: String) {
         if (!state.recentList.contains(item)) {
@@ -146,7 +151,8 @@ class CaptionGeneratorViewModel @Inject constructor(
             )
             state.recentList.clear()
             val result =
-                dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
+                dataStoreRepositoryImpl.getList(DATASTORE_RECENT_KEYWORD_LIST)
+                    .filter { it.isNotEmpty() }
             if (result.isNotEmpty()) {
                 state.recentList.addAll(result)
             }
@@ -169,10 +175,40 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
+    fun onFirstLaunchCompleted() {
+        viewModelScope.launch {
+            // while testing first launch disable this
+            dataStoreRepositoryImpl.putBoolean(DATASTORE_IS_FIRST_LAUNCH, false)
+            state = state.copy(
+                isFirstLaunch = false,
+                isLoading = false
+            )
+            state.loadedTags.clear()
+        }
+    }
+
+    private fun checkIfIsFirstLaunch() {
+        state = state.copy(
+            isLoading = true
+        )
+        viewModelScope.launch {
+            val firstLaunch = dataStoreRepositoryImpl.getBoolean(DATASTORE_IS_FIRST_LAUNCH) ?: true
+
+            if (firstLaunch) {
+                state.loadedTags.addAll(listOf("Mountains", "Nature", "Life"))
+            }
+
+            state = state.copy(
+                isFirstLaunch = firstLaunch,
+                isLoading = false
+            )
+        }
+    }
+
     private fun saveRecentList() {
         viewModelScope.launch {
             if (state.recentList.isNotEmpty()) {
-                dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+                dataStoreRepositoryImpl.putList(DATASTORE_RECENT_KEYWORD_LIST, state.recentList)
             }
         }
     }
