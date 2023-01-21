@@ -47,13 +47,13 @@ object ThemeColors {
     // SURFACES
 // Dark
     val surfaceDark = darkGray
-    val primaryDark = pink
+    val primaryDark = blue
     val secondaryDark = lightPink
 
     // Light
     val surface = white
-    val primary = pink
-    val secondary = blue
+    val primary = blue
+    val secondary = pink
 }
 
 object CustomColors {
