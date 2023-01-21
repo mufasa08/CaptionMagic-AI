@@ -29,11 +29,6 @@ class CaptionGeneratorViewModel @Inject constructor(
     var state by mutableStateOf(GeneratorScreenState())
         private set
 
-    init {
-        getRecentList()
-        getSelectedTone()
-    }
-
     fun addToRecentList(item: String) {
         if (!state.recentList.contains(item)) {
             if (state.recentList.size >= 10) {
@@ -45,12 +40,12 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     // delete this later
     fun generateDescription() {
-        state = state.copy(
-            isLoading = true,
-            error = null
-        )
-        saveRecentList()
         viewModelScope.launch {
+            state = state.copy(
+                isLoading = true,
+                error = null
+            )
+            saveRecentList()
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = state.loadedTags,
@@ -77,12 +72,12 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun processBitmap(resizedBitmap: Bitmap) {
-        state = state.copy(
-            image = resizedBitmap,
-            isLoadingTags = true,
-            error = null
-        )
         viewModelScope.launch {
+            state = state.copy(
+                image = resizedBitmap,
+                isLoadingTags = true,
+                error = null
+            )
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
                 is Resource.Success -> {
                     result.data?.let {
@@ -144,13 +139,14 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun getRecentList() {
-        state = state.copy(
-            isLoading = true,
-            error = null
-        )
-        state.recentList.clear()
         viewModelScope.launch {
-            val result = dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST)
+            state = state.copy(
+                isLoading = true,
+                error = null
+            )
+            state.recentList.clear()
+            val result =
+                dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
             if (result.isNotEmpty()) {
                 state.recentList.addAll(result)
             }
@@ -161,10 +157,10 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun getSelectedTone() {
-        state = state.copy(
-            isLoading = true
-        )
         viewModelScope.launch {
+            state = state.copy(
+                isLoading = true
+            )
             val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE) ?: "Cool"
             state = state.copy(
                 selectedCaptionTone = selectedTone,

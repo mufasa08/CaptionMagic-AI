@@ -18,7 +18,8 @@ class DataStoreRepositoryImpl @Inject constructor(
     override suspend fun putList(key: String, value: List<String>) {
         val preferenceKey = stringPreferencesKey(key)
         context.dataStore.edit { preferences ->
-            preferences[preferenceKey] = value.filter { it.isEmpty() }.joinToString("####")
+            preferences[preferenceKey] =
+                if (value.size == 1) value[0] else value.joinToString("####")
         }
     }
 
@@ -66,7 +67,6 @@ class DataStoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getStringFlow(key: String): Flow<String> {
-
         val preferenceKey = stringPreferencesKey(key)
         val data = context.dataStore.data
         return data
@@ -108,7 +108,6 @@ class DataStoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLongFlow(key: String): Flow<Long?> {
-
         val preferenceKey = longPreferencesKey(key)
         val data = context.dataStore.data
         return data
