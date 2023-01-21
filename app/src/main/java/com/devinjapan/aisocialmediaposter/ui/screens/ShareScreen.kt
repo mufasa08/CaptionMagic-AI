@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import kotlinx.coroutines.launch
 
@@ -74,16 +75,33 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                             Icon(Icons.Filled.ArrowBack, null)
                         }
                     },
-                    backgroundColor = MaterialTheme.colors.surface,
+                    backgroundColor = MaterialTheme.colors.surface
                 )
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         modifier = Modifier.padding(bottom = 16.dp),
-                        text = context.getString(R.string.share_screen_header_text),
+                        text = buildString {
+                            append(context.getString(R.string.share_screen_header_text_pt1))
+                            append(" ")
+                            append(viewModel.state.selectedCaptionTone)
+                            append(" ")
+
+                            if (viewModel.state.selectedSocialMedia == SocialMedia.OTHER) {
+                                append(context.getString(R.string.share_screen_header_text_pt2))
+                            } else {
+                                append(
+                                    viewModel.state.selectedSocialMedia.toString() + " " + context.getString(
+                                        R.string.share_screen_header_text_pt2
+                                    )
+                                )
+                            }
+                            append(" ")
+                            append(context.getString(R.string.share_screen_header_text_pt3))
+                        },
                         style = MaterialTheme.typography.caption
                     )
                     if (viewModel.state.image != null) {
@@ -93,7 +111,7 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                                 .height(246.dp)
                                 .fillMaxWidth(),
                             contentScale = ContentScale.Fit,
-                            contentDescription = "Selected image",
+                            contentDescription = "Selected image"
                         )
                     }
                 }
@@ -121,7 +139,7 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                     Icon(
                         painter = painterResource(id = R.drawable.ic_content_copy),
                         contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
@@ -139,7 +157,7 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
                         text = context.getString(R.string.share_screen_generate_new_one),
-                        color = MaterialTheme.colors.secondary,
+                        color = MaterialTheme.colors.secondary
                     )
                 }
             }
@@ -193,7 +211,7 @@ fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                textColor = MaterialTheme.colors.onSurface,
+                textColor = MaterialTheme.colors.onSurface
             )
         )
     }

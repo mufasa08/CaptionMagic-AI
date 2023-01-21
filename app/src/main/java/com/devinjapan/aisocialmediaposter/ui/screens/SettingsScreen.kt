@@ -91,19 +91,19 @@ fun SettingsItems(viewModel: SettingsViewModel) {
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_customize)) }) {
         val list = listOf<String>(
-            context.getString(R.string.setting_tone_neutral),
+            context.getString(R.string.setting_tone_cool) + " \uD83D\uDE0E",
 
-            context.getString(R.string.setting_tone_humurous),
+            context.getString(R.string.setting_tone_humurous) + " \uD83E\uDD23",
 
-            context.getString(R.string.setting_tone_poetic),
+            context.getString(R.string.setting_tone_poetic) + " \uD83D\uDCDC\uD83D\uDD8B",
 
-            context.getString(R.string.setting_tone_professional),
+            context.getString(R.string.setting_tone_professional) + " \uD83D\uDCBC",
 
-            context.getString(R.string.setting_tone_gothic),
+            context.getString(R.string.setting_tone_gothic) + " ꧁ ༺ ༻ ꧂",
 
-            context.getString(R.string.setting_tone_energetic),
+            context.getString(R.string.setting_tone_energetic) + " ⚡",
 
-            context.getString(R.string.setting_tone_flirty)
+            context.getString(R.string.setting_tone_flirty) + " \uD83D\uDE18"
         )
         var selectedNumber: Int = list.indexOf(viewModel.state.selectedCaptionTone)
         if (selectedNumber == -1) selectedNumber = 0
