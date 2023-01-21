@@ -188,4 +188,22 @@ fun SettingsItems(viewModel: SettingsViewModel) {
         ) {
         }
     }
+
+    if (BuildConfig.DEBUG) {
+        SettingsGroup(title = { Text(text = "DEBUG ONLY VISIBLE") }) {
+            SettingsMenuLink(
+                modifier = Modifier.clickable(enabled = false, onClick = {}),
+                title = { Text(text = "Reset First Launch Relay") }
+            ) {
+                coroutineScope.launch {
+                    viewModel.resetFirstLaunchRelay()
+                    Toast.makeText(
+                        context,
+                        "First Launch Relay Reset",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 }

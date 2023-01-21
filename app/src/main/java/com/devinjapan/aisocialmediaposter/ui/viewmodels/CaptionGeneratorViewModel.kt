@@ -30,10 +30,6 @@ class CaptionGeneratorViewModel @Inject constructor(
     var state by mutableStateOf(GeneratorScreenState())
         private set
 
-    init {
-        checkIfIsFirstLaunch()
-    }
-
     fun addToRecentList(item: String) {
         if (!state.recentList.contains(item)) {
             if (state.recentList.size >= 10) {
@@ -187,7 +183,7 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
-    private fun checkIfIsFirstLaunch() {
+    fun checkIfIsFirstLaunch() {
         state = state.copy(
             isLoading = true
         )

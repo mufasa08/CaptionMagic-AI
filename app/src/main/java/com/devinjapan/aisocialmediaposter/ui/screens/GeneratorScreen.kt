@@ -119,6 +119,7 @@ fun GeneratorScreen(
         // 検出したイベントに応じた処理を実装する。
         when (event) {
             Lifecycle.Event.ON_RESUME -> {
+                viewModel.checkIfIsFirstLaunch()
                 viewModel.getRecentList()
                 viewModel.getSelectedTone()
             }
