@@ -9,13 +9,13 @@ fun SocialMedia.toChatGPTUnderstandableString(
 ): String {
     return when (this) {
         SocialMedia.INSTAGRAM -> {
-            "Create a ${selectedTone ?: "cool"} instagram post with the following keywords: ${keywords.joinToString()}}"
+            "${selectedTone ?: "cool"} instagram post with keywords: ${keywords.joinToString()}}"
         }
         SocialMedia.TWITTER -> {
-            "Create a ${selectedTone ?: "catchy"} twitter tweet with the following keywords: ${keywords.joinToString()}}"
+            "${selectedTone ?: "catchy"} twitter tweet with keywords: ${keywords.joinToString()}}"
         }
         SocialMedia.OTHER -> {
-            "Create a ${selectedTone ?: "catchy"} social media post with the following keywords: ${keywords.joinToString()}}"
+            "${selectedTone ?: "catchy"} social media post following keywords: ${keywords.joinToString()}}"
         }
     }
 }

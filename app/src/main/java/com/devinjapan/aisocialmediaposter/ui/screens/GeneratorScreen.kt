@@ -2,6 +2,7 @@ package com.devinjapan.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -54,6 +55,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLi
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
@@ -364,8 +366,16 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             keyboardActions = KeyboardActions(
                 onDone = {
                     if (text.isNotEmpty()) {
-                        viewModel.addTag(text)
-                        viewModel.addToRecentList(text)
+                        if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.toast_max_keywords),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            viewModel.addTag(text)
+                            viewModel.addToRecentList(text)
+                        }
                     }
                     text = ""
                 }
@@ -470,7 +480,15 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                     ),
                     backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
-                        viewModel.addTag(tag)
+                        if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.toast_max_keywords),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            viewModel.addTag(tag)
+                        }
                     },
                     trailingIcon = {
                         Icon(

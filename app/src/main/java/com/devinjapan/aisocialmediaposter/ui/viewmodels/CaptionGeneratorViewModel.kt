@@ -12,6 +12,7 @@ import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorReposit
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,11 +29,6 @@ class CaptionGeneratorViewModel @Inject constructor(
     var state by mutableStateOf(GeneratorScreenState())
         private set
 
-    init {
-        getRecentList()
-        getSelectedTone()
-    }
-
     fun addToRecentList(item: String) {
         if (!state.recentList.contains(item)) {
             if (state.recentList.size >= 10) {
@@ -44,12 +40,12 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     // delete this later
     fun generateDescription() {
-        state = state.copy(
-            isLoading = true,
-            error = null
-        )
-        saveRecentList()
         viewModelScope.launch {
+            state = state.copy(
+                isLoading = true,
+                error = null
+            )
+            saveRecentList()
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = state.loadedTags,
@@ -76,12 +72,12 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun processBitmap(resizedBitmap: Bitmap) {
-        state = state.copy(
-            image = resizedBitmap,
-            isLoadingTags = true,
-            error = null
-        )
         viewModelScope.launch {
+            state = state.copy(
+                image = resizedBitmap,
+                isLoadingTags = true,
+                error = null
+            )
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
                 is Resource.Success -> {
                     result.data?.let {
@@ -112,7 +108,9 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun addTag(tag: String) {
-        state.loadedTags.add(tag)
+        if (state.loadedTags.size <= MAX_NUMBER_OF_KEYWORDS && tag.isNotEmpty()) {
+            state.loadedTags.add(tag)
+        }
     }
 
     fun removeTag(tag: String) {
@@ -141,14 +139,17 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun getRecentList() {
-        state = state.copy(
-            isLoading = true,
-            error = null
-        )
-        state.recentList.clear()
         viewModelScope.launch {
-            val result = dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST)
-            state.recentList.addAll(result)
+            state = state.copy(
+                isLoading = true,
+                error = null
+            )
+            state.recentList.clear()
+            val result =
+                dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
+            if (result.isNotEmpty()) {
+                state.recentList.addAll(result)
+            }
             state = state.copy(
                 isLoading = false
             )
@@ -156,10 +157,10 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun getSelectedTone() {
-        state = state.copy(
-            isLoading = true
-        )
         viewModelScope.launch {
+            state = state.copy(
+                isLoading = true
+            )
             val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE) ?: "Cool"
             state = state.copy(
                 selectedCaptionTone = selectedTone,

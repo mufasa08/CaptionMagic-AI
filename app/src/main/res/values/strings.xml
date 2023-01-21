@@ -41,4 +41,5 @@
     <string name="setting_tone_professional">Professional</string>
     <string name="setting_tone_flirty">Flirty</string>
     <string name="setting_tone_select_preferred">Select Preferred Tone</string>
+    <string name="toast_max_keywords">10 keyword limit reached.</string>
 </resources>
