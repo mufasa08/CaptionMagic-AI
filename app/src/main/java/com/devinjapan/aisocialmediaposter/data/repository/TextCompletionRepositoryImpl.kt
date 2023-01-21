@@ -14,6 +14,7 @@ import com.plcoding.weatherapp.data.remote.OpenAIApi
 import javax.inject.Inject
 
 class TextCompletionRepositoryImpl @Inject constructor(
+    private val authRepositoryImpl: AuthRepositoryImpl,
     private val dataStoreRepository: DatastoreRepository,
     private val api: OpenAIApi
 ) : TextCompletionRepository {
@@ -25,12 +26,14 @@ class TextCompletionRepositoryImpl @Inject constructor(
     ): Resource<TextCompletion> {
         return try {
             val selectedTone = dataStoreRepository.getString(SELECTED_TONE)
+            val user = authRepositoryImpl.getSignedInUserIfExists()
             Resource.Success(
                 data = api.postTextCompletionReply(
                     textCompletionRequestBody = TextCompletionRequestBody(
                         // fix magic number
                         maxTokens = minOf(maxCharacters, MAX_NUMBER_OF_TOKENS_CHAT_GPT),
-                        prompt = type.toChatGPTUnderstandableString(selectedTone, keywords)
+                        prompt = type.toChatGPTUnderstandableString(selectedTone, keywords),
+                        user = user?.userId ?: "not-signed-in"
                     )
                 ).toTextCompletion()
             )

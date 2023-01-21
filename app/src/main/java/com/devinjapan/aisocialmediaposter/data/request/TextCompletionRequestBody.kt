@@ -8,4 +8,5 @@ data class TextCompletionRequestBody(
     @field:Json(name = "max_tokens")
     val maxTokens: Int,
     val temperature: Double = 0.9,
+    val user: String
 )
