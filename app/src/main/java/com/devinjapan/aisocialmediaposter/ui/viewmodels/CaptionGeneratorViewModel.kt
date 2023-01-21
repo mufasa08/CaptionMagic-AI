@@ -151,7 +151,9 @@ class CaptionGeneratorViewModel @Inject constructor(
         state.recentList.clear()
         viewModelScope.launch {
             val result = dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST)
-            state.recentList.addAll(result)
+            if (result.isNotEmpty()) {
+                state.recentList.addAll(result)
+            }
             state = state.copy(
                 isLoading = false
             )
