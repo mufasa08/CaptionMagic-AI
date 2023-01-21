@@ -16,6 +16,7 @@ private val whiteAlpha74 = Color(0xBDFFFFFF)
 private val whiteAlpha38 = Color(0x61FFFFFF)
 private val whiteAlpha12 = Color(0x146200EE)
 private val whiteAlpha8 = Color(0x14FFFFFF)
+private val whiteAlpha5 = Color(0x0DFFFFFF)
 
 // Black
 private val blackAlpha87 = Color(0xDE000000)
@@ -78,4 +79,7 @@ object CustomColors {
     val ButtonBackgroundUnselectedDark = Color.Transparent
     val ButtonBackgroundSelectedLight = blackAlpha87
     val ButtonBackgroundUnselectedLight = Color.Transparent
+
+    val EditTextLightBackground = blackAlpha8
+    val EditTextDarkBackground = whiteAlpha5
 }

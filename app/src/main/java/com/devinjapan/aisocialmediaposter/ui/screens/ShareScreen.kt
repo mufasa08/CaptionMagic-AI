@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -35,6 +36,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import kotlinx.coroutines.launch
 
@@ -102,7 +104,7 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                             append(" ")
                             append(context.getString(R.string.share_screen_header_text_pt3))
                         },
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.body2
                     )
                     if (viewModel.state.image != null) {
                         AsyncImage(
@@ -157,7 +159,8 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
                         text = context.getString(R.string.share_screen_generate_new_one),
-                        color = MaterialTheme.colors.secondary
+                        color = MaterialTheme.colors.secondary,
+                        style = MaterialTheme.typography.body1
                     )
                 }
             }
@@ -209,6 +212,11 @@ fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
                     }
                 },
             colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = if (isSystemInDarkTheme()) {
+                    CustomColors.EditTextDarkBackground
+                } else {
+                    CustomColors.EditTextLightBackground
+                },
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 textColor = MaterialTheme.colors.onSurface

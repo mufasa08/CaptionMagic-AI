@@ -10,9 +10,9 @@
     <string name="generator_screen_loading">Generating...</string>
     <string name="share_screen_copy_button">COPY</string>
     <string name="share_screen_header_text_pt1">You wanted a</string>
-    <string name="share_screen_header_text_pt2">caption</string>
+    <string name="share_screen_header_text_pt2">caption.</string>
     <string name="share_screen_header_text_pt3">Here\'s what I came up with. Make changes as necessary before sharing 😁 </string>
-    <string name="share_screen_generate_new_one">Or start over</string>
+    <string name="share_screen_generate_new_one">Start over</string>
     <string name="copied_to_clipboard">Copied to clipboard! 😉</string>
     <string name="twitter">Twitter</string>
     <string name="instagram">Instagram</string>
