@@ -155,7 +155,7 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
-    private fun getSelectedTone() {
+    fun getSelectedTone() {
         state = state.copy(
             isLoading = true
         )
