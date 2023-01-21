@@ -98,6 +98,7 @@ dependencies {
 
     // Settings
     implementation 'com.github.alorma:compose-settings-ui:0.15.0'
+    implementation 'com.github.alorma:compose-settings-storage-preferences:0.15.0'
 
     // Production related Libs
     // Firebase

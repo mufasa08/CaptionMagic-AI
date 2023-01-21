@@ -91,6 +91,7 @@ fun GeneratorScreen(
         when (event) {
             Lifecycle.Event.ON_RESUME -> {
                 viewModel.getRecentList()
+                viewModel.getSelectedTone()
             }
             else -> {}
         }

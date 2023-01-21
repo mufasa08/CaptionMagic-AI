@@ -13,6 +13,7 @@ import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionReposi
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
+import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     init {
         getRecentList()
+        getSelectedTone()
     }
 
     fun addToRecentList(item: String) {
@@ -153,9 +155,24 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
+    fun getSelectedTone() {
+        state = state.copy(
+            isLoading = true
+        )
+        viewModelScope.launch {
+            val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE) ?: "Cool"
+            state = state.copy(
+                selectedCaptionTone = selectedTone,
+                isLoading = false
+            )
+        }
+    }
+
     private fun saveRecentList() {
         viewModelScope.launch {
-            dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+            if (state.recentList.isNotEmpty()) {
+                dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+            }
         }
     }
 

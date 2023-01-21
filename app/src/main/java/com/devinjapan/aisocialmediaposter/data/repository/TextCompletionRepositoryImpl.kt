@@ -6,12 +6,15 @@ import com.devinjapan.aisocialmediaposter.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_G
 import com.devinjapan.aisocialmediaposter.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.domain.model.TextCompletion
+import com.devinjapan.aisocialmediaposter.domain.repository.DatastoreRepository
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
+import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import com.plcoding.weatherapp.data.remote.OpenAIApi
 import javax.inject.Inject
 
 class TextCompletionRepositoryImpl @Inject constructor(
+    private val dataStoreRepository: DatastoreRepository,
     private val api: OpenAIApi
 ) : TextCompletionRepository {
 
@@ -21,12 +24,13 @@ class TextCompletionRepositoryImpl @Inject constructor(
         type: SocialMedia
     ): Resource<TextCompletion> {
         return try {
+            val selectedTone = dataStoreRepository.getString(SELECTED_TONE)
             Resource.Success(
                 data = api.postTextCompletionReply(
                     textCompletionRequestBody = TextCompletionRequestBody(
                         // fix magic number
                         maxTokens = minOf(maxCharacters, MAX_NUMBER_OF_TOKENS_CHAT_GPT),
-                        prompt = type.toChatGPTUnderstandableString(keywords)
+                        prompt = type.toChatGPTUnderstandableString(selectedTone, keywords)
                     )
                 ).toTextCompletion()
             )

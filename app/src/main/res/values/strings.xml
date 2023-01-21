@@ -9,8 +9,10 @@
     <string name="generator_generate_post_button">GENERATE DESCRIPTION</string>
     <string name="generator_screen_loading">Generating...</string>
     <string name="share_screen_copy_button">COPY</string>
-    <string name="share_screen_header_text">Here\'s what I came up with. Make changes as necessary before sharing 😁 </string>
-    <string name="share_screen_generate_new_one">Or start over</string>
+    <string name="share_screen_header_text_pt1">You wanted a</string>
+    <string name="share_screen_header_text_pt2">caption.</string>
+    <string name="share_screen_header_text_pt3">Here\'s what I came up with. Make changes as necessary before sharing 😁 </string>
+    <string name="share_screen_generate_new_one">Start over</string>
     <string name="copied_to_clipboard">Copied to clipboard! 😉</string>
     <string name="twitter">Twitter</string>
     <string name="instagram">Instagram</string>
@@ -30,4 +32,13 @@
     <string name="settings_title_recent_keywords">Clear Recent Keywords</string>
     <string name="settings_toast_keywords_cleared">Keywords Cleared</string>
     <string name="splash_screen">splash_screen</string>
+    <string name="settings_customize">Customization</string>
+    <string name="setting_tone_humurous">Humorous</string>
+    <string name="setting_tone_cool">Cool</string>
+    <string name="setting_tone_poetic">Poetic</string>
+    <string name="setting_tone_gothic">Gothic</string>
+    <string name="setting_tone_energetic">Energetic</string>
+    <string name="setting_tone_professional">Professional</string>
+    <string name="setting_tone_flirty">Flirty</string>
+    <string name="setting_tone_select_preferred">Select Preferred Tone</string>
 </resources>
