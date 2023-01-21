@@ -111,13 +111,17 @@ fun SettingsItems(viewModel: SettingsViewModel) {
         CustomSettingsList(
             state = singleChoiceState,
             title = { Text(text = context.getString(R.string.setting_tone_select_preferred)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_mood),
+                    contentDescription = "Menu Tone"
+                )
+            },
             items = list,
             onClick = {
                 viewModel.updateSelectedTone(list[singleChoiceState.value])
             }
         )
-
-        Divider()
     }
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_data)) }) {
         SettingsMenuLink(
@@ -125,7 +129,7 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_history),
-                    contentDescription = "Menu 1"
+                    contentDescription = "Menu Clear Data"
                 )
             }
         ) {
@@ -139,8 +143,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 ).show()
             }
         }
-
-        Divider()
     }
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_other)) }) {
@@ -149,7 +151,7 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_bug_report),
-                    contentDescription = "Menu 1"
+                    contentDescription = "Menu Bug Report"
                 )
             }
         ) {
@@ -157,14 +159,13 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             uriHandler.openUri(BUG_REPORT_BASE_URL)
         }
 
-        Divider()
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.settings_title_feedback)) },
             subtitle = { Text(text = context.getString(R.string.settings_subtitle_feedback)) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_feedback),
-                    contentDescription = "Menu 2"
+                    contentDescription = "Menu Feedback"
                 )
             }
         ) {
@@ -172,7 +173,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             uriHandler.openUri(FEEDBACK_URL)
         }
     }
-    Divider()
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_about)) }) {
         SettingsMenuLink(
