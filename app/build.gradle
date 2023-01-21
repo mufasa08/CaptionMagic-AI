@@ -96,6 +96,10 @@ dependencies {
     implementation 'com.google.mlkit:image-labeling-custom:17.0.1'
     implementation 'androidx.core:core-splashscreen:1.0.0'
 
+    // App Introduction
+    implementation("com.svenjacobs.reveal:reveal-core:0.0.14")
+    implementation("com.svenjacobs.reveal:reveal-shapes:0.0.14")
+
     // Settings
     implementation 'com.github.alorma:compose-settings-ui:0.15.0'
     implementation 'com.github.alorma:compose-settings-storage-preferences:0.15.0'

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -59,8 +60,14 @@ import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.svenjacobs.reveal.Reveal
+import com.svenjacobs.reveal.RevealOverlayArrangement
+import com.svenjacobs.reveal.RevealState
+import com.svenjacobs.reveal.rememberRevealState
 import kotlinx.coroutines.launch
 import org.compose.museum.simpletags.SimpleTags
+
+enum class Keys { UploadImage, AddKeyWords, SocialMedia }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -121,140 +128,206 @@ fun GeneratorScreen(
             navController.navigate(context.getString(R.string.share_screen))
         }
     }
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                TopAppBar(
-                    elevation = 0.dp,
-                    title = {
-                        Text(
-                            context.getString(R.string.app_name),
-                            style = MaterialTheme.typography.h6
-                        )
-                    },
-                    backgroundColor =
-                    if (isSystemInDarkTheme()) {
-                        TopBarGray
-                    } else {
-                        Color.White
-                    },
+        val revealState = rememberRevealState()
 
-                    actions = {
-                        IconButton(onClick = {
-                            navController.navigate(context.getString(R.string.settings_screen))
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings"
-                            )
-                        }
+        val localCoroutineScope = rememberCoroutineScope()
+        LaunchedEffect(Unit) {
+            localCoroutineScope.launch {
+                revealState.reveal(Keys.UploadImage)
+            }
+        }
+
+        Reveal(
+            modifier = Modifier.fillMaxSize(),
+            revealState = revealState,
+            onRevealableClick = { key ->
+                when (key) {
+                    Keys.UploadImage -> {
+                        localCoroutineScope.launch { revealState.reveal(Keys.AddKeyWords) }
                     }
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        modifier = Modifier.padding(bottom = 16.dp),
-                        text = context.getString(R.string.generator_screen_header),
-                        style = MaterialTheme.typography.body2
-                    )
-                    if (viewModel.state.image == null) {
-                        TextButton(
-                            onClick = {
-                                imagePicker.launch("image/*")
-                            },
-                            modifier = Modifier.align(alignment = Alignment.Start)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_add_photo),
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.IconSize),
-                                tint = MaterialTheme.colors.secondary
-                            )
-                            Text(
-                                modifier = Modifier.padding(start = 16.dp),
-                                text = context.getString(R.string.generator_upload_text),
-                                color = MaterialTheme.colors.secondary,
-                                style = MaterialTheme.typography.body1
-                            )
-                        }
-                    } else {
-                        ImagePicker(
+                    Keys.AddKeyWords -> {
+                        localCoroutineScope.launch { revealState.reveal(Keys.SocialMedia) }
+                    }
+                    Keys.SocialMedia -> {
+                        localCoroutineScope.launch { revealState.hide() }
+                    }
+                }
+            },
+            onOverlayClick = { key ->
+                when (key) {
+                    Keys.UploadImage -> {
+                        localCoroutineScope.launch { revealState.reveal(Keys.AddKeyWords) }
+                    }
+                    Keys.AddKeyWords -> {
+                        localCoroutineScope.launch { revealState.reveal(Keys.SocialMedia) }
+                    }
+                    Keys.SocialMedia -> {
+                        localCoroutineScope.launch { revealState.hide() }
+                    }
+                }
+            },
+            overlayContent = { key ->
+                when (key) {
+                    Keys.UploadImage -> {
+                        Surface(
                             modifier = Modifier
-                                .height(246.dp)
-                                .fillMaxWidth(),
-                            viewModel,
-                            viewModel.state.image!!
-                        )
+                                .align(horizontalArrangement = RevealOverlayArrangement.Start)
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            shape = RoundedCornerShape(4.dp),
+                            color = Color.White
+                        ) {
+                            Text("This is an explanation")
+                        }
                     }
-                }
-
-                Column(modifier = Modifier.defaultMinSize(minHeight = 60.dp)) {
-                    ListOfTags(list = viewModel.state.loadedTags, viewModel)
-                    KeywordInputTextField(viewModel)
-                }
-
-                ListOfRecentItems(
-                    list = viewModel.state.recentList.filterNot {
-                        viewModel.state.loadedTags.contains(
-                            it
-                        )
-                    },
-                    viewModel
-                )
-
-                Spacer(modifier = Modifier.height(48.dp))
-
-                SelectSocialMedia(viewModel)
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    onClick = {
-                        viewModel.generateDescription()
-                    },
-                    enabled = viewModel.state.loadedTags.isNotEmpty()
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_magic_wand),
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = context.getString(R.string.generator_generate_post_button)
-                    )
                 }
             }
-            if (viewModel.state.isLoading) {
-                GeneratingDialog()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    TopAppBar(
+                        elevation = 0.dp,
+                        title = {
+                            Text(
+                                context.getString(R.string.app_name),
+                                style = MaterialTheme.typography.h6
+                            )
+                        },
+                        backgroundColor =
+                        if (isSystemInDarkTheme()) {
+                            TopBarGray
+                        } else {
+                            Color.White
+                        },
+
+                        actions = {
+                            IconButton(onClick = {
+                                navController.navigate(context.getString(R.string.settings_screen))
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings"
+                                )
+                            }
+                        }
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp, horizontal = 16.dp)
+                            .revealable(key = Keys.UploadImage),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            text = context.getString(R.string.generator_screen_header),
+                            style = MaterialTheme.typography.body2
+                        )
+                        if (viewModel.state.image == null) {
+                            TextButton(
+                                onClick = {
+                                    imagePicker.launch("image/*")
+                                },
+                                modifier = Modifier.align(alignment = Alignment.Start)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_add_photo),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                                    tint = MaterialTheme.colors.secondary
+                                )
+                                Text(
+                                    modifier = Modifier.padding(start = 16.dp),
+                                    text = context.getString(R.string.generator_upload_text),
+                                    color = MaterialTheme.colors.secondary,
+                                    style = MaterialTheme.typography.body1
+                                )
+                            }
+                        } else {
+                            ImagePicker(
+                                modifier = Modifier
+                                    .height(246.dp)
+                                    .fillMaxWidth(),
+                                viewModel,
+                                viewModel.state.image!!
+                            )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier.defaultMinSize(minHeight = 60.dp)
+                            .revealable(key = Keys.AddKeyWords)
+                    ) {
+                        ListOfTags(list = viewModel.state.loadedTags, viewModel)
+                        KeywordInputTextField(viewModel)
+                    }
+
+                    ListOfRecentItems(
+                        list = viewModel.state.recentList.filterNot {
+                            viewModel.state.loadedTags.contains(
+                                it
+                            )
+                        },
+                        viewModel = viewModel
+                    )
+
+                    Spacer(modifier = Modifier.height(48.dp))
+
+                    SelectSocialMedia(
+                        viewModel,
+                        modifier = Modifier.revealable(key = Keys.SocialMedia)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        onClick = {
+                            viewModel.generateDescription()
+                        },
+                        enabled = viewModel.state.loadedTags.isNotEmpty()
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_magic_wand),
+                            contentDescription = null,
+                            modifier = Modifier.size(ButtonDefaults.IconSize)
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = context.getString(R.string.generator_generate_post_button)
+                        )
+                    }
+                }
+                if (viewModel.state.isLoading) {
+                    GeneratingDialog()
+                }
             }
         }
     }
 }
 
+@Composable
+fun LaunchRevealTutorialIfNecessary(revealState: RevealState) {
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
+fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel, modifier: Modifier) {
     val context = LocalContext.current
     val selectedItem = viewModel.state.selectedSocialMedia
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
     ) {
@@ -451,7 +524,10 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
 }
 
 @Composable
-fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) {
+fun ListOfRecentItems(
+    list: List<String>,
+    viewModel: CaptionGeneratorViewModel
+) {
     val context = LocalContext.current
     if (list.isNotEmpty()) {
         Text(
