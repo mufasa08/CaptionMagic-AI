@@ -10,6 +10,7 @@ import com.devinjapan.aisocialmediaposter.domain.model.TextCompletion
 import com.devinjapan.aisocialmediaposter.domain.repository.DatastoreRepository
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
+import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import com.plcoding.weatherapp.data.remote.OpenAIApi
 import javax.inject.Inject
@@ -28,6 +29,7 @@ class TextCompletionRepositoryImpl @Inject constructor(
         return try {
             val selectedTone = dataStoreRepository.getString(SELECTED_TONE)
             val user = authRepositoryImpl.getSignedInUserIfExists()
+            val hideHashTags = dataStoreRepository.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
             Resource.Success(
                 data = api.postTextCompletionReply(
                     textCompletionRequestBody = TextCompletionRequestBody(
@@ -36,7 +38,7 @@ class TextCompletionRepositoryImpl @Inject constructor(
                         prompt = type.toChatGPTUnderstandableString(selectedTone, keywords),
                         user = user?.userId ?: "not-signed-in"
                     )
-                ).toTextCompletion()
+                ).toTextCompletion(hideHashTags)
             )
         } catch (e: Exception) {
             e.printStackTrace()

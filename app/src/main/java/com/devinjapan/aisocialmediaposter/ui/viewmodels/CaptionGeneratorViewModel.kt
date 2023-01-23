@@ -38,7 +38,6 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
-    // delete this later
     fun generateDescription() {
         viewModelScope.launch {
             state = state.copy(

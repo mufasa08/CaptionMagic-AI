@@ -48,4 +48,6 @@
     <string name="exception_message_not_allowed">You\'re not allowed to do that.</string>
     <string name="exception_message_bad_request">Something went wrong. We are looking into it.</string>
     <string name="exception_message_image_detection">Sorry but I can\'t recognize the anything in the image.</string>
+    <string name="setting_tone_title_hide_ai_hashtag">Hide promotional hashtags</string>
+    <string name="setting_tone_subtitle_hide_ai_hashtag">#madewithai and #chatgpt</string>
 </resources>
