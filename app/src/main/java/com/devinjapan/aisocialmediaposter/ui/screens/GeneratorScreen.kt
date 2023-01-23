@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.data.error.ApiException
+import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
@@ -248,15 +250,24 @@ fun GeneratorScreen(
             }
 
             viewModel.state.error?.let { error ->
-                val errorMessage = if (error.exception != null) {
-                    error.exception.toUserUnderstandableMessage()
+                if (error.exception != null && error.exception is ApiException) {
+                    ErrorDialog(
+                        errorMessage = error.exception.toUserUnderstandableMessage(),
+                        onConfirmClick = {
+                            viewModel.clearError()
+                        }
+                    )
                 } else {
-                    error.errorMessage
+                    if (error.exception is ImageDetectionException) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.exception_message_image_detection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(context, error.errorMessage, Toast.LENGTH_SHORT).show()
+                    }
                 }
-
-                ErrorDialog(errorMessage = errorMessage, onConfirmClick = {
-                    viewModel.clearError()
-                })
             }
         }
     }
