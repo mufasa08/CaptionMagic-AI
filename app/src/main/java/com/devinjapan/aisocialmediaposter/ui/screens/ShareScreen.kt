@@ -139,7 +139,7 @@ fun ShareScreen(
                                 context,
                                 context.getString(R.string.copied_to_clipboard),
                                 Toast.LENGTH_SHORT
-                            )
+                            ).show()
                         }
                     },
                     enabled = viewModel.state.loadedTags.isNotEmpty()
