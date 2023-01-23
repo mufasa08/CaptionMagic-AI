@@ -15,5 +15,7 @@ data class GeneratorScreenState(
     val selectedCaptionTone: String? = null,
     val isLoading: Boolean = false,
     val isLoadingTags: Boolean = false,
-    val error: String? = null
-)
+    val error: ErrorInfo? = null
+) {
+    data class ErrorInfo(val errorMessage: String, val exception: Exception? = null)
+}

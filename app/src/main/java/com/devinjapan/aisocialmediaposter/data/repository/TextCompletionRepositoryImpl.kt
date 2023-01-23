@@ -1,5 +1,6 @@
 package com.devinjapan.aisocialmediaposter.data.repository
 
+import com.devinjapan.aisocialmediaposter.data.error.toApiException
 import com.devinjapan.aisocialmediaposter.data.mappers.toTextCompletion
 import com.devinjapan.aisocialmediaposter.data.request.TextCompletionRequestBody
 import com.devinjapan.aisocialmediaposter.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
@@ -39,7 +40,9 @@ class TextCompletionRepositoryImpl @Inject constructor(
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            Resource.Error(e.message ?: "An unknown error occurred.")
+            val apiException = e.toApiException()
+            // TODO add analytics
+            Resource.Error(message = e.message ?: "Something went wrong.", exception = apiException)
         }
     }
 }

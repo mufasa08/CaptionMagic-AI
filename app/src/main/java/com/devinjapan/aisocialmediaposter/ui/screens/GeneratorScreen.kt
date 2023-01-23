@@ -34,7 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.data.error.ApiException
+import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
 import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
@@ -57,6 +60,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
+import com.devinjapan.aisocialmediaposter.ui.utils.toUserUnderstandableMessage
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
@@ -243,6 +247,27 @@ fun GeneratorScreen(
             }
             if (viewModel.state.isLoading) {
                 GeneratingDialog()
+            }
+
+            viewModel.state.error?.let { error ->
+                if (error.exception != null && error.exception is ApiException) {
+                    ErrorDialog(
+                        errorMessage = error.exception.toUserUnderstandableMessage(),
+                        onConfirmClick = {
+                            viewModel.clearError()
+                        }
+                    )
+                } else {
+                    if (error.exception is ImageDetectionException) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.exception_message_image_detection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(context, error.errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
