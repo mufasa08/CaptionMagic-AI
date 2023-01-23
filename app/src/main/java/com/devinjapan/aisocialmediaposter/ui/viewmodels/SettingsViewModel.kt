@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
+import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         getSelectedTone()
+        getHidePromoHashtagState()
     }
 
     private fun getSelectedTone() {
@@ -33,6 +35,19 @@ class SettingsViewModel @Inject constructor(
             val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE)
             state = state.copy(
                 selectedCaptionTone = selectedTone,
+                isLoading = false
+            )
+        }
+    }
+
+    private fun getHidePromoHashtagState() {
+        state = state.copy(
+            isLoading = true
+        )
+        viewModelScope.launch {
+            val hidePromoHashtags = dataStoreRepositoryImpl.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
+            state = state.copy(
+                hidePromoHashtags = hidePromoHashtags,
                 isLoading = false
             )
         }
@@ -52,6 +67,23 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             state.selectedCaptionTone?.let { dataStoreRepositoryImpl.putString(SELECTED_TONE, it) }
             state = state.copy(
+                isLoading = false
+            )
+        }
+    }
+
+    fun toggleHidePromoHashtags() {
+        val newSetting: Boolean = !state.hidePromoHashtags
+
+        viewModelScope.launch {
+            state.selectedCaptionTone?.let {
+                dataStoreRepositoryImpl.putBoolean(
+                    HIDE_PROMO_HASHTAGS,
+                    newSetting
+                )
+            }
+            state = state.copy(
+                hidePromoHashtags = newSetting,
                 isLoading = false
             )
         }
