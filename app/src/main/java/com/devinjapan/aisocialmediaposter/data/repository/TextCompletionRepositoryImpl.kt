@@ -3,6 +3,7 @@ package com.devinjapan.aisocialmediaposter.data.repository
 import com.devinjapan.aisocialmediaposter.data.error.toApiException
 import com.devinjapan.aisocialmediaposter.data.mappers.toTextCompletion
 import com.devinjapan.aisocialmediaposter.data.request.TextCompletionRequestBody
+import com.devinjapan.aisocialmediaposter.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
 import com.devinjapan.aisocialmediaposter.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.domain.model.TextCompletion
@@ -31,7 +32,7 @@ class TextCompletionRepositoryImpl @Inject constructor(
                 data = api.postTextCompletionReply(
                     textCompletionRequestBody = TextCompletionRequestBody(
                         // fix magic number
-                        maxTokens = 5000,
+                        maxTokens = minOf(maxCharacters, MAX_NUMBER_OF_TOKENS_CHAT_GPT),
                         prompt = type.toChatGPTUnderstandableString(selectedTone, keywords),
                         user = user?.userId ?: "not-signed-in"
                     )
