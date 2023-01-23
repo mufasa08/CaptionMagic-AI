@@ -2,6 +2,7 @@ package com.devinjapan.aisocialmediaposter.ui.state
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
+import com.devinjapan.aisocialmediaposter.data.error.ApiException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.domain.model.TextCompletion
 
@@ -15,5 +16,7 @@ data class GeneratorScreenState(
     val selectedCaptionTone: String? = null,
     val isLoading: Boolean = false,
     val isLoadingTags: Boolean = false,
-    val error: String? = null
-)
+    val error: ErrorInfo? = null
+) {
+    data class ErrorInfo(val errorMessage: String, val exception: ApiException? = null)
+}

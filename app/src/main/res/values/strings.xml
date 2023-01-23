@@ -42,4 +42,9 @@
     <string name="setting_tone_flirty">Flirty</string>
     <string name="setting_tone_select_preferred">Select Preferred Tone</string>
     <string name="toast_max_keywords">10 keyword limit reached.</string>
+    <string name="dialog_ok_button">OK</string>
+    <string name="exception_message_something_went_wrong">"Oops…Something went wrong. "</string>
+    <string name="exception_message_try_again_later">Service currently unavailable. Please try again later.</string>
+    <string name="exception_message_not_allowed">You\'re not allowed to do that.</string>
+    <string name="exception_message_bad_request">Something went wrong. We are looking into it.</string>
 </resources>

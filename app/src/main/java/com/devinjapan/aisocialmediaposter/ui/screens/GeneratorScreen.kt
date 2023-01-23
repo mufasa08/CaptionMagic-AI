@@ -35,6 +35,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
 import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
@@ -57,6 +58,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
+import com.devinjapan.aisocialmediaposter.ui.utils.toUserUnderstandableMessage
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
@@ -243,6 +245,18 @@ fun GeneratorScreen(
             }
             if (viewModel.state.isLoading) {
                 GeneratingDialog()
+            }
+
+            viewModel.state.error?.let { error ->
+                val errorMessage = if (error.exception != null) {
+                    error.exception.toUserUnderstandableMessage()
+                } else {
+                    error.errorMessage
+                }
+
+                ErrorDialog(errorMessage = errorMessage, onConfirmClick = {
+                    viewModel.clearError()
+                })
             }
         }
     }

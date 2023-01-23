@@ -61,11 +61,14 @@ class CaptionGeneratorViewModel @Inject constructor(
                     )
                 }
                 is Resource.Error -> {
-                    state = state.copy(
-                        textCompletion = null,
-                        isLoading = false,
-                        error = result.message
-                    )
+                    if (result.message != null) {
+                        state = state.copy(
+                            textCompletion = null,
+                            isLoading = false,
+                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+
+                        )
+                    }
                 }
             }
         }
@@ -90,10 +93,12 @@ class CaptionGeneratorViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     state.loadedTags.clear()
-                    state = state.copy(
-                        isLoadingTags = false,
-                        error = result.message
-                    )
+                    if (result.message != null) {
+                        state = state.copy(
+                            isLoadingTags = false,
+                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+                        )
+                    }
                 }
             }
         }
@@ -182,5 +187,11 @@ class CaptionGeneratorViewModel @Inject constructor(
         if (currentUser == null) {
             auth.signInAnonymously()
         }*/
+    }
+
+    fun clearError() {
+        state = state.copy(
+            error = null
+        )
     }
 }
