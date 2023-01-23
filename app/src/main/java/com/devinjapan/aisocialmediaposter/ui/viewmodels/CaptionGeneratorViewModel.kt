@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorRepository
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class CaptionGeneratorViewModel @Inject constructor(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     var state by mutableStateOf(GeneratorScreenState())
@@ -39,6 +41,7 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun generateDescription() {
+        analyticsTracker.logEvent("generate_description", null)
         viewModelScope.launch {
             state = state.copy(
                 isLoading = true,
@@ -179,13 +182,6 @@ class CaptionGeneratorViewModel @Inject constructor(
                 dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
             }
         }
-    }
-
-    fun signInAnonymouslyIfNecessary() {
-        /*val currentUser = auth.currentUser
-        if (currentUser == null) {
-            auth.signInAnonymously()
-        }*/
     }
 
     fun clearError() {

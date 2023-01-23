@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
 import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     var state by mutableStateOf(SettingsState())
@@ -54,12 +56,14 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun clearRecentList() {
+        analyticsTracker.logClearedRecentList()
         viewModelScope.launch {
             dataStoreRepositoryImpl.clearPreferences(RECENT_KEYWORD_LIST)
         }
     }
 
     fun updateSelectedTone(selectedTone: String) {
+        analyticsTracker.logUpdateSelectedTone(selectedTone)
         state = state.copy(
             selectedCaptionTone = selectedTone,
             isLoading = true
@@ -72,7 +76,16 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onBugReportLinkClicked() {
+        analyticsTracker.logLinkClicked("bug_report")
+    }
+
+    fun onSubmitFeedbackClicked() {
+        analyticsTracker.logLinkClicked("submit_feedback")
+    }
+
     fun toggleHidePromoHashtags() {
+        analyticsTracker.logEvent("hide_promo_Tags", null)
         val newSetting: Boolean = !state.hidePromoHashtags
 
         viewModelScope.launch {

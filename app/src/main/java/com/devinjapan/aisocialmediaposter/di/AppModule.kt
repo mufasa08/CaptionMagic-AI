@@ -1,10 +1,12 @@
 package com.devinjapan.aisocialmediaposter.di
 
 import android.content.Context
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.repository.AuthRepositoryImpl
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.domain.repository.AuthRepository
 import com.devinjapan.aisocialmediaposter.domain.repository.DatastoreRepository
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -24,6 +26,17 @@ object AppModule {
         return context
     }
 
+    @Singleton
+    @Provides
+    fun provideFirebaseAnalytics(
+        @ApplicationContext context: Context
+    ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+
+    @Singleton
+    @Provides
+    fun provideAnalyticsTracker(firebaseAnalytics: FirebaseAnalytics): AnalyticsTracker =
+        AnalyticsTracker(firebaseAnalytics)
+
     @Provides
     @Singleton
     fun providesFirebaseAuthInstance(): FirebaseAuth {
@@ -38,6 +51,7 @@ object AppModule {
 
     @Provides
     fun provideAuthRepository(
-        auth: FirebaseAuth
-    ): AuthRepository = AuthRepositoryImpl(auth)
+        auth: FirebaseAuth,
+        analyticsTracker: AnalyticsTracker
+    ): AuthRepository = AuthRepositoryImpl(auth, analyticsTracker)
 }

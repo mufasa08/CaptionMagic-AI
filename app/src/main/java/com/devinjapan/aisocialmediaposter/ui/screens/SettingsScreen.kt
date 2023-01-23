@@ -179,7 +179,7 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 )
             }
         ) {
-            // TODO log firebase uid analytics
+            viewModel.onBugReportLinkClicked()
             uriHandler.openUri(BUG_REPORT_BASE_URL)
         }
 
@@ -193,7 +193,7 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 )
             }
         ) {
-            // TODO log firebase uid analytics
+            viewModel.onSubmitFeedbackClicked()
             uriHandler.openUri(FEEDBACK_URL)
         }
     }
