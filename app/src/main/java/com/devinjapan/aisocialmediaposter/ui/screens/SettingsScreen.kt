@@ -127,6 +127,12 @@ fun SettingsItems(viewModel: SettingsViewModel) {
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.setting_tone_title_hide_ai_hashtag)) },
             subtitle = { Text(text = context.getString(R.string.setting_tone_subtitle_hide_ai_hashtag)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_hashtag),
+                    contentDescription = "Menu Clear Data"
+                )
+            },
             action = {
                 Checkbox(checked = rememberCheckBoxState, onCheckedChange = { newState ->
                     rememberCheckBoxState = newState
