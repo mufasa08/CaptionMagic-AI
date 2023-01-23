@@ -13,6 +13,7 @@ data class GeneratorScreenState(
     val selectedSocialMedia: SocialMedia = SocialMedia.OTHER,
     val recentList: MutableList<String> = mutableStateListOf(),
     val selectedCaptionTone: String? = null,
+    var isFirstLaunch: Boolean = true,
     val isLoading: Boolean = false,
     val isLoadingTags: Boolean = false,
     val error: String? = null

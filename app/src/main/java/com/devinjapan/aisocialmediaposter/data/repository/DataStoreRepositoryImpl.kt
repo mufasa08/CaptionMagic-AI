@@ -81,6 +81,17 @@ class DataStoreRepositoryImpl @Inject constructor(
             }.distinctUntilChanged()
     }
 
+    override suspend fun getBoolean(key: String): Boolean? {
+        return try {
+            val preferenceKey = booleanPreferencesKey(key)
+            val preference = context.dataStore.data.first()
+            preference[preferenceKey]
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     override suspend fun getBooleanFlow(key: String): Flow<Boolean> {
         val preferenceKey = booleanPreferencesKey(key)
         val data = context.dataStore.data

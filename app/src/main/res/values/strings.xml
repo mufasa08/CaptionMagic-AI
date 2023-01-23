@@ -42,4 +42,10 @@
     <string name="setting_tone_flirty">Flirty</string>
     <string name="setting_tone_select_preferred">Select Preferred Tone</string>
     <string name="toast_max_keywords">10 keyword limit reached.</string>
+    <string name="onboarding_title_1">Screen 1 Title</string>
+    <string name="onboarding_title_2">Screen 2 Title</string>
+    <string name="onboarding_title_3">Screen 3 Title</string>
+    <string name="onboarding_text_1">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum tempus turpis, vitae fermentum tortor varius ac. Suspendisse ut sollicitudin mi. Proin felis nisl, efficitur id ornare ut, dictum at magna. "</string>
+    <string name="onboarding_text_2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum tempus turpis, vitae fermentum tortor varius ac. Suspendisse ut sollicitudin mi. Proin felis nisl, efficitur id ornare ut, dictum at magna. "</string>
+    <string name="onboarding_text_3">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum tempus turpis, vitae fermentum tortor varius ac. Suspendisse ut sollicitudin mi. Proin felis nisl, efficitur id ornare ut, dictum at magna. "</string>
 </resources>

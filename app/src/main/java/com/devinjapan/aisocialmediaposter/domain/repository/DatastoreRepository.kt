@@ -11,6 +11,7 @@ interface DatastoreRepository {
     suspend fun putBoolean(key: String, value: Boolean)
     suspend fun getString(key: String): String?
     suspend fun getStringFlow(key: String): Flow<String>
+    suspend fun getBoolean(key: String): Boolean?
     suspend fun getBooleanFlow(key: String): Flow<Boolean>
     suspend fun getLong(key: String): Long?
     suspend fun getLongFlow(key: String): Flow<Long?>

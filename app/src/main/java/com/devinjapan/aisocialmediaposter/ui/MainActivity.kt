@@ -25,23 +25,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
+import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -60,24 +65,37 @@ class MainActivity : ComponentActivity() {
     }
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        // askNotificationPermission()
+
         setContent {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
                 val connection by connectivityState()
 
                 val isConnected = connection === ConnectionState.Available
+                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
 
+                ObserveLifecycleEvent { event ->
+                    // 検出したイベントに応じた処理を実装する。
+                    when (event) {
+                        Lifecycle.Event.ON_CREATE -> {
+                            viewModel.checkIfIsFirstLaunch()
+                        }
+                        else -> {}
+                    }
+                }
                 Scaffold {
-                    if (isConnected) {
+                    if (viewModel.state.isFirstLaunch) {
+                        OnBoarding()
+                    } else if (isConnected) {
                         // Show UI when connectivity is available
                         val imageUri = shareImageHandleIntent()
-                        Navigation(imageUri)
+                        Navigation(imageUri, viewModel)
                     } else {
+                        askNotificationPermission()
                         NotConnectedScreen()
                     }
                 }
@@ -137,11 +155,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation(imageUri: Uri?) {
+fun Navigation(imageUri: Uri?, viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val navController = rememberNavController()
-
-    val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
 
     NavHost(
         navController = navController,
@@ -202,4 +218,11 @@ fun NotConnectedScreen() {
             )
         }
     }
+}
+
+@ExperimentalPagerApi
+@Preview(showBackground = true)
+@Composable
+fun PreviewFunction() {
+    OnBoarding()
 }

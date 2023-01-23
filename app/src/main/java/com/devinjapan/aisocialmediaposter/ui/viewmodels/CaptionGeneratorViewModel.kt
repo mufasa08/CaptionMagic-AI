@@ -12,6 +12,7 @@ import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorReposit
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
+import com.devinjapan.aisocialmediaposter.ui.utils.IS_FIRST_LAUNCH
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
@@ -182,5 +183,12 @@ class CaptionGeneratorViewModel @Inject constructor(
         if (currentUser == null) {
             auth.signInAnonymously()
         }*/
+    }
+
+    fun checkIfIsFirstLaunch() {
+        viewModelScope.launch {
+            val isFirstLaunch = dataStoreRepositoryImpl.getBoolean(IS_FIRST_LAUNCH) ?: true
+            state.isFirstLaunch = isFirstLaunch
+        }
     }
 }
