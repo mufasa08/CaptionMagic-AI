@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
@@ -43,7 +44,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewModel) {
+fun ShareScreen(
+    navController: NavController,
+    viewModel: CaptionGeneratorViewModel,
+    analyticsTracker: AnalyticsTracker
+) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
@@ -128,6 +133,7 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                         val text = viewModel.state.modifiedText
                             ?: viewModel.state.textCompletion?.choices?.first()?.text?.trim()
                         if (text != null) {
+                            analyticsTracker.logEvent("description_copied", null)
                             clipboardManager.setText(AnnotatedString(text))
                             Toast.makeText(
                                 context,
@@ -151,6 +157,7 @@ fun ShareScreen(navController: NavController, viewModel: CaptionGeneratorViewMod
                 TextButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
+                        analyticsTracker.logEvent("start_over_pressed", null)
                         viewModel.resetEverything()
                         navController.navigateUp()
                     },

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.error.ApiException
 import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
@@ -72,10 +73,12 @@ import org.compose.museum.simpletags.SimpleTags
 fun GeneratorScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
-    startingImageUri: Uri? = null
+    startingImageUri: Uri? = null,
+    analyticsTracker: AnalyticsTracker
 ) {
     val context = LocalContext.current
     val contentResolver = LocalContext.current.contentResolver
+
     // 1
 
     var hasImage by remember {
@@ -110,6 +113,7 @@ fun GeneratorScreen(
             hasImage = uri != null
 
             if (hasImage) {
+                analyticsTracker.logEvent("image_uploaded", null)
                 imageUri = uri
                 val imageBitmap =
                     BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)

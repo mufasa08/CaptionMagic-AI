@@ -34,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
@@ -47,6 +48,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -59,12 +61,16 @@ class MainActivity : ComponentActivity() {
         // signInIfNecessary(auth)
     }
 
+    @Inject
+    lateinit var analyticsTracker: AnalyticsTracker
+
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         // askNotificationPermission()
+
         setContent {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
@@ -76,7 +82,7 @@ class MainActivity : ComponentActivity() {
                     if (isConnected) {
                         // Show UI when connectivity is available
                         val imageUri = shareImageHandleIntent()
-                        Navigation(imageUri)
+                        Navigation(imageUri, analyticsTracker)
                     } else {
                         NotConnectedScreen()
                     }
@@ -137,7 +143,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation(imageUri: Uri?) {
+fun Navigation(imageUri: Uri?, analyticsTracker: AnalyticsTracker) {
     val context = LocalContext.current
     val navController = rememberNavController()
 
@@ -151,11 +157,16 @@ fun Navigation(imageUri: Uri?) {
             GeneratorScreen(
                 navController = navController,
                 viewModel = viewModel,
-                startingImageUri = imageUri
+                startingImageUri = imageUri,
+                analyticsTracker = analyticsTracker
             )
         }
         composable(context.getString(R.string.share_screen)) {
-            ShareScreen(navController = navController, viewModel = viewModel)
+            ShareScreen(
+                navController = navController,
+                viewModel = viewModel,
+                analyticsTracker = analyticsTracker
+            )
         }
         composable(context.getString(R.string.settings_screen)) {
             SettingsScreen(navController = navController)
