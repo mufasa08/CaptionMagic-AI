@@ -384,8 +384,7 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             TextField(
                 value = text,
                 onValueChange = {
-                    val cleanedText = it.removeNewLine()
-                    text = cleanedText
+                    text = it
                 },
                 placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
                 textStyle = MaterialTheme.typography.body2,
@@ -443,16 +442,9 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 16.dp)
                 )
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
-    }
-}
-
-private fun String.removeNewLine(): String {
-    return this.apply {
-        replace("(\\r|\\n|\\r\\n)+", "")
-        replace("(\\r\\n)+", "")
-        replace("(\\n)+", "")
     }
 }
 
