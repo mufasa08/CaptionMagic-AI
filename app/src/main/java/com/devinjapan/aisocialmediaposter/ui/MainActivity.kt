@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
                 val scaffoldState: ScaffoldState = rememberScaffoldState()
-                val connection by connectivityState()
+                val connection by connectivityState(applicationContext)
 
                 val isConnected = connection === ConnectionState.Available
 
