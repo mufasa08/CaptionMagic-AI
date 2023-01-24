@@ -60,10 +60,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedDa
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
-import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
-import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
-import com.devinjapan.aisocialmediaposter.ui.utils.toUserUnderstandableMessage
+import com.devinjapan.aisocialmediaposter.ui.utils.*
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
@@ -392,7 +389,7 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                     value = text,
                     onValueChange = {
                         viewModel.validateKeyword(it)
-                        if (text.length < CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH + 1 || it.length < text.length) {
+                        if (text.length < MAX_KEYWORD_LENGTH + 1 || it.length < text.length) {
                             text = it
                         }
                     },
@@ -404,7 +401,7 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                     keyboardActions = KeyboardActions(
                         onDone = {
                             if (text.isNotEmpty() && viewModel.state.keywordError == GeneratorScreenState.ValidationError.NONE) {
-                                if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                                if (viewModel.state.loadedTags.size >= MAX_KEYWORDS) {
                                     Toast.makeText(
                                         context,
                                         context.getString(R.string.toast_max_keywords),
@@ -437,16 +434,16 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                 )
                 if (text.isNotEmpty()) {
                     Text(
-                        text = "${text.length} / ${CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH}",
+                        text = "${text.length} / $MAX_KEYWORD_LENGTH",
                         textAlign = TextAlign.End,
                         style = MaterialTheme.typography.caption,
                         modifier = Modifier
                             .wrapContentWidth()
                             .align(CenterVertically)
                             .padding(end = 16.dp),
-                        color = if (CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH - text.length < 0) {
+                        color = if (MAX_KEYWORD_LENGTH - text.length < 0) {
                             Color.Red
-                        } else if (CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH - text.length < 5) Color.Yellow
+                        } else if (MAX_KEYWORD_LENGTH - text.length < 5) Color.Yellow
                         else MaterialTheme.colors.onPrimary
                     )
                 }
@@ -554,7 +551,7 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                     ),
                     backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
-                        if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                        if (viewModel.state.loadedTags.size >= MAX_KEYWORDS) {
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.toast_max_keywords),

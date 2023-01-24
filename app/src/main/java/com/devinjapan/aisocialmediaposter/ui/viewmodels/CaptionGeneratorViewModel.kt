@@ -13,7 +13,8 @@ import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorReposit
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +87,9 @@ class CaptionGeneratorViewModel @Inject constructor(
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
                 is Resource.Success -> {
                     result.data?.let {
-                        state.loadedTags.addAll(it)
+                        val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size
+                        val list = it.take(availableTagSlots)
+                        state.loadedTags.addAll(list)
                         state = state.copy(
                             isLoadingTags = false,
                             error = null
@@ -115,13 +118,18 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun addTag(tag: String) {
-        if (state.loadedTags.size <= MAX_NUMBER_OF_KEYWORDS && tag.isNotEmpty()) {
+        if (state.loadedTags.size < MAX_KEYWORDS && tag.isNotEmpty()) {
             state.loadedTags.add(tag)
         }
     }
 
     fun removeTag(tag: String) {
         state.loadedTags.remove(tag)
+        if (state.loadedTags.size <= MAX_KEYWORDS) {
+            state = state.copy(
+                keywordError = GeneratorScreenState.ValidationError.NONE
+            )
+        }
     }
 
     fun clearGeneratedText() {
@@ -210,7 +218,5 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     companion object {
-        const val MAX_KEYWORD_LENGTH = 20
-        const val MAX_KEYWORDS = 10
     }
 }
