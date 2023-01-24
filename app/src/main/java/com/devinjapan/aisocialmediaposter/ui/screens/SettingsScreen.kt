@@ -122,7 +122,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 viewModel.updateSelectedTone(list[singleChoiceState.value])
             }
         )
-        Divider()
         var rememberCheckBoxState by remember { mutableStateOf(viewModel.state.hidePromoHashtags) }
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.setting_tone_title_hide_ai_hashtag)) },
