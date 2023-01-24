@@ -108,12 +108,11 @@ class SettingsViewModel @Inject constructor(
             state = state.copy(
                 isLoading = true
             )
-            state.selectedCaptionTone?.let {
-                dataStoreRepositoryImpl.putLong(
-                    LAUNCH_COUNT,
-                    1L
-                )
-            }
+            dataStoreRepositoryImpl.putLong(
+                LAUNCH_COUNT,
+                1L
+            )
+
             state = state.copy(
                 isLoading = false
             )

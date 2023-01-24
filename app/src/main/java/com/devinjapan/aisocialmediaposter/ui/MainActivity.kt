@@ -80,6 +80,10 @@ class MainActivity : ComponentActivity() {
                     } else if (viewModel.state.isFirstLaunch) {
                         OnBoarding(viewModel, analyticsTracker)
                     } else {
+                        // dont ask for something like notification permission on first launch
+                        if (viewModel.state.launchNumber > 2) {
+                            askNotificationPermission()
+                        }
                         Navigation(imageUri, analyticsTracker, viewModel)
                     }
                 }
