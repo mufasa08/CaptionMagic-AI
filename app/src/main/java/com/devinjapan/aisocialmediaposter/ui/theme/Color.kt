@@ -8,6 +8,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors.onLightMedium
 
 private val pink = Color(0xFFE91E63)
 private val blue = Color(0xFF0091EA)
+private val lightBlue = Color(0xFFD9F3FF)
 private val lightPink = Color(0xFFF8BBD0)
 
 // White
@@ -60,6 +61,8 @@ object ThemeColors {
 object CustomColors {
 
     val TopBarGray = mediumGray
+
+    val LightBlueChip = lightBlue
 
     val DarkChip = whiteAlpha8
     val LightChip = blackAlpha8

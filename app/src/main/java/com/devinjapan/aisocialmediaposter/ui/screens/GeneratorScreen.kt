@@ -52,6 +52,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBorderDark
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBorderLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.DarkChip
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.DarkChipCloseButton
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightBlueChip
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightChip
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightChipCloseButton
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintSelectedDark
@@ -213,14 +214,12 @@ fun GeneratorScreen(
                     KeywordInputTextField(viewModel)
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 ListOfRecentItems(
                     list = viewModel.state.recentList.minus(viewModel.state.loadedTags.toSet()),
                     viewModel
                 )
 
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 SelectSocialMedia(viewModel)
 
@@ -293,7 +292,9 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
                 text = context.getString(R.string.social_media_selector_optional_label),
-                style = MaterialTheme.typography.caption.copy(ThemeColors.onLightMedium)
+                style = MaterialTheme.typography.caption.copy(
+                    if (isSystemInDarkTheme()) ThemeColors.onDarkMedium else ThemeColors.onLightMedium
+                )
             )
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
@@ -383,7 +384,9 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
         Column() {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
                 TextField(
                     value = text,
@@ -476,7 +479,8 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp)
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
@@ -497,9 +501,10 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                         .padding(horizontal = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        color = ThemeColors.onLightHigh
                     ),
-                    backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
+                    backgroundColor = LightBlueChip,
                     onClick = {
                         viewModel.removeTag(tag)
                     },
@@ -508,11 +513,7 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                             painter = painterResource(id = R.drawable.ic_remove_tag),
                             contentDescription = null,
                             modifier = Modifier.padding(start = 4.dp),
-                            tint = if (isSystemInDarkTheme()) {
-                                DarkChipCloseButton
-                            } else {
-                                LightChipCloseButton
-                            }
+                            tint = LightChipCloseButton
                         )
                     }
                 )
@@ -525,13 +526,6 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
 fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     if (list.isNotEmpty()) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = context.getString(R.string.recent_list_items),
-            style = MaterialTheme.typography.body2
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
         FlowRow(
             modifier = Modifier
                 .padding(16.dp)
@@ -544,10 +538,11 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                 SimpleTags(
                     modifier = Modifier
                         .wrapContentHeight()
-                        .padding(horizontal = 4.dp),
+                        .padding(end = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        color = if (isSystemInDarkTheme()) ThemeColors.onDarkMedium else ThemeColors.onLightMedium
                     ),
                     backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
@@ -561,11 +556,10 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                             viewModel.addTag(tag)
                         }
                     },
-                    trailingIcon = {
+                    leadingIcon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_add_circle),
+                            painter = painterResource(id = R.drawable.ic_add),
                             contentDescription = null,
-                            modifier = Modifier.padding(start = 4.dp),
                             tint = if (isSystemInDarkTheme()) {
                                 DarkChipCloseButton
                             } else {
