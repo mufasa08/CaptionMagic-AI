@@ -26,11 +26,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@Inject
+lateinit var analyticsTracker: AnalyticsTracker
 
 @ExperimentalPagerApi
 @Composable
@@ -50,6 +55,7 @@ fun OnBoarding(viewModel: CaptionGeneratorViewModel) {
                 if (pageState.currentPage + 1 < items.size) scope.launch {
                     pageState.scrollToPage(items.size - 1)
                 }
+                analyticsTracker.logEvent("walkthrough_skip_clicked", null)
             }
         )
 
@@ -66,8 +72,10 @@ fun OnBoarding(viewModel: CaptionGeneratorViewModel) {
             if (pageState.currentPage + 1 < items.size) scope.launch {
                 pageState.scrollToPage(pageState.currentPage + 1)
             }
+            analyticsTracker.logWalkthroughPageViewed(pageState.currentPage)
         }, onFinishClick = {
                 viewModel.finishOnBoarding()
+                analyticsTracker.logEvent("walkthrough_finished", null)
             })
     }
 }
