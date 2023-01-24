@@ -199,12 +199,16 @@ fun GeneratorScreen(
                             )
                         }
                     } else {
+                        val isLandscape = viewModel.state.image?.isLandscape() == true
+                        val modifier = if (isLandscape) Modifier.fillMaxWidth()
+                            .wrapContentHeight() else Modifier
+                            .height(246.dp)
+                            .fillMaxWidth()
                         ImagePicker(
-                            modifier = Modifier
-                                .height(246.dp)
-                                .fillMaxWidth(),
+                            modifier = modifier,
                             viewModel,
-                            viewModel.state.image!!
+                            viewModel.state.image!!,
+                            isLandscape
                         )
                     }
                 }
