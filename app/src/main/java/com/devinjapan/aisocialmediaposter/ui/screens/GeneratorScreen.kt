@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,10 +35,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
+import com.devinjapan.aisocialmediaposter.data.error.ApiException
+import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
 import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
+import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundSelectedDark
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundSelectedLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundUnselectedDark
@@ -46,6 +52,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBorderDark
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBorderLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.DarkChip
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.DarkChipCloseButton
+import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightBlueChip
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightChip
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.LightChipCloseButton
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintSelectedDark
@@ -54,9 +61,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedDa
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
-import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_NUMBER_OF_KEYWORDS
-import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
+import com.devinjapan.aisocialmediaposter.ui.utils.*
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
@@ -68,10 +73,12 @@ import org.compose.museum.simpletags.SimpleTags
 fun GeneratorScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
-    startingImageUri: Uri? = null
+    startingImageUri: Uri? = null,
+    analyticsTracker: AnalyticsTracker
 ) {
     val context = LocalContext.current
     val contentResolver = LocalContext.current.contentResolver
+
     // 1
 
     var hasImage by remember {
@@ -106,6 +113,7 @@ fun GeneratorScreen(
             hasImage = uri != null
 
             if (hasImage) {
+                analyticsTracker.logEvent("image_uploaded", null)
                 imageUri = uri
                 val imageBitmap =
                     BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
@@ -207,15 +215,11 @@ fun GeneratorScreen(
                 }
 
                 ListOfRecentItems(
-                    list = viewModel.state.recentList.filterNot {
-                        viewModel.state.loadedTags.contains(
-                            it
-                        )
-                    },
+                    list = viewModel.state.recentList.minus(viewModel.state.loadedTags.toSet()),
                     viewModel
                 )
 
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 SelectSocialMedia(viewModel)
 
@@ -228,7 +232,7 @@ fun GeneratorScreen(
                     onClick = {
                         viewModel.generateDescription()
                     },
-                    enabled = viewModel.state.loadedTags.isNotEmpty()
+                    enabled = viewModel.state.loadedTags.isNotEmpty() && viewModel.state.isConnected
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_magic_wand),
@@ -243,6 +247,27 @@ fun GeneratorScreen(
             }
             if (viewModel.state.isLoading) {
                 GeneratingDialog()
+            }
+
+            viewModel.state.error?.let { error ->
+                if (error.exception != null && error.exception is ApiException) {
+                    ErrorDialog(
+                        errorMessage = error.exception.toUserUnderstandableMessage(),
+                        onConfirmClick = {
+                            viewModel.clearError()
+                        }
+                    )
+                } else {
+                    if (error.exception is ImageDetectionException) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.exception_message_image_detection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(context, error.errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -267,7 +292,9 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
                 text = context.getString(R.string.social_media_selector_optional_label),
-                style = MaterialTheme.typography.caption.copy(ThemeColors.onLightMedium)
+                style = MaterialTheme.typography.caption.copy(
+                    if (isSystemInDarkTheme()) ThemeColors.onDarkMedium else ThemeColors.onLightMedium
+                )
             )
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
@@ -354,48 +381,95 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             .focusRequester(focusRequester)
             .padding(start = 4.dp)
     ) {
-        TextField(
-            value = text,
-            onValueChange = {
-                text = it
-            },
-            placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
-            textStyle = MaterialTheme.typography.body2,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    if (text.isNotEmpty()) {
-                        if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.toast_max_keywords),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            viewModel.addTag(text)
-                            viewModel.addToRecentList(text)
+        Column() {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                TextField(
+                    value = text,
+                    onValueChange = {
+                        viewModel.validateKeyword(it)
+                        if (text.length < MAX_KEYWORD_LENGTH + 1 || it.length < text.length) {
+                            text = it
                         }
-                    }
-                    text = ""
+                    },
+                    placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
+                    textStyle = MaterialTheme.typography.body2,
+                    isError = viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (text.isNotEmpty() && viewModel.state.keywordError == GeneratorScreenState.ValidationError.NONE) {
+                                if (viewModel.state.loadedTags.size >= MAX_KEYWORDS) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.toast_max_keywords),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    viewModel.addTag(text)
+                                    viewModel.addToRecentList(text)
+                                }
+                                text = ""
+                            }
+                        }
+                    ),
+                    maxLines = 1,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .bringIntoViewRequester(bringIntoViewRequester)
+                        .onFocusEvent { focusState ->
+                            if (focusState.isFocused) {
+                                coroutineScope.launch {
+                                    bringIntoViewRequester.bringIntoView()
+                                }
+                            }
+                        },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
+                if (text.isNotEmpty()) {
+                    Text(
+                        text = "${text.length} / $MAX_KEYWORD_LENGTH",
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .align(CenterVertically)
+                            .padding(end = 16.dp),
+                        color = if (MAX_KEYWORD_LENGTH - text.length < 0) {
+                            Color.Red
+                        } else if (MAX_KEYWORD_LENGTH - text.length < 5) Color.Yellow
+                        else MaterialTheme.colors.onPrimary
+                    )
                 }
-            ),
-            modifier = Modifier
-                .padding(0.dp)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent { focusState ->
-                    if (focusState.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
+            }
+            if (viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE) {
+                val errorText = when (viewModel.state.keywordError) {
+                    GeneratorScreenState.ValidationError.TOO_MANY_KEYWORDS -> {
+                        context.getString(R.string.validation_text_keyword_limit)
                     }
-                },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
+                    else -> {
+                        context.getString(R.string.validation_text_too_long)
+                    }
+                }
+
+                Text(
+                    text = errorText,
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+        }
     }
 }
 
@@ -405,7 +479,8 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp)
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
@@ -426,9 +501,10 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                         .padding(horizontal = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        color = ThemeColors.onLightHigh
                     ),
-                    backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
+                    backgroundColor = LightBlueChip,
                     onClick = {
                         viewModel.removeTag(tag)
                     },
@@ -437,11 +513,7 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
                             painter = painterResource(id = R.drawable.ic_remove_tag),
                             contentDescription = null,
                             modifier = Modifier.padding(start = 4.dp),
-                            tint = if (isSystemInDarkTheme()) {
-                                DarkChipCloseButton
-                            } else {
-                                LightChipCloseButton
-                            }
+                            tint = LightChipCloseButton
                         )
                     }
                 )
@@ -454,13 +526,6 @@ fun ListOfTags(list: List<String>, viewModel: CaptionGeneratorViewModel) {
 fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     if (list.isNotEmpty()) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = context.getString(R.string.recent_list_items),
-            style = MaterialTheme.typography.body2
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
         FlowRow(
             modifier = Modifier
                 .padding(16.dp)
@@ -473,14 +538,15 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                 SimpleTags(
                     modifier = Modifier
                         .wrapContentHeight()
-                        .padding(horizontal = 4.dp),
+                        .padding(end = 4.dp),
                     text = tag,
                     textStyle = MaterialTheme.typography.body2.copy(
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        color = if (isSystemInDarkTheme()) ThemeColors.onDarkMedium else ThemeColors.onLightMedium
                     ),
                     backgroundColor = if (isSystemInDarkTheme()) DarkChip else LightChip,
                     onClick = {
-                        if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                        if (viewModel.state.loadedTags.size >= MAX_KEYWORDS) {
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.toast_max_keywords),
@@ -490,11 +556,10 @@ fun ListOfRecentItems(list: List<String>, viewModel: CaptionGeneratorViewModel) 
                             viewModel.addTag(tag)
                         }
                     },
-                    trailingIcon = {
+                    leadingIcon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_add_circle),
+                            painter = painterResource(id = R.drawable.ic_add),
                             contentDescription = null,
-                            modifier = Modifier.padding(start = 4.dp),
                             tint = if (isSystemInDarkTheme()) {
                                 DarkChipCloseButton
                             } else {

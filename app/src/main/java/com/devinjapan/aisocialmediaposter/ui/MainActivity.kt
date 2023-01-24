@@ -14,44 +14,38 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
-import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -64,40 +58,42 @@ class MainActivity : ComponentActivity() {
         // signInIfNecessary(auth)
     }
 
+    @Inject
+    lateinit var analyticsTracker: AnalyticsTracker
+
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        // askNotificationPermission()
 
         setContent {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
-                val connection by connectivityState()
+                val scaffoldState: ScaffoldState = rememberScaffoldState()
+                val connection by connectivityState(applicationContext)
 
                 val isConnected = connection === ConnectionState.Available
-                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
 
-                ObserveLifecycleEvent { event ->
-                    // 検出したイベントに応じた処理を実装する。
-                    when (event) {
-                        Lifecycle.Event.ON_CREATE -> {
-                            viewModel.checkIfIsFirstLaunch()
+                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+                viewModel.updateConnectionStatus(isConnected)
+
+                Scaffold(scaffoldState = scaffoldState) {
+                    if (!isConnected) {
+                        LaunchedEffect(Unit) {
+                            this.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = getString(R.string.offline),
+                                    actionLabel = getString(R.string.dialog_ok_button),
+                                    duration = SnackbarDuration.Indefinite
+                                )
+                            }
                         }
-                        else -> {}
                     }
-                }
-                Scaffold {
-                    if (viewModel.state.isFirstLaunch) {
-                        OnBoarding()
-                    } else if (isConnected) {
-                        // Show UI when connectivity is available
-                        val imageUri = shareImageHandleIntent()
-                        Navigation(imageUri, viewModel)
-                    } else {
-                        askNotificationPermission()
-                        NotConnectedScreen()
-                    }
+                    // Show UI when connectivity is available
+                    val imageUri = shareImageHandleIntent()
+                    Navigation(imageUri, analyticsTracker, viewModel)
                 }
             }
         }
@@ -155,7 +151,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation(imageUri: Uri?, viewModel: CaptionGeneratorViewModel) {
+fun Navigation(
+    imageUri: Uri?,
+    analyticsTracker: AnalyticsTracker,
+    viewModel: CaptionGeneratorViewModel
+) {
     val context = LocalContext.current
     val navController = rememberNavController()
 
@@ -167,11 +167,16 @@ fun Navigation(imageUri: Uri?, viewModel: CaptionGeneratorViewModel) {
             GeneratorScreen(
                 navController = navController,
                 viewModel = viewModel,
-                startingImageUri = imageUri
+                startingImageUri = imageUri,
+                analyticsTracker = analyticsTracker
             )
         }
         composable(context.getString(R.string.share_screen)) {
-            ShareScreen(navController = navController, viewModel = viewModel)
+            ShareScreen(
+                navController = navController,
+                viewModel = viewModel,
+                analyticsTracker = analyticsTracker
+            )
         }
         composable(context.getString(R.string.settings_screen)) {
             SettingsScreen(navController = navController)
@@ -189,40 +194,4 @@ fun preLoadInitialImageAndTags(
     if (imageBitmap != null) {
         viewModel.processBitmap(imageBitmap)
     }
-}
-
-@Composable
-fun NotConnectedScreen() {
-    val context = LocalContext.current
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_wifi_offline),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                modifier = Modifier.padding(bottom = 16.dp),
-                text = context.getString(R.string.offline),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h6
-            )
-        }
-    }
-}
-
-@ExperimentalPagerApi
-@Preview(showBackground = true)
-@Composable
-fun PreviewFunction() {
-    OnBoarding()
 }

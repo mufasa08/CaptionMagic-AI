@@ -16,4 +16,5 @@ interface DatastoreRepository {
     suspend fun getLong(key: String): Long?
     suspend fun getLongFlow(key: String): Flow<Long?>
     suspend fun clearPreferences(key: String)
+    suspend fun getBoolean(key: String): Boolean?
 }

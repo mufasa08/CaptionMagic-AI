@@ -122,6 +122,29 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 viewModel.updateSelectedTone(list[singleChoiceState.value])
             }
         )
+        var rememberCheckBoxState by remember { mutableStateOf(viewModel.state.hidePromoHashtags) }
+        SettingsMenuLink(
+            title = { Text(text = context.getString(R.string.setting_tone_title_hide_ai_hashtag)) },
+            subtitle = { Text(text = context.getString(R.string.setting_tone_subtitle_hide_ai_hashtag)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_hashtag),
+                    contentDescription = "Menu Clear Data"
+                )
+            },
+            action = {
+                Checkbox(checked = rememberCheckBoxState, onCheckedChange = { newState ->
+                    rememberCheckBoxState = newState
+                    coroutineScope.launch {
+                        viewModel.toggleHidePromoHashtags()
+                    }
+                })
+            }
+        ) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(message = "Click on menu 4")
+            }
+        }
     }
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_data)) }) {
         SettingsMenuLink(
@@ -155,7 +178,7 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 )
             }
         ) {
-            // TODO log firebase uid analytics
+            viewModel.onBugReportLinkClicked()
             uriHandler.openUri(BUG_REPORT_BASE_URL)
         }
 
@@ -169,7 +192,7 @@ fun SettingsItems(viewModel: SettingsViewModel) {
                 )
             }
         ) {
-            // TODO log firebase uid analytics
+            viewModel.onSubmitFeedbackClicked()
             uriHandler.openUri(FEEDBACK_URL)
         }
     }

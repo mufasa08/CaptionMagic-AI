@@ -13,8 +13,18 @@ data class GeneratorScreenState(
     val selectedSocialMedia: SocialMedia = SocialMedia.OTHER,
     val recentList: MutableList<String> = mutableStateListOf(),
     val selectedCaptionTone: String? = null,
+    val hidePromoHashtags: Boolean = false,
+    val isConnected: Boolean = true,
     var isFirstLaunch: Boolean = true,
     val isLoading: Boolean = false,
+    val keywordError: ValidationError = ValidationError.NONE,
     val isLoadingTags: Boolean = false,
-    val error: String? = null
-)
+    val error: ErrorInfo? = null
+) {
+    data class ErrorInfo(val errorMessage: String, val exception: Exception? = null)
+    enum class ValidationError {
+        TOO_LONG,
+        TOO_MANY_KEYWORDS,
+        NONE,
+    }
+}

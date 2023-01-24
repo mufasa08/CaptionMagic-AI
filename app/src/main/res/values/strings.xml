@@ -19,7 +19,7 @@
     <string name="other">Unspecified</string>
     <string name="social_media_selector_label">Which social media are you targeting?</string>
     <string name="social_media_selector_optional_label">Optional</string>
-    <string name="offline">Please check\nyour network connection.</string>
+    <string name="offline">No internet connection.</string>
     <string name="not_showing_notifications">Showing notifications disabled</string>
     <string name="recent_list_items">Recent Keywords</string>
     <string name="settings_title">Settings</string>
@@ -48,4 +48,14 @@
     <string name="onboarding_text_1">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum tempus turpis, vitae fermentum tortor varius ac. Suspendisse ut sollicitudin mi. Proin felis nisl, efficitur id ornare ut, dictum at magna. "</string>
     <string name="onboarding_text_2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum tempus turpis, vitae fermentum tortor varius ac. Suspendisse ut sollicitudin mi. Proin felis nisl, efficitur id ornare ut, dictum at magna. "</string>
     <string name="onboarding_text_3">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum tempus turpis, vitae fermentum tortor varius ac. Suspendisse ut sollicitudin mi. Proin felis nisl, efficitur id ornare ut, dictum at magna. "</string>
+    <string name="dialog_ok_button">OK</string>
+    <string name="exception_message_something_went_wrong">"Oops…Something went wrong. "</string>
+    <string name="exception_message_try_again_later">Service currently unavailable. Please try again later.</string>
+    <string name="exception_message_not_allowed">You\'re not allowed to do that.</string>
+    <string name="exception_message_bad_request">Something went wrong. We are looking into it.</string>
+    <string name="exception_message_image_detection">Sorry but I can\'t recognize the anything in the image.</string>
+    <string name="setting_tone_title_hide_ai_hashtag">Hide promotional hashtags</string>
+    <string name="setting_tone_subtitle_hide_ai_hashtag">#ChatGPT #CaptionMagic #AI</string>
+    <string name="validation_text_too_long">Too long. 20 character limit.</string>
+    <string name="validation_text_keyword_limit">10 keywords max. Delete some first.</string>
 </resources>
