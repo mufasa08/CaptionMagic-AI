@@ -211,4 +211,20 @@ fun SettingsItems(viewModel: SettingsViewModel) {
         ) {
         }
     }
+    if (BuildConfig.DEBUG) {
+        SettingsGroup(title = { Text(text = "DEBUG ONLY") }) {
+            SettingsMenuLink(
+                title = { Text(text = "Reset first launch") }
+            ) {
+                coroutineScope.launch {
+                    viewModel.resetWalkthrough()
+                    Toast.makeText(
+                        context,
+                        "Restart App",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 }

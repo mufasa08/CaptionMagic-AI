@@ -26,12 +26,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
+import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
@@ -39,7 +39,6 @@ import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
-import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -76,20 +75,13 @@ class MainActivity : ComponentActivity() {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
                 val scaffoldState: ScaffoldState = rememberScaffoldState()
+
+                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+
                 val connection by connectivityState(applicationContext)
 
                 val isConnected = connection === ConnectionState.Available
 
-                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
-                ObserveLifecycleEvent { event ->
-                    // 検出したイベントに応じた処理を実装する。
-                    when (event) {
-                        Lifecycle.Event.ON_CREATE -> {
-                            viewModel.checkLaunchCountAndIncrement()
-                        }
-                        else -> {}
-                    }
-                }
                 viewModel.updateConnectionStatus(isConnected)
 
                 Scaffold(scaffoldState = scaffoldState) {
@@ -106,7 +98,9 @@ class MainActivity : ComponentActivity() {
                     }
                     // Show UI when connectivity is available
                     val imageUri = shareImageHandleIntent()
-                    if (viewModel.state.isFirstLaunch) {
+                    if (viewModel.state.isLoadingFirstLaunchCheck) {
+                        GeneratingDialog()
+                    } else if (viewModel.state.isFirstLaunch) {
                         OnBoarding(viewModel)
                     } else {
                         Navigation(imageUri, analyticsTracker, viewModel)

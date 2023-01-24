@@ -29,6 +29,10 @@ class CaptionGeneratorViewModel @Inject constructor(
     var state by mutableStateOf(GeneratorScreenState())
         private set
 
+    init {
+        checkLaunchCountAndIncrement()
+    }
+
     fun addToRecentList(item: String) {
         if (!state.recentList.contains(item)) {
             if (state.recentList.size >= 10) {
@@ -214,12 +218,15 @@ class CaptionGeneratorViewModel @Inject constructor(
         )
     }
 
-    fun checkLaunchCountAndIncrement() {
+    private fun checkLaunchCountAndIncrement() {
         viewModelScope.launch {
             val launchCount = dataStoreRepositoryImpl.getLong(LAUNCH_COUNT) ?: 1L
-            state.isFirstLaunch = launchCount == 1L
-            state.launchNumber = launchCount
             dataStoreRepositoryImpl.putLong(LAUNCH_COUNT, launchCount + 1L)
+            state = state.copy(
+                isLoadingFirstLaunchCheck = false,
+                launchNumber = launchCount,
+                isFirstLaunch = launchCount == 1L
+            )
         }
     }
 

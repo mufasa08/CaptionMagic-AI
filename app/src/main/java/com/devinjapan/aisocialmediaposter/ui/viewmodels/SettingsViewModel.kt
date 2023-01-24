@@ -9,6 +9,7 @@ import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
 import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
+import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -97,6 +98,23 @@ class SettingsViewModel @Inject constructor(
             }
             state = state.copy(
                 hidePromoHashtags = newSetting,
+                isLoading = false
+            )
+        }
+    }
+
+    fun resetWalkthrough() {
+        viewModelScope.launch {
+            state = state.copy(
+                isLoading = true
+            )
+            state.selectedCaptionTone?.let {
+                dataStoreRepositoryImpl.putLong(
+                    LAUNCH_COUNT,
+                    1L
+                )
+            }
+            state = state.copy(
                 isLoading = false
             )
         }
