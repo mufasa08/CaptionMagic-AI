@@ -7,11 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -46,12 +44,6 @@ fun OnBoarding(viewModel: CaptionGeneratorViewModel, analyticsTracker: Analytics
                 if (pageState.currentPage + 1 > 1) scope.launch {
                     pageState.scrollToPage(pageState.currentPage - 1)
                 }
-            },
-            onSkipClick = {
-                if (pageState.currentPage + 1 < items.size) scope.launch {
-                    pageState.scrollToPage(items.size - 1)
-                }
-                analyticsTracker.logEvent("walkthrough_skip_clicked", null)
             }
         )
 
@@ -78,7 +70,7 @@ fun OnBoarding(viewModel: CaptionGeneratorViewModel, analyticsTracker: Analytics
 
 @ExperimentalPagerApi
 @Composable
-fun TopSection(onBackClick: () -> Unit = {}, onSkipClick: () -> Unit = {}) {
+fun TopSection(onBackClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -87,15 +79,6 @@ fun TopSection(onBackClick: () -> Unit = {}, onSkipClick: () -> Unit = {}) {
         // Back button
         IconButton(onClick = onBackClick, modifier = Modifier.align(Alignment.CenterStart)) {
             Icon(imageVector = Icons.Outlined.KeyboardArrowLeft, contentDescription = null)
-        }
-
-        // Skip Button
-        TextButton(
-            onClick = onSkipClick,
-            modifier = Modifier.align(Alignment.CenterEnd),
-            contentPadding = PaddingValues(0.dp)
-        ) {
-            Text(text = "Skip", color = MaterialTheme.colors.onBackground)
         }
     }
 }
@@ -129,19 +112,14 @@ fun BottomSection(
                 )
             }
         } else {
-            FloatingActionButton(
-                onClick = {
-                    onButtonClick()
-                },
-                backgroundColor = Color.Black,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .clip(RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+            TextButton(
+                onClick = onFinishClick,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                contentPadding = PaddingValues(0.dp)
             ) {
-                Icon(
-                    Icons.Outlined.KeyboardArrowRight,
-                    tint = Color.White,
-                    contentDescription = "Localized description"
+                Text(
+                    text = context.getString(R.string.walkthrough_next_button),
+                    color = MaterialTheme.colors.onBackground
                 )
             }
         }

@@ -59,4 +59,5 @@
     <string name="validation_text_too_long">Too long. 20 character limit.</string>
     <string name="validation_text_keyword_limit">10 keywords max. Delete some first.</string>
     <string name="walkthrough_finish_button">Finish</string>
+    <string name="walkthrough_next_button">Next</string>
 </resources>
