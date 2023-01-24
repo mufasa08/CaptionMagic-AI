@@ -15,7 +15,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
@@ -40,6 +44,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -66,6 +71,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
+                val scaffoldState: ScaffoldState = rememberScaffoldState()
                 val connection by connectivityState()
 
                 val isConnected = connection === ConnectionState.Available
@@ -73,13 +79,17 @@ class MainActivity : ComponentActivity() {
                 val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
                 viewModel.updateConnectionStatus(isConnected)
 
-                Scaffold {
+                Scaffold(scaffoldState = scaffoldState) {
                     if (!isConnected) {
-                        Toast.makeText(
-                            LocalContext.current,
-                            getString(R.string.offline),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        LaunchedEffect(Unit) {
+                            this.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = getString(R.string.offline),
+                                    actionLabel = getString(R.string.dialog_ok_button),
+                                    duration = SnackbarDuration.Indefinite
+                                )
+                            }
+                        }
                     }
                     // Show UI when connectivity is available
                     val imageUri = shareImageHandleIntent()
