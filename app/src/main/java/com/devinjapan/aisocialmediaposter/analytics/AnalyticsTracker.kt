@@ -103,6 +103,12 @@ class AnalyticsTracker(val firebaseAnalytics: FirebaseAnalytics) {
         }
     }
 
+    fun logWalkthroughPageViewed(page: Int) {
+        logEvent("walthrough") {
+            intParam("page_viewed", page)
+        }
+    }
+
     //endregion
 
     companion object {

@@ -14,14 +14,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
+import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
@@ -39,6 +40,7 @@ import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -62,7 +64,7 @@ class MainActivity : ComponentActivity() {
     lateinit var analyticsTracker: AnalyticsTracker
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -72,11 +74,13 @@ class MainActivity : ComponentActivity() {
             AISocialMediaPosterTheme {
                 // This will cause re-composition on every network state change
                 val scaffoldState: ScaffoldState = rememberScaffoldState()
+
+                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+
                 val connection by connectivityState(applicationContext)
 
                 val isConnected = connection === ConnectionState.Available
 
-                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
                 viewModel.updateConnectionStatus(isConnected)
 
                 Scaffold(scaffoldState = scaffoldState) {
@@ -93,8 +97,35 @@ class MainActivity : ComponentActivity() {
                     }
                     // Show UI when connectivity is available
                     val imageUri = shareImageHandleIntent()
-                    Navigation(imageUri, analyticsTracker, viewModel)
+
+                    if (viewModel.state.isLoadingFirstLaunchCheck) {
+                        LoadingCircle()
+                    } else if (viewModel.state.isFirstLaunch) {
+                        OnBoarding(viewModel, analyticsTracker)
+                    } else {
+                        Navigation(imageUri, analyticsTracker, viewModel)
+                    }
                 }
+            }
+        }
+    }
+
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @Composable
+    private fun LoadingCircle() {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }

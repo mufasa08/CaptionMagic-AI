@@ -13,10 +13,7 @@ import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorReposit
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
-import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
-import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
+import com.devinjapan.aisocialmediaposter.ui.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +28,10 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     var state by mutableStateOf(GeneratorScreenState())
         private set
+
+    init {
+        checkLaunchCountAndIncrement()
+    }
 
     fun addToRecentList(item: String) {
         if (!state.recentList.contains(item)) {
@@ -217,6 +218,21 @@ class CaptionGeneratorViewModel @Inject constructor(
         )
     }
 
-    companion object {
+    private fun checkLaunchCountAndIncrement() {
+        viewModelScope.launch {
+            val launchCount = dataStoreRepositoryImpl.getLong(LAUNCH_COUNT) ?: 1L
+            dataStoreRepositoryImpl.putLong(LAUNCH_COUNT, launchCount + 1L)
+            state = state.copy(
+                isLoadingFirstLaunchCheck = false,
+                launchNumber = launchCount,
+                isFirstLaunch = launchCount == 1L
+            )
+        }
+    }
+
+    fun finishOnBoarding() {
+        state = state.copy(
+            isFirstLaunch = false
+        )
     }
 }

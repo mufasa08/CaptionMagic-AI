@@ -5,6 +5,8 @@ const val RECENT_KEYWORD_LIST = "recent_keyword_list"
 const val MAX_KEYWORDS = 10
 const val MAX_KEYWORD_LENGTH = 20
 
+const val LAUNCH_COUNT = "launch_count"
+
 const val SELECTED_TONE = "selected_tone"
 
 const val HIDE_PROMO_HASHTAGS = "hide_promo_hashtags"
