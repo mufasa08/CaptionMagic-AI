@@ -80,13 +80,13 @@ class AnalyticsTracker(val firebaseAnalytics: FirebaseAnalytics) {
     fun logApiCallError(
         apiName: String,
         parameters: String?,
-        httpStatus: Int? = null,
+        errorType: String? = null,
         responseTime: Long? = null
     ) {
         logEvent("api_call_error") {
             stringParam("type", apiName)
             stringParam("parameters", parameters)
-            intParam("http_status", httpStatus)
+            stringParam("error_type", errorType)
             longParam("response_time", responseTime)
         }
     }

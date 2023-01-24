@@ -14,7 +14,6 @@ import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import com.plcoding.weatherapp.data.remote.OpenAIApi
-import retrofit2.HttpException
 import javax.inject.Inject
 
 class TextCompletionRepositoryImpl @Inject constructor(
@@ -50,10 +49,11 @@ class TextCompletionRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             val apiException = e.toApiException()
+
             analyticsTracker.logApiCallError(
                 "getReplyFromTextCompletionAPI",
                 type.name,
-                (e as HttpException).code()
+                apiException.type.name
             )
             Resource.Error(message = e.message ?: "Something went wrong.", exception = apiException)
         }
