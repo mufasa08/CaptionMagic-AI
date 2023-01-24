@@ -195,4 +195,22 @@ class CaptionGeneratorViewModel @Inject constructor(
             isConnected = connected
         )
     }
+
+    fun validateKeyword(keyword: String) {
+        val keywordErrorState = if (state.loadedTags.size >= MAX_KEYWORDS) {
+            GeneratorScreenState.ValidationError.TOO_MANY_KEYWORDS
+        } else if (keyword.length > MAX_KEYWORD_LENGTH) {
+            GeneratorScreenState.ValidationError.TOO_LONG
+        } else {
+            GeneratorScreenState.ValidationError.NONE
+        }
+        state = state.copy(
+            keywordError = keywordErrorState
+        )
+    }
+
+    companion object {
+        const val MAX_KEYWORD_LENGTH = 30
+        const val MAX_KEYWORDS = 10
+    }
 }

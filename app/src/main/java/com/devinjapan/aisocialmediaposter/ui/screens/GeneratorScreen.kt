@@ -42,6 +42,7 @@ import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
 import com.devinjapan.aisocialmediaposter.ui.preLoadInitialImageAndTags
+import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundSelectedDark
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundSelectedLight
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.ButtonBackgroundUnselectedDark
@@ -215,11 +216,7 @@ fun GeneratorScreen(
                 }
 
                 ListOfRecentItems(
-                    list = viewModel.state.recentList.filterNot {
-                        viewModel.state.loadedTags.contains(
-                            it
-                        )
-                    },
+                    list = viewModel.state.recentList.minus(viewModel.state.loadedTags.toSet()),
                     viewModel
                 )
 
@@ -383,48 +380,79 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             .focusRequester(focusRequester)
             .padding(start = 4.dp)
     ) {
-        TextField(
-            value = text,
-            onValueChange = {
-                text = it
-            },
-            placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
-            textStyle = MaterialTheme.typography.body2,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    if (text.isNotEmpty()) {
-                        if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.toast_max_keywords),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            viewModel.addTag(text)
-                            viewModel.addToRecentList(text)
-                        }
-                    }
-                    text = ""
-                }
-            ),
-            modifier = Modifier
-                .padding(0.dp)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent { focusState ->
-                    if (focusState.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
+        Column() {
+            TextField(
+                value = text,
+                onValueChange = {
+                    val cleanedText = it.removeNewLine()
+                    text = cleanedText
                 },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
+                textStyle = MaterialTheme.typography.body2,
+                isError = viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (text.isNotEmpty() && viewModel.state.keywordError == GeneratorScreenState.ValidationError.NONE) {
+                            if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.toast_max_keywords),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                viewModel.addTag(text)
+                                viewModel.addToRecentList(text)
+                            }
+                            text = ""
+                        }
+                    }
+                ),
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(0.dp)
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent { focusState ->
+                        if (focusState.isFocused) {
+                            coroutineScope.launch {
+                                bringIntoViewRequester.bringIntoView()
+                            }
+                        }
+                    },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
             )
-        )
+            if (viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE) {
+                val errorText =
+                    when (viewModel.state.keywordError) {
+                        GeneratorScreenState.ValidationError.TOO_MANY_KEYWORDS -> {
+                            context.getString(R.string.validation_text_keyword_limit)
+                        }
+                        else -> {
+                            context.getString(R.string.validation_text_too_long)
+                        }
+                    }
+
+                Text(
+                    text = errorText,
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+private fun String.removeNewLine(): String {
+    return this.apply {
+        replace("(\\r|\\n|\\r\\n)+", "")
+        replace("(\\r\\n)+", "")
+        replace("(\\n)+", "")
     }
 }
 
