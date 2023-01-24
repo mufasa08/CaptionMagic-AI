@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -215,6 +216,8 @@ fun GeneratorScreen(
                     KeywordInputTextField(viewModel)
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
                 ListOfRecentItems(
                     list = viewModel.state.recentList.minus(viewModel.state.loadedTags.toSet()),
                     viewModel
@@ -381,60 +384,82 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
             .padding(start = 4.dp)
     ) {
         Column() {
-            TextField(
-                value = text,
-                onValueChange = {
-                    text = it
-                },
-                placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
-                textStyle = MaterialTheme.typography.body2,
-                isError = viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE,
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        if (text.isNotEmpty() && viewModel.state.keywordError == GeneratorScreenState.ValidationError.NONE) {
-                            if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.toast_max_keywords),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                viewModel.addTag(text)
-                                viewModel.addToRecentList(text)
-                            }
-                            text = ""
-                        }
-                    }
-                ),
-                maxLines = 1,
-                modifier = Modifier
-                    .padding(0.dp)
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    .onFocusEvent { focusState ->
-                        if (focusState.isFocused) {
-                            coroutineScope.launch {
-                                bringIntoViewRequester.bringIntoView()
-                            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+            ) {
+                TextField(
+                    value = text,
+                    onValueChange = {
+                        viewModel.validateKeyword(it)
+                        if (text.length < CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH + 1 || it.length < text.length) {
+                            text = it
                         }
                     },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    placeholder = { Text(context.getString(R.string.generator_keyword_hint)) },
+                    textStyle = MaterialTheme.typography.body2,
+                    isError = viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (text.isNotEmpty() && viewModel.state.keywordError == GeneratorScreenState.ValidationError.NONE) {
+                                if (viewModel.state.loadedTags.size >= MAX_NUMBER_OF_KEYWORDS) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.toast_max_keywords),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    viewModel.addTag(text)
+                                    viewModel.addToRecentList(text)
+                                }
+                                text = ""
+                            }
+                        }
+                    ),
+                    maxLines = 1,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .bringIntoViewRequester(bringIntoViewRequester)
+                        .onFocusEvent { focusState ->
+                            if (focusState.isFocused) {
+                                coroutineScope.launch {
+                                    bringIntoViewRequester.bringIntoView()
+                                }
+                            }
+                        },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
                 )
-            )
+                if (text.isNotEmpty()) {
+                    Text(
+                        text = "${text.length} / ${CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH}",
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .align(CenterVertically)
+                            .padding(end = 16.dp),
+                        color = if (CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH - text.length < 0) {
+                            Color.Red
+                        } else if (CaptionGeneratorViewModel.MAX_KEYWORD_LENGTH - text.length < 5) Color.Yellow
+                        else MaterialTheme.colors.onPrimary
+                    )
+                }
+            }
             if (viewModel.state.keywordError != GeneratorScreenState.ValidationError.NONE) {
-                val errorText =
-                    when (viewModel.state.keywordError) {
-                        GeneratorScreenState.ValidationError.TOO_MANY_KEYWORDS -> {
-                            context.getString(R.string.validation_text_keyword_limit)
-                        }
-                        else -> {
-                            context.getString(R.string.validation_text_too_long)
-                        }
+                val errorText = when (viewModel.state.keywordError) {
+                    GeneratorScreenState.ValidationError.TOO_MANY_KEYWORDS -> {
+                        context.getString(R.string.validation_text_keyword_limit)
                     }
+                    else -> {
+                        context.getString(R.string.validation_text_too_long)
+                    }
+                }
 
                 Text(
                     text = errorText,
@@ -442,8 +467,8 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 16.dp)
                 )
-                Spacer(modifier = Modifier.height(4.dp))
             }
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }

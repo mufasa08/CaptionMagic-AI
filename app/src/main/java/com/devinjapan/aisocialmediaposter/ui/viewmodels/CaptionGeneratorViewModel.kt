@@ -210,7 +210,7 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     companion object {
-        const val MAX_KEYWORD_LENGTH = 30
+        const val MAX_KEYWORD_LENGTH = 20
         const val MAX_KEYWORDS = 10
     }
 }

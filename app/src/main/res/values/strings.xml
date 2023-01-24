@@ -50,6 +50,6 @@
     <string name="exception_message_image_detection">Sorry but I can\'t recognize the anything in the image.</string>
     <string name="setting_tone_title_hide_ai_hashtag">Hide promotional hashtags</string>
     <string name="setting_tone_subtitle_hide_ai_hashtag">#ChatGPT #CaptionMagic #AI</string>
-    <string name="validation_text_too_long">Too long. 30 character limit.</string>
+    <string name="validation_text_too_long">Too long. 20 character limit.</string>
     <string name="validation_text_keyword_limit">10 keywords max. Delete some first.</string>
 </resources>
