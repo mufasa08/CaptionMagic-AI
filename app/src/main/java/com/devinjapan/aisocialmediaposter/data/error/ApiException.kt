@@ -24,6 +24,9 @@ class ApiException(
         CONFLICT(409),
 
         // Response body is empty or has invalid format
+        NO_INTERNET_ERROR,
+
+        // Response body is empty or has invalid format
         INVALID_RESPONSE,
 
         // Failed to connect to web service. There is internet connection, though
@@ -53,6 +56,7 @@ class ApiException(
             fun from(e: Throwable): Type {
                 return when (e) {
                     is JsonDataException -> INVALID_RESPONSE
+                    is NoInternetException -> NO_INTERNET_ERROR
                     is SocketTimeoutException,
                     is UnknownHostException,
                     is SocketException -> CONNECTION_ERROR

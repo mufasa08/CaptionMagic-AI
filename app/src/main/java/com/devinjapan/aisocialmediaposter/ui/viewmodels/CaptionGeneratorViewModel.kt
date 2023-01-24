@@ -70,7 +70,6 @@ class CaptionGeneratorViewModel @Inject constructor(
                             textCompletion = null,
                             isLoading = false,
                             error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
-
                         )
                     }
                 }
@@ -196,12 +195,6 @@ class CaptionGeneratorViewModel @Inject constructor(
     fun clearError() {
         state = state.copy(
             error = null
-        )
-    }
-
-    fun updateConnectionStatus(connected: Boolean) {
-        state = state.copy(
-            isConnected = connected
         )
     }
 
