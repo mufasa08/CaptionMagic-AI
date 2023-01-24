@@ -32,14 +32,10 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-@Inject
-lateinit var analyticsTracker: AnalyticsTracker
 
 @ExperimentalPagerApi
 @Composable
-fun OnBoarding(viewModel: CaptionGeneratorViewModel) {
+fun OnBoarding(viewModel: CaptionGeneratorViewModel, analyticsTracker: AnalyticsTracker) {
     val items = OnBoardingItems.getData()
     val scope = rememberCoroutineScope()
     val pageState = rememberPagerState()

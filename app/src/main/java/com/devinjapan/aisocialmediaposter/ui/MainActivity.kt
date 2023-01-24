@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                     if (viewModel.state.isLoadingFirstLaunchCheck) {
                         GeneratingDialog()
                     } else if (viewModel.state.isFirstLaunch) {
-                        OnBoarding(viewModel)
+                        OnBoarding(viewModel, analyticsTracker)
                     } else {
                         Navigation(imageUri, analyticsTracker, viewModel)
                     }
