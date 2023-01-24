@@ -14,18 +14,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -78,14 +70,20 @@ class MainActivity : ComponentActivity() {
 
                 val isConnected = connection === ConnectionState.Available
 
+                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+                viewModel.updateConnectionStatus(isConnected)
+
                 Scaffold {
-                    if (isConnected) {
-                        // Show UI when connectivity is available
-                        val imageUri = shareImageHandleIntent()
-                        Navigation(imageUri, analyticsTracker)
-                    } else {
-                        NotConnectedScreen()
+                    if (!isConnected) {
+                        Toast.makeText(
+                            LocalContext.current,
+                            getString(R.string.offline),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
+                    // Show UI when connectivity is available
+                    val imageUri = shareImageHandleIntent()
+                    Navigation(imageUri, analyticsTracker, viewModel)
                 }
             }
         }
@@ -143,11 +141,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation(imageUri: Uri?, analyticsTracker: AnalyticsTracker) {
+fun Navigation(
+    imageUri: Uri?,
+    analyticsTracker: AnalyticsTracker,
+    viewModel: CaptionGeneratorViewModel
+) {
     val context = LocalContext.current
     val navController = rememberNavController()
-
-    val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
 
     NavHost(
         navController = navController,
@@ -183,34 +183,5 @@ fun preLoadInitialImageAndTags(
         BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
     if (imageBitmap != null) {
         viewModel.processBitmap(imageBitmap)
-    }
-}
-
-@Composable
-fun NotConnectedScreen() {
-    val context = LocalContext.current
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_wifi_offline),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                modifier = Modifier.padding(bottom = 16.dp),
-                text = context.getString(R.string.offline),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h6
-            )
-        }
     }
 }

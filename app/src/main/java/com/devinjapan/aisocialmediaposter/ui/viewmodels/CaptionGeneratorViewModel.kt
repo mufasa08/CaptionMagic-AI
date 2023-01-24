@@ -189,4 +189,10 @@ class CaptionGeneratorViewModel @Inject constructor(
             error = null
         )
     }
+
+    fun updateConnectionStatus(connected: Boolean) {
+        state = state.copy(
+            isConnected = connected
+        )
+    }
 }

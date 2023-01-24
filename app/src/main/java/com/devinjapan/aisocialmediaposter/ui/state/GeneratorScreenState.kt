@@ -14,6 +14,7 @@ data class GeneratorScreenState(
     val recentList: MutableList<String> = mutableStateListOf(),
     val selectedCaptionTone: String? = null,
     val hidePromoHashtags: Boolean = false,
+    val isConnected: Boolean = true,
     val isLoading: Boolean = false,
     val isLoadingTags: Boolean = false,
     val error: ErrorInfo? = null

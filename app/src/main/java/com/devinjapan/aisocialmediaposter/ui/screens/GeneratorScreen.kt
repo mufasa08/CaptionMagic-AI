@@ -236,7 +236,7 @@ fun GeneratorScreen(
                     onClick = {
                         viewModel.generateDescription()
                     },
-                    enabled = viewModel.state.loadedTags.isNotEmpty()
+                    enabled = viewModel.state.loadedTags.isNotEmpty() && viewModel.state.isConnected
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_magic_wand),
