@@ -26,19 +26,23 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
+import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
+import com.devinjapan.aisocialmediaposter.ui.utils.ObserveLifecycleEvent
 import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -62,7 +66,7 @@ class MainActivity : ComponentActivity() {
     lateinit var analyticsTracker: AnalyticsTracker
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -77,6 +81,15 @@ class MainActivity : ComponentActivity() {
                 val isConnected = connection === ConnectionState.Available
 
                 val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+                ObserveLifecycleEvent { event ->
+                    // 検出したイベントに応じた処理を実装する。
+                    when (event) {
+                        Lifecycle.Event.ON_CREATE -> {
+                            viewModel.checkLaunchCountAndIncrement()
+                        }
+                        else -> {}
+                    }
+                }
                 viewModel.updateConnectionStatus(isConnected)
 
                 Scaffold(scaffoldState = scaffoldState) {
@@ -93,7 +106,11 @@ class MainActivity : ComponentActivity() {
                     }
                     // Show UI when connectivity is available
                     val imageUri = shareImageHandleIntent()
-                    Navigation(imageUri, analyticsTracker, viewModel)
+                    if (viewModel.state.isFirstLaunch) {
+                        OnBoarding(viewModel)
+                    } else {
+                        Navigation(imageUri, analyticsTracker, viewModel)
+                    }
                 }
             }
         }

@@ -6,17 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorRepository
 import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
-import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
-import com.devinjapan.aisocialmediaposter.ui.utils.IS_FIRST_LAUNCH
-import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
-import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
+import com.devinjapan.aisocialmediaposter.ui.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +22,8 @@ import javax.inject.Inject
 class CaptionGeneratorViewModel @Inject constructor(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     var state by mutableStateOf(GeneratorScreenState())
@@ -40,8 +38,8 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
-    // delete this later
     fun generateDescription() {
+        analyticsTracker.logEvent("generate_description", null)
         viewModelScope.launch {
             state = state.copy(
                 isLoading = true,
@@ -63,11 +61,14 @@ class CaptionGeneratorViewModel @Inject constructor(
                     )
                 }
                 is Resource.Error -> {
-                    state = state.copy(
-                        textCompletion = null,
-                        isLoading = false,
-                        error = result.message
-                    )
+                    if (result.message != null) {
+                        state = state.copy(
+                            textCompletion = null,
+                            isLoading = false,
+                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+
+                        )
+                    }
                 }
             }
         }
@@ -83,7 +84,9 @@ class CaptionGeneratorViewModel @Inject constructor(
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
                 is Resource.Success -> {
                     result.data?.let {
-                        state.loadedTags.addAll(it)
+                        val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size
+                        val list = it.take(availableTagSlots)
+                        state.loadedTags.addAll(list)
                         state = state.copy(
                             isLoadingTags = false,
                             error = null
@@ -92,10 +95,12 @@ class CaptionGeneratorViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     state.loadedTags.clear()
-                    state = state.copy(
-                        isLoadingTags = false,
-                        error = result.message
-                    )
+                    if (result.message != null) {
+                        state = state.copy(
+                            isLoadingTags = false,
+                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+                        )
+                    }
                 }
             }
         }
@@ -110,13 +115,18 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun addTag(tag: String) {
-        if (state.loadedTags.size <= MAX_NUMBER_OF_KEYWORDS && tag.isNotEmpty()) {
+        if (state.loadedTags.size < MAX_KEYWORDS && tag.isNotEmpty()) {
             state.loadedTags.add(tag)
         }
     }
 
     fun removeTag(tag: String) {
         state.loadedTags.remove(tag)
+        if (state.loadedTags.size <= MAX_KEYWORDS) {
+            state = state.copy(
+                keywordError = GeneratorScreenState.ValidationError.NONE
+            )
+        }
     }
 
     fun clearGeneratedText() {
@@ -179,10 +189,43 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
-    fun signInAnonymouslyIfNecessary() {
-        /*val currentUser = auth.currentUser
-        if (currentUser == null) {
-            auth.signInAnonymously()
-        }*/
+    fun clearError() {
+        state = state.copy(
+            error = null
+        )
+    }
+
+    fun updateConnectionStatus(connected: Boolean) {
+        state = state.copy(
+            isConnected = connected
+        )
+    }
+
+    fun validateKeyword(keyword: String) {
+        val keywordErrorState = if (state.loadedTags.size >= MAX_KEYWORDS) {
+            GeneratorScreenState.ValidationError.TOO_MANY_KEYWORDS
+        } else if (keyword.length > MAX_KEYWORD_LENGTH) {
+            GeneratorScreenState.ValidationError.TOO_LONG
+        } else {
+            GeneratorScreenState.ValidationError.NONE
+        }
+        state = state.copy(
+            keywordError = keywordErrorState
+        )
+    }
+
+    fun checkLaunchCountAndIncrement() {
+        viewModelScope.launch {
+            val launchCount = dataStoreRepositoryImpl.getLong(LAUNCH_COUNT) ?: 1L
+            state.isFirstLaunch = launchCount == 1L
+            state.launchNumber = launchCount
+            dataStoreRepositoryImpl.putLong(LAUNCH_COUNT, launchCount + 1L)
+        }
+    }
+
+    fun finishOnBoarding() {
+        state = state.copy(
+            isFirstLaunch = false
+        )
     }
 }

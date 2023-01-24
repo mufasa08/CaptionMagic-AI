@@ -15,6 +15,7 @@ data class GeneratorScreenState(
     val selectedCaptionTone: String? = null,
     val hidePromoHashtags: Boolean = false,
     val isConnected: Boolean = true,
+    var launchNumber: Long = 0L,
     var isFirstLaunch: Boolean = true,
     val isLoading: Boolean = false,
     val keywordError: ValidationError = ValidationError.NONE,

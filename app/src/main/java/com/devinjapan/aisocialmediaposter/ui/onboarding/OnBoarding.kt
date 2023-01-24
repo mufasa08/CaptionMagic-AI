@@ -18,22 +18,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
 @ExperimentalPagerApi
-@Preview
 @Composable
-fun OnBoarding() {
+fun OnBoarding(viewModel: CaptionGeneratorViewModel) {
     val items = OnBoardingItems.getData()
     val scope = rememberCoroutineScope()
     val pageState = rememberPagerState()
@@ -61,11 +62,13 @@ fun OnBoarding() {
         ) { page ->
             OnBoardingItem(items = items[page])
         }
-        BottomSection(size = items.size, index = pageState.currentPage) {
+        BottomSection(size = items.size, index = pageState.currentPage, onButtonClick = {
             if (pageState.currentPage + 1 < items.size) scope.launch {
                 pageState.scrollToPage(pageState.currentPage + 1)
             }
-        }
+        }, onFinishClick = {
+                viewModel.finishOnBoarding()
+            })
     }
 }
 
@@ -94,7 +97,13 @@ fun TopSection(onBackClick: () -> Unit = {}, onSkipClick: () -> Unit = {}) {
 }
 
 @Composable
-fun BottomSection(size: Int, index: Int, onButtonClick: () -> Unit = {}) {
+fun BottomSection(
+    size: Int,
+    index: Int,
+    onButtonClick: () -> Unit = {},
+    onFinishClick: () -> Unit = {}
+) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,29 +113,33 @@ fun BottomSection(size: Int, index: Int, onButtonClick: () -> Unit = {}) {
         Indicators(size, index)
 
         // FAB Next
-        /* FloatingActionButton(
-             onClick = onButtonClick,
-            // backgroundColor = MaterialTheme.colorScheme.primary,
-            // contentColor = MaterialTheme.colorScheme.onPrimary,
-             modifier = Modifier.align(Alignment.CenterEnd)
-         ) {
-             Icon(imageVector = Icons.Outlined.KeyboardArrowRight, contentDescription = "Next")
-         }*/
-
-        FloatingActionButton(
-            onClick = {
-                onButtonClick()
-            },
-            backgroundColor = Color.Black,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .clip(RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-        ) {
-            Icon(
-                Icons.Outlined.KeyboardArrowRight,
-                tint = Color.White,
-                contentDescription = "Localized description"
-            )
+        if (index == size - 1) {
+            TextButton(
+                onClick = onFinishClick,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = context.getString(R.string.walkthrough_finish_button),
+                    color = MaterialTheme.colors.onBackground
+                )
+            }
+        } else {
+            FloatingActionButton(
+                onClick = {
+                    onButtonClick()
+                },
+                backgroundColor = Color.Black,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clip(RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+            ) {
+                Icon(
+                    Icons.Outlined.KeyboardArrowRight,
+                    tint = Color.White,
+                    contentDescription = "Localized description"
+                )
+            }
         }
     }
 }
@@ -180,7 +193,7 @@ fun OnBoardingItem(items: OnBoardingItems) {
 
         Text(
             text = stringResource(id = items.title),
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.h6,
             // fontSize = 24.sp,
             color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Bold,
@@ -191,7 +204,7 @@ fun OnBoardingItem(items: OnBoardingItems) {
 
         Text(
             text = stringResource(id = items.desc),
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Light,
             textAlign = TextAlign.Center,

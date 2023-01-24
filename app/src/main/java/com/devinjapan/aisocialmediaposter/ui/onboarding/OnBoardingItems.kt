@@ -11,17 +11,17 @@ class OnBoardingItems(
         fun getData(): List<OnBoardingItems> {
             return listOf(
                 OnBoardingItems(
-                    R.drawable.ic_magic_wand,
+                    R.drawable.walkthrough_page1,
                     R.string.onboarding_title_1,
                     R.string.onboarding_text_1
                 ),
                 OnBoardingItems(
-                    R.drawable.ic_magic_wand,
+                    R.drawable.walkthrough_page2,
                     R.string.onboarding_title_2,
                     R.string.onboarding_text_2
                 ),
                 OnBoardingItems(
-                    R.drawable.ic_magic_wand,
+                    R.drawable.walkthrough_page3,
                     R.string.onboarding_title_3,
                     R.string.onboarding_text_3
                 )
