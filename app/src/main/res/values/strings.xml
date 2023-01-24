@@ -19,7 +19,7 @@
     <string name="other">Unspecified</string>
     <string name="social_media_selector_label">Which social media are you targeting?</string>
     <string name="social_media_selector_optional_label">Optional</string>
-    <string name="offline">Please check\nyour network connection.</string>
+    <string name="offline">No internet connection.</string>
     <string name="not_showing_notifications">Showing notifications disabled</string>
     <string name="recent_list_items">Recent Keywords</string>
     <string name="settings_title">Settings</string>
@@ -50,4 +50,6 @@
     <string name="exception_message_image_detection">Sorry but I can\'t recognize the anything in the image.</string>
     <string name="setting_tone_title_hide_ai_hashtag">Hide promotional hashtags</string>
     <string name="setting_tone_subtitle_hide_ai_hashtag">#ChatGPT #CaptionMagic #AI</string>
+    <string name="validation_text_too_long">Too long. 20 character limit.</string>
+    <string name="validation_text_keyword_limit">10 keywords max. Delete some first.</string>
 </resources>

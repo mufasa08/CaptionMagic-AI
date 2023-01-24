@@ -2,7 +2,8 @@ package com.devinjapan.aisocialmediaposter.ui.utils
 
 const val RECENT_KEYWORD_LIST = "recent_keyword_list"
 
-const val MAX_NUMBER_OF_KEYWORDS = 10
+const val MAX_KEYWORDS = 10
+const val MAX_KEYWORD_LENGTH = 20
 
 const val SELECTED_TONE = "selected_tone"
 
