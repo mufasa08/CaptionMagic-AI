@@ -4,6 +4,7 @@ import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.error.toApiException
 import com.devinjapan.aisocialmediaposter.data.mappers.toTextCompletion
 import com.devinjapan.aisocialmediaposter.data.request.TextCompletionRequestBody
+import com.devinjapan.aisocialmediaposter.data.source.remote.OpenAIApi
 import com.devinjapan.aisocialmediaposter.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
 import com.devinjapan.aisocialmediaposter.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
@@ -13,7 +14,6 @@ import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionReposi
 import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
-import com.plcoding.weatherapp.data.remote.OpenAIApi
 import javax.inject.Inject
 
 class TextCompletionRepositoryImpl @Inject constructor(

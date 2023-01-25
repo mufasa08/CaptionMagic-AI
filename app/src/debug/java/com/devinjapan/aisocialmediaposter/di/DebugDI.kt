@@ -4,9 +4,9 @@ import android.content.Context
 import com.devinjapan.aisocialmediaposter.BuildConfig
 import com.devinjapan.aisocialmediaposter.data.interceptors.AuthorizationInterceptor
 import com.devinjapan.aisocialmediaposter.data.interceptors.NetworkConnectivityInterceptor
+import com.devinjapan.aisocialmediaposter.data.source.remote.OpenAIApi
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.plcoding.weatherapp.data.remote.OpenAIApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -5,6 +5,8 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.android.gms.oss-licenses-plugin'
+
 
 }
 
@@ -133,10 +135,13 @@ dependencies {
     // image detection
     implementation 'com.google.mlkit:image-labeling:17.0.7'
 
-    
+
     // Datastore
     implementation 'androidx.datastore:datastore-preferences-core:1.0.0'
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // Licenses plugin tool
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
     // Debug tools
     // Flipper

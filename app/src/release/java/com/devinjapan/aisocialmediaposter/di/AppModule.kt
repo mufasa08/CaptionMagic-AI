@@ -1,11 +1,14 @@
 package com.devinjapan.aisocialmediaposter.di
 
+import android.content.Context
 import com.devinjapan.aisocialmediaposter.BuildConfig
 import com.devinjapan.aisocialmediaposter.data.interceptors.AuthorizationInterceptor
-import com.plcoding.weatherapp.data.remote.OpenAIApi
+import com.devinjapan.aisocialmediaposter.data.interceptors.NetworkConnectivityInterceptor
+import com.devinjapan.aisocialmediaposter.data.source.remote.OpenAIApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -15,7 +18,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object ReleaseAppModule {
     @Singleton
     @Provides
     fun makeOkHttpClient(@ApplicationContext appContext: Context): OkHttpClient {
