@@ -38,6 +38,7 @@ import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
+import com.devinjapan.aisocialmediaposter.ui.utils.isLandscape
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import kotlinx.coroutines.launch
 
@@ -112,12 +113,15 @@ fun ShareScreen(
                         style = MaterialTheme.typography.body2
                     )
                     if (viewModel.state.image != null) {
+                        val isLandscape = viewModel.state.image?.isLandscape() == true
+                        val modifier = if (isLandscape) Modifier.fillMaxWidth()
+                            .wrapContentHeight() else Modifier
+                            .height(246.dp)
+                            .fillMaxWidth()
                         AsyncImage(
                             model = viewModel.state.image,
-                            modifier = Modifier
-                                .height(246.dp)
-                                .fillMaxWidth(),
-                            contentScale = ContentScale.Fit,
+                            modifier = modifier,
+                            contentScale = if (isLandscape) ContentScale.FillWidth else ContentScale.FillHeight,
                             contentDescription = "Selected image"
                         )
                     }
