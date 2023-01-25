@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
@@ -245,7 +246,8 @@ fun GeneratorScreen(
                     )
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = context.getString(R.string.generator_generate_post_button)
+                        text = context.getString(R.string.generator_generate_post_button),
+                        letterSpacing = 1.5.sp
                     )
                 }
             }
