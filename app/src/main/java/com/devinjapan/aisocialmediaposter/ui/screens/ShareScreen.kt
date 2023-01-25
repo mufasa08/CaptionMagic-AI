@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -203,14 +202,10 @@ fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
             value = text,
             onValueChange = {
                 text = it
+                viewModel.updateModifiedText(text)
             },
             textStyle = MaterialTheme.typography.body2,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    viewModel.updateModifiedText(text)
-                }
-            ),
             modifier = Modifier
                 .padding(0.dp)
                 .fillMaxWidth()
