@@ -10,6 +10,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -47,7 +48,8 @@ fun ImagePicker(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_close_round),
-                null
+                contentDescription = null,
+                tint = Color.Unspecified
             )
         }
     }
