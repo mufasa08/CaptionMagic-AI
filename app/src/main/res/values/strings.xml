@@ -61,4 +61,5 @@
     <string name="walkthrough_finish_button">Finish</string>
     <string name="walkthrough_next_button">Next</string>
     <string name="settings_title_oss_licenses">Licenses</string>
+    <string name="settings_title_privacy_policy">Privacy Policy</string>
 </resources>

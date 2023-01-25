@@ -29,6 +29,7 @@ import com.devinjapan.aisocialmediaposter.ui.components.CustomSettingsList
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
 import com.devinjapan.aisocialmediaposter.ui.utils.FEEDBACK_URL
+import com.devinjapan.aisocialmediaposter.ui.utils.PRIVACY_POLICY_URL
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -201,6 +202,18 @@ fun SettingsItems(viewModel: SettingsViewModel) {
     }
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_about)) }) {
+        SettingsMenuLink(
+            title = { Text(text = context.getString(R.string.settings_title_privacy_policy)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_policy),
+                    contentDescription = "Menu Licenses"
+                )
+            }
+        ) {
+            uriHandler.openUri(PRIVACY_POLICY_URL)
+            viewModel.openPrivacyPolicyClicked()
+        }
         SettingsMenuLink(
             title = { Text(text = context.getString(R.string.settings_title_oss_licenses)) },
             icon = {
