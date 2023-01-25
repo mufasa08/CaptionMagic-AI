@@ -60,4 +60,5 @@
     <string name="validation_text_keyword_limit">10 keywords max. Delete some first.</string>
     <string name="walkthrough_finish_button">Finish</string>
     <string name="walkthrough_next_button">Next</string>
+    <string name="settings_title_oss_licenses">Licenses</string>
 </resources>

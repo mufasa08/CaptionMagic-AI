@@ -1,6 +1,7 @@
 package com.devinjapan.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.alorma.compose.settings.storage.base.rememberIntSettingState
@@ -28,6 +30,7 @@ import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
 import com.devinjapan.aisocialmediaposter.ui.utils.FEEDBACK_URL
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -198,6 +201,18 @@ fun SettingsItems(viewModel: SettingsViewModel) {
     }
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_group_about)) }) {
+        SettingsMenuLink(
+            title = { Text(text = context.getString(R.string.settings_title_oss_licenses)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_licenses),
+                    contentDescription = "Menu Licenses"
+                )
+            }
+        ) {
+            startActivity(context, Intent(context, OssLicensesMenuActivity::class.java), null)
+            viewModel.openSourceLicensesClicked()
+        }
         SettingsMenuLink(
             modifier = Modifier.clickable(enabled = false, onClick = {}),
             title = { Text(text = context.getString(R.string.app_name)) },
