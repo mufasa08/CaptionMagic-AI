@@ -22,7 +22,8 @@ fun ImagePicker(
     modifier: Modifier,
     // change this sometime.. don't pass viewmodel but pass a callback.
     viewModel: CaptionGeneratorViewModel,
-    imageBitmap: Bitmap
+    imageBitmap: Bitmap,
+    isLandscape: Boolean
 ) {
     Box(
         modifier = modifier
@@ -33,7 +34,7 @@ fun ImagePicker(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .align(Alignment.TopCenter),
-            contentScale = ContentScale.Fit,
+            contentScale = if (isLandscape) ContentScale.FillWidth else ContentScale.FillHeight,
             contentDescription = "Selected image"
         )
         IconButton(

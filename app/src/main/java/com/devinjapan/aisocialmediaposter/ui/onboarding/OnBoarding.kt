@@ -113,7 +113,7 @@ fun BottomSection(
             }
         } else {
             TextButton(
-                onClick = onFinishClick,
+                onClick = onButtonClick,
                 modifier = Modifier.align(Alignment.CenterEnd),
                 contentPadding = PaddingValues(0.dp)
             ) {

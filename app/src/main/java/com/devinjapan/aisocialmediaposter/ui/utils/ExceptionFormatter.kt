@@ -9,6 +9,7 @@ import com.devinjapan.aisocialmediaposter.data.error.ApiException
 fun ApiException.toUserUnderstandableMessage(): String {
     val context = LocalContext.current
     return when (this.type) {
+        ApiException.Type.NO_INTERNET_ERROR -> context.getString(R.string.offline)
         ApiException.Type.BAD_REQUEST -> context.getString(R.string.exception_message_bad_request)
         ApiException.Type.UNAUTHORIZED -> context.getString(R.string.exception_message_not_allowed)
         ApiException.Type.FORBIDDEN -> context.getString(R.string.exception_message_something_went_wrong)

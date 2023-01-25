@@ -18,9 +18,10 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun makeOkHttpClient(): OkHttpClient {
+    fun makeOkHttpClient(@ApplicationContext appContext: Context): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(AuthorizationInterceptor(BuildConfig.OpenApiSecret))
+            .addInterceptor(NetworkConnectivityInterceptor(appContext))
             .build()
     }
 

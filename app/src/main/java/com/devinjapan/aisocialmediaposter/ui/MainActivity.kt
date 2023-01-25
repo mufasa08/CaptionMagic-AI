@@ -16,8 +16,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,8 +35,6 @@ import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
-import com.devinjapan.aisocialmediaposter.ui.utils.ConnectionState
-import com.devinjapan.aisocialmediaposter.ui.utils.connectivityState
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.firebase.auth.FirebaseAuth
@@ -46,7 +42,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -77,25 +72,7 @@ class MainActivity : ComponentActivity() {
 
                 val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
 
-                val connection by connectivityState(applicationContext)
-
-                val isConnected = connection === ConnectionState.Available
-
-                viewModel.updateConnectionStatus(isConnected)
-
                 Scaffold(scaffoldState = scaffoldState) {
-                    if (!isConnected) {
-                        LaunchedEffect(Unit) {
-                            this.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = getString(R.string.offline),
-                                    actionLabel = getString(R.string.dialog_ok_button),
-                                    duration = SnackbarDuration.Indefinite
-                                )
-                            }
-                        }
-                    }
-                    // Show UI when connectivity is available
                     val imageUri = shareImageHandleIntent()
 
                     if (viewModel.state.isLoadingFirstLaunchCheck) {
@@ -103,6 +80,10 @@ class MainActivity : ComponentActivity() {
                     } else if (viewModel.state.isFirstLaunch) {
                         OnBoarding(viewModel, analyticsTracker)
                     } else {
+                        // dont ask for something like notification permission on first launch
+                        if (viewModel.state.launchNumber > 1) {
+                            askNotificationPermission()
+                        }
                         Navigation(imageUri, analyticsTracker, viewModel)
                     }
                 }
@@ -128,12 +109,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    private fun signInIfNecessary(viewModel: CaptionGeneratorViewModel, auth: FirebaseAuth) {
-        // Check if user is signed in (non-null) and update UI accordingly.
-        // viewModel.signInAnonymouslyIfNecessary()
-        // TODO implement this with Repository Pattern and Analytics
     }
 
     @Suppress("DEPRECATION")

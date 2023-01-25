@@ -199,12 +199,16 @@ fun GeneratorScreen(
                             )
                         }
                     } else {
+                        val isLandscape = viewModel.state.image?.isLandscape() == true
+                        val modifier = if (isLandscape) Modifier.fillMaxWidth()
+                            .wrapContentHeight() else Modifier
+                            .height(246.dp)
+                            .fillMaxWidth()
                         ImagePicker(
-                            modifier = Modifier
-                                .height(246.dp)
-                                .fillMaxWidth(),
+                            modifier = modifier,
                             viewModel,
-                            viewModel.state.image!!
+                            viewModel.state.image!!,
+                            isLandscape
                         )
                     }
                 }
@@ -232,7 +236,7 @@ fun GeneratorScreen(
                     onClick = {
                         viewModel.generateDescription()
                     },
-                    enabled = viewModel.state.loadedTags.isNotEmpty() && viewModel.state.isConnected
+                    enabled = viewModel.state.loadedTags.isNotEmpty()
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_magic_wand),
