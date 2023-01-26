@@ -256,7 +256,6 @@ fun GeneratorScreen(
             }
             if (viewModel.state.launchNumber > 1) {
                 BannerAd(
-                    context,
                     Modifier.align(BottomCenter),
                     adUnitId = context.getString(R.string.ads_banner_generator_screen_bottom)
                 )

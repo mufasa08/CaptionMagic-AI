@@ -179,7 +179,6 @@ fun ShareScreen(
                 }
             }
             BannerAd(
-                context,
                 Modifier.align(Alignment.BottomCenter),
                 context.getString(R.string.ads_banner_share_screen_bottom)
             )

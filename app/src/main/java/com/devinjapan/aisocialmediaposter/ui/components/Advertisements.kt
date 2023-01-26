@@ -19,7 +19,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
 @SuppressLint("VisibleForTests")
 @Composable
-fun BannerAd(context: Context, modifier: Modifier = Modifier, adUnitId: String) {
+fun BannerAd(modifier: Modifier = Modifier, adUnitId: String) {
     // on below line creating a variable for location.
     // on below line creating a column for our maps.
     Column(
@@ -31,8 +31,6 @@ fun BannerAd(context: Context, modifier: Modifier = Modifier, adUnitId: String) 
             // on below line specifying width for ads.
             modifier = Modifier.fillMaxWidth(),
             factory = { context ->
-                // on below line specifying ad view.
-                val adView = AdView(context)
 
                 AdView(context).apply {
                     // on below line specifying ad size

@@ -240,7 +240,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
         ) {
         }
         BannerAd(
-            context,
             adUnitId = context.getString(R.string.ads_banner_settings)
         )
     }
