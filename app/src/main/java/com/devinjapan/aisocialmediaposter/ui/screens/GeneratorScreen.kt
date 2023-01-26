@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.error.ApiException
 import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
@@ -251,6 +253,12 @@ fun GeneratorScreen(
                         letterSpacing = 1.5.sp
                     )
                 }
+            }
+            if (viewModel.state.launchNumber > 1) {
+                BannerAd(
+                    Modifier.align(BottomCenter),
+                    adUnitId = context.getString(R.string.ads_banner_generator_screen_bottom)
+                )
             }
             if (viewModel.state.isLoading) {
                 GeneratingDialog()

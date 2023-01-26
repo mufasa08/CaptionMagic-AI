@@ -25,6 +25,7 @@ import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.devinjapan.aisocialmediaposter.BuildConfig
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.CustomSettingsList
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.utils.BUG_REPORT_BASE_URL
@@ -238,6 +239,9 @@ fun SettingsItems(viewModel: SettingsViewModel) {
             }
         ) {
         }
+        BannerAd(
+            adUnitId = context.getString(R.string.ads_banner_settings)
+        )
     }
     if (BuildConfig.DEBUG) {
         SettingsGroup(title = { Text(text = "DEBUG ONLY") }) {

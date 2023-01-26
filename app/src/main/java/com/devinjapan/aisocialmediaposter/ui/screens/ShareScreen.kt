@@ -36,6 +36,8 @@ import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
+import com.devinjapan.aisocialmediaposter.ui.components.showInterstitial
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
 import com.devinjapan.aisocialmediaposter.ui.utils.isLandscape
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
@@ -160,9 +162,11 @@ fun ShareScreen(
                 TextButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
-                        analyticsTracker.logEvent("start_over_pressed", null)
-                        viewModel.resetEverything()
-                        navController.navigateUp()
+                        showInterstitial(context) {
+                            analyticsTracker.logEvent("start_over_pressed", null)
+                            viewModel.resetEverything()
+                            navController.navigateUp()
+                        }
                     },
                     enabled = viewModel.state.loadedTags.isNotEmpty()
                 ) {
@@ -174,6 +178,10 @@ fun ShareScreen(
                     )
                 }
             }
+            BannerAd(
+                Modifier.align(Alignment.BottomCenter),
+                context.getString(R.string.ads_banner_share_screen_bottom)
+            )
         }
     }
 }
