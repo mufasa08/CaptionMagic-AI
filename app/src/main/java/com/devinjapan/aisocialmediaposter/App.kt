@@ -1,7 +1,7 @@
 package com.devinjapan.aisocialmediaposter
 
 import android.app.Application
-import com.devinjapan.aisocialmediaposter.domain.repository.AuthRepository
+import com.devinjapan.shared.domain.repository.AuthRepository
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -17,6 +17,14 @@ open class App : Application() {
         super.onCreate()
         GlobalScope.launch {
             authRepository.signInAnonymously()
+        }
+
+        initKoin {
+            androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
+            androidContext(this@KmmApplication)
+            modules(
+                viewModelModule
+            )
         }
     }
 }

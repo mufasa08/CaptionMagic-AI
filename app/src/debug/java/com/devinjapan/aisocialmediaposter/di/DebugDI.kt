@@ -2,9 +2,6 @@ package com.devinjapan.aisocialmediaposter.di
 
 import android.content.Context
 import com.devinjapan.aisocialmediaposter.BuildConfig
-import com.devinjapan.aisocialmediaposter.data.interceptors.AuthorizationInterceptor
-import com.devinjapan.aisocialmediaposter.data.interceptors.NetworkConnectivityInterceptor
-import com.devinjapan.aisocialmediaposter.data.source.remote.OpenAIApi
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import dagger.Module
@@ -32,8 +29,16 @@ object DebugDI {
         @ApplicationContext appContext: Context
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(AuthorizationInterceptor(BuildConfig.OpenApiSecret))
-            .addInterceptor(NetworkConnectivityInterceptor(appContext))
+            .addInterceptor(
+                com.example.shared.data.interceptors.AuthorizationInterceptor(
+                    BuildConfig.OpenApiSecret
+                )
+            )
+            .addInterceptor(
+                com.example.shared.data.interceptors.NetworkConnectivityInterceptor(
+                    appContext
+                )
+            )
             .addInterceptor(
                 FlipperOkhttpInterceptor(networkFlipperPlugin)
             )
@@ -44,7 +49,7 @@ object DebugDI {
     @Singleton
     fun provideOpenAIApi(
         client: OkHttpClient
-    ): OpenAIApi {
+    ): com.example.shared.data.source.remote.OpenAIApi {
         return Retrofit.Builder()
             .baseUrl("https://api.openai.com/v1/")
             .addConverterFactory(MoshiConverterFactory.create())

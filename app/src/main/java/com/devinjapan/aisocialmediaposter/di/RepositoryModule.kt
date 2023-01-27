@@ -1,9 +1,9 @@
 package com.devinjapan.aisocialmediaposter.di
 
-import com.devinjapan.aisocialmediaposter.data.repository.ImageDetectorRepositoryImpl
-import com.devinjapan.aisocialmediaposter.data.repository.TextCompletionRepositoryImpl
-import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorRepository
-import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
+import com.example.shared.data.repository.ImageDetectorRepositoryImpl
+import com.example.shared.data.repository.TextCompletionRepositoryImpl
+import com.example.shared.domain.repository.ImageDetectorRepository
+import com.example.shared.domain.repository.TextCompletionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

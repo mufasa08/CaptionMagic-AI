@@ -1,8 +1,8 @@
 package com.devinjapan.aisocialmediaposter.di
 
 import android.content.Context
-import com.devinjapan.aisocialmediaposter.data.source.local.ImageProcessorDataSource
-import com.devinjapan.aisocialmediaposter.data.source.local.label.LabelDetectorProcessor
+import com.example.shared.data.source.local.ImageProcessorDataSource
+import com.example.shared.data.source.local.label.LabelDetectorProcessor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

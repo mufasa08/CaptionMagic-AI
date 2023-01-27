@@ -2,15 +2,15 @@ package com.devinjapan.aisocialmediaposter.ui.state
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
-import com.devinjapan.aisocialmediaposter.domain.model.TextCompletion
+import com.example.shared.domain.model.SocialMedia
+import com.example.shared.domain.model.TextCompletion
 
 data class GeneratorScreenState(
     val image: Bitmap? = null,
-    val textCompletion: TextCompletion? = null,
+    val textCompletion: com.example.shared.domain.model.TextCompletion? = null,
     var modifiedText: String? = null,
     val loadedTags: MutableList<String> = mutableStateListOf(),
-    val selectedSocialMedia: SocialMedia = SocialMedia.OTHER,
+    val selectedSocialMedia: com.example.shared.domain.model.SocialMedia = com.example.shared.domain.model.SocialMedia.OTHER,
     val recentList: MutableList<String> = mutableStateListOf(),
     val selectedCaptionTone: String? = null,
     val hidePromoHashtags: Boolean = false,

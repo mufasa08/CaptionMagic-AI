@@ -38,10 +38,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.error.ApiException
-import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
@@ -67,6 +63,10 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.*
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.example.shared.AnalyticsTracker
+import com.example.shared.data.error.ApiException
+import com.example.shared.data.error.ImageDetectionException
+import com.example.shared.domain.model.SocialMedia
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
 import org.compose.museum.simpletags.SimpleTags
@@ -78,7 +78,7 @@ fun GeneratorScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
     startingImageUri: Uri? = null,
-    analyticsTracker: AnalyticsTracker
+    analyticsTracker: com.example.shared.AnalyticsTracker
 ) {
     val context = LocalContext.current
     val contentResolver = LocalContext.current.contentResolver
@@ -265,7 +265,7 @@ fun GeneratorScreen(
             }
 
             viewModel.state.error?.let { error ->
-                if (error.exception != null && error.exception is ApiException) {
+                if (error.exception != null && error.exception is com.example.shared.data.error.ApiException) {
                     ErrorDialog(
                         errorMessage = error.exception.toUserUnderstandableMessage(),
                         onConfirmClick = {
@@ -273,7 +273,7 @@ fun GeneratorScreen(
                         }
                     )
                 } else {
-                    if (error.exception is ImageDetectionException) {
+                    if (error.exception is com.example.shared.data.error.ImageDetectionException) {
                         Toast.makeText(
                             context,
                             context.getString(R.string.exception_message_image_detection),
@@ -314,16 +314,29 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-                GetButton(viewModel, selectedItem, SocialMedia.TWITTER, R.drawable.ic_twitter)
+                GetButton(
+                    viewModel,
+                    selectedItem,
+                    com.example.shared.domain.model.SocialMedia.TWITTER,
+                    R.drawable.ic_twitter
+                )
                 Spacer(modifier = Modifier.padding(start = 8.dp))
-                GetButton(viewModel, selectedItem, SocialMedia.INSTAGRAM, R.drawable.ic_instagram)
+                GetButton(
+                    viewModel,
+                    selectedItem,
+                    com.example.shared.domain.model.SocialMedia.INSTAGRAM,
+                    R.drawable.ic_instagram
+                )
             }
         }
     }
 }
 
 @Composable
-fun getButtonIconTintColor(selectedItem: SocialMedia, socialMedia: SocialMedia): Color {
+fun getButtonIconTintColor(
+    selectedItem: com.example.shared.domain.model.SocialMedia,
+    socialMedia: com.example.shared.domain.model.SocialMedia
+): Color {
     return if (isSystemInDarkTheme()) {
         if (selectedItem == socialMedia) TintSelectedDark else TintUnselectedDark
     } else {
@@ -332,7 +345,10 @@ fun getButtonIconTintColor(selectedItem: SocialMedia, socialMedia: SocialMedia):
 }
 
 @Composable
-fun getButtonBackgroundColor(selectedItem: SocialMedia, socialMedia: SocialMedia): Color {
+fun getButtonBackgroundColor(
+    selectedItem: com.example.shared.domain.model.SocialMedia,
+    socialMedia: com.example.shared.domain.model.SocialMedia
+): Color {
     return if (isSystemInDarkTheme()) {
         if (selectedItem == socialMedia) ButtonBackgroundSelectedDark else ButtonBackgroundUnselectedDark
     } else {
@@ -343,8 +359,8 @@ fun getButtonBackgroundColor(selectedItem: SocialMedia, socialMedia: SocialMedia
 @Composable
 fun GetButton(
     viewModel: CaptionGeneratorViewModel,
-    selectedItem: SocialMedia,
-    socialMedia: SocialMedia,
+    selectedItem: com.example.shared.domain.model.SocialMedia,
+    socialMedia: com.example.shared.domain.model.SocialMedia,
     icon: Int
 ) {
     val backgroundColor =
@@ -355,7 +371,7 @@ fun GetButton(
     return OutlinedButton(
         onClick = {
             if (selectedItem == socialMedia) {
-                viewModel.updateSelectedSocialMedia(socialMedia = SocialMedia.OTHER)
+                viewModel.updateSelectedSocialMedia(socialMedia = com.example.shared.domain.model.SocialMedia.OTHER)
             } else {
                 viewModel.updateSelectedSocialMedia(socialMedia = socialMedia)
             }

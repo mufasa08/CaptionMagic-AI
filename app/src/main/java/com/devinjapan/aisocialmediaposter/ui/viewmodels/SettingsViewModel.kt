@@ -5,21 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
 import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
+import com.example.shared.AnalyticsTracker
+import com.example.shared.data.repository.DataStoreRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
-    private val analyticsTracker: AnalyticsTracker
+    private val dataStoreRepositoryImpl: com.example.shared.data.repository.DataStoreRepositoryImpl,
+    private val analyticsTracker: com.example.shared.AnalyticsTracker
 ) : ViewModel() {
 
     var state by mutableStateOf(SettingsState())

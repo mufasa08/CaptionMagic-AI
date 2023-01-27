@@ -34,13 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.showInterstitial
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
 import com.devinjapan.aisocialmediaposter.ui.utils.isLandscape
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.example.shared.AnalyticsTracker
+import com.example.shared.domain.model.SocialMedia
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 fun ShareScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
-    analyticsTracker: AnalyticsTracker
+    analyticsTracker: com.example.shared.AnalyticsTracker
 ) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
@@ -99,7 +99,7 @@ fun ShareScreen(
                             append(viewModel.state.selectedCaptionTone)
                             append(" ")
 
-                            if (viewModel.state.selectedSocialMedia == SocialMedia.OTHER) {
+                            if (viewModel.state.selectedSocialMedia == com.example.shared.domain.model.SocialMedia.OTHER) {
                                 append(context.getString(R.string.share_screen_header_text_pt2))
                             } else {
                                 append(

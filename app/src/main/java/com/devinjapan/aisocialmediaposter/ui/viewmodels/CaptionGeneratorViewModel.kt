@@ -6,25 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
-import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorRepository
-import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
-import com.devinjapan.aisocialmediaposter.domain.util.Resource
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.devinjapan.aisocialmediaposter.ui.utils.*
+import com.devinjapan.shared.domain.repository.TextCompletionRepository
+import com.example.shared.AnalyticsTracker
+import com.example.shared.data.repository.DataStoreRepositoryImpl
+import com.example.shared.domain.model.SocialMedia
+import com.example.shared.domain.repository.ImageDetectorRepository
+import com.example.shared.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.core.component.inject
 
 @HiltViewModel
-class CaptionGeneratorViewModel @Inject constructor(
-    private val textCompletionRepository: TextCompletionRepository,
-    private val imageDetectorRepository: ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
-    private val analyticsTracker: AnalyticsTracker
-) : ViewModel() {
+class CaptionGeneratorViewModel() : ViewModel() {
+    private val textCompletionRepository: TextCompletionRepository by inject()
+    private val imageDetectorRepository: com.example.shared.domain.repository.ImageDetectorRepository,
+    private val dataStoreRepositoryImpl: com.example.shared.data.repository.DataStoreRepositoryImpl,
+    private val analyticsTracker: com.example.shared.AnalyticsTracker
+
 
     var state by mutableStateOf(GeneratorScreenState())
         private set
@@ -57,14 +57,14 @@ class CaptionGeneratorViewModel @Inject constructor(
                     type = state.selectedSocialMedia
                 )
             ) {
-                is Resource.Success -> {
+                is com.example.shared.domain.util.Resource.Success -> {
                     state = state.copy(
                         textCompletion = result.data,
                         isLoading = false,
                         error = null
                     )
                 }
-                is Resource.Error -> {
+                is com.example.shared.domain.util.Resource.Error -> {
                     if (result.message != null) {
                         state = state.copy(
                             textCompletion = null,
@@ -85,7 +85,7 @@ class CaptionGeneratorViewModel @Inject constructor(
                 error = null
             )
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
-                is Resource.Success -> {
+                is com.example.shared.domain.util.Resource.Success -> {
                     result.data?.let {
                         val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size
                         val list = it.take(availableTagSlots)
@@ -96,7 +96,7 @@ class CaptionGeneratorViewModel @Inject constructor(
                         )
                     }
                 }
-                is Resource.Error -> {
+                is com.example.shared.domain.util.Resource.Error -> {
                     state.loadedTags.clear()
                     if (result.message != null) {
                         state = state.copy(
@@ -153,7 +153,7 @@ class CaptionGeneratorViewModel @Inject constructor(
         state.recentList.clear()
     }
 
-    fun updateSelectedSocialMedia(socialMedia: SocialMedia) {
+    fun updateSelectedSocialMedia(socialMedia: com.example.shared.domain.model.SocialMedia) {
         state = state.copy(
             selectedSocialMedia = socialMedia
         )

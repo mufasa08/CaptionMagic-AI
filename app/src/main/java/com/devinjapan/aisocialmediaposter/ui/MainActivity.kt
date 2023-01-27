@@ -28,7 +28,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.ui.components.loadInterstitial
 import com.devinjapan.aisocialmediaposter.ui.components.removeInterstitial
 import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
@@ -38,6 +37,7 @@ import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.example.shared.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Inject
-    lateinit var analyticsTracker: AnalyticsTracker
+    lateinit var analyticsTracker: com.example.shared.AnalyticsTracker
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -169,7 +169,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigation(
     imageUri: Uri?,
-    analyticsTracker: AnalyticsTracker,
+    analyticsTracker: com.example.shared.AnalyticsTracker,
     viewModel: CaptionGeneratorViewModel
 ) {
     val context = LocalContext.current

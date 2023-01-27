@@ -1,6 +1,6 @@
 package com.devinjapan.aisocialmediaposter.di
 
-import com.devinjapan.aisocialmediaposter.data.util.SafeMainScope
+import com.example.shared.data.util.SafeMainScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

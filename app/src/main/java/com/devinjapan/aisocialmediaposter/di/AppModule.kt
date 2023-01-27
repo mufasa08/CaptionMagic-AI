@@ -1,11 +1,11 @@
 package com.devinjapan.aisocialmediaposter.di
 
 import android.content.Context
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.repository.AuthRepositoryImpl
-import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
-import com.devinjapan.aisocialmediaposter.domain.repository.AuthRepository
-import com.devinjapan.aisocialmediaposter.domain.repository.DatastoreRepository
+import com.example.shared.analytics.AnalyticsTracker
+import com.example.shared.data.repository.AuthRepositoryImpl
+import com.example.shared.data.repository.DataStoreRepositoryImpl
+import com.example.shared.domain.repository.AuthRepository
+import com.example.shared.domain.repository.DatastoreRepository
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
