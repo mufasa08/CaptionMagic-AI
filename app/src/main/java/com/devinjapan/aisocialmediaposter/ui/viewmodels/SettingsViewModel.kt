@@ -10,18 +10,15 @@ import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
-import com.example.shared.AnalyticsTracker
-import com.example.shared.data.repository.DataStoreRepositoryImpl
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.devinjapan.shared.analytics.AnalyticsTracker
+import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.core.component.inject
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val dataStoreRepositoryImpl: com.example.shared.data.repository.DataStoreRepositoryImpl,
-    private val analyticsTracker: com.example.shared.AnalyticsTracker
-) : ViewModel() {
+class SettingsViewModel : ViewModel() {
 
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl by inject()
+    private val analyticsTracker: AnalyticsTracker by inject()
     var state by mutableStateOf(SettingsState())
         private set
 

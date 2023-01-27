@@ -6,7 +6,6 @@ import com.devinjapan.shared.data.repository.TextCompletionRepositoryImpl
 import com.devinjapan.shared.domain.repository.AuthRepository
 import com.devinjapan.shared.domain.repository.DataStoreRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
-import daniel.avila.ricknmortykmm.shared.di.platformModule
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -33,7 +32,7 @@ fun initKoin() = initKoin {}
 val repositoryModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
-    single<TextCompletionRepository> { TextCompletionRepositoryImpl(get(), get(), get()) }
+    single<TextCompletionRepository> { TextCompletionRepositoryImpl(get(), get(), get(), get()) }
 
     single {
         HttpClient {

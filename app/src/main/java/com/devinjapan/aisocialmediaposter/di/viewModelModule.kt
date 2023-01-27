@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     single { CaptionGeneratorViewModel() }
-    single { SettingsViewModel() }
+    single { SettingsViewModel(get(), get()) }
 }

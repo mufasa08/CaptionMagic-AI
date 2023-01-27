@@ -1,4 +1,4 @@
-package daniel.avila.ricknmortykmm.shared.di
+package com.devinjapan.shared.di
 
 import org.koin.core.module.Module
 

@@ -8,23 +8,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.devinjapan.aisocialmediaposter.ui.utils.*
+import com.devinjapan.shared.analytics.AnalyticsTracker
+import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
+import com.devinjapan.shared.domain.repository.ImageDetectorRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
-import com.example.shared.AnalyticsTracker
-import com.example.shared.data.repository.DataStoreRepositoryImpl
-import com.example.shared.domain.model.SocialMedia
-import com.example.shared.domain.repository.ImageDetectorRepository
-import com.example.shared.domain.util.Resource
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.devinjapan.shared.domain.util.Resource
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 
-@HiltViewModel
-class CaptionGeneratorViewModel() : ViewModel() {
+class CaptionGeneratorViewModel : ViewModel() {
     private val textCompletionRepository: TextCompletionRepository by inject()
-    private val imageDetectorRepository: com.example.shared.domain.repository.ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: com.example.shared.data.repository.DataStoreRepositoryImpl,
-    private val analyticsTracker: com.example.shared.AnalyticsTracker
-
+    private val imageDetectorRepository: ImageDetectorRepository by inject()
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl by inject()
+    private val analyticsTracker: AnalyticsTracker by inject()
 
     var state by mutableStateOf(GeneratorScreenState())
         private set
@@ -57,14 +53,14 @@ class CaptionGeneratorViewModel() : ViewModel() {
                     type = state.selectedSocialMedia
                 )
             ) {
-                is com.example.shared.domain.util.Resource.Success -> {
+                is Resource.Success<*> -> {
                     state = state.copy(
                         textCompletion = result.data,
                         isLoading = false,
                         error = null
                     )
                 }
-                is com.example.shared.domain.util.Resource.Error -> {
+                is Resource.Error<*> -> {
                     if (result.message != null) {
                         state = state.copy(
                             textCompletion = null,
@@ -85,7 +81,7 @@ class CaptionGeneratorViewModel() : ViewModel() {
                 error = null
             )
             when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
-                is com.example.shared.domain.util.Resource.Success -> {
+                is Resource.Success<*> -> {
                     result.data?.let {
                         val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size
                         val list = it.take(availableTagSlots)
@@ -96,7 +92,7 @@ class CaptionGeneratorViewModel() : ViewModel() {
                         )
                     }
                 }
-                is com.example.shared.domain.util.Resource.Error -> {
+                is Resource.Error<*> -> {
                     state.loadedTags.clear()
                     if (result.message != null) {
                         state = state.copy(
@@ -153,7 +149,7 @@ class CaptionGeneratorViewModel() : ViewModel() {
         state.recentList.clear()
     }
 
-    fun updateSelectedSocialMedia(socialMedia: com.example.shared.domain.model.SocialMedia) {
+    fun updateSelectedSocialMedia(socialMedia: com.devinjapan.shared.domain.model.SocialMedia) {
         state = state.copy(
             selectedSocialMedia = socialMedia
         )

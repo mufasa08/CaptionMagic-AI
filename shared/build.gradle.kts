@@ -45,6 +45,12 @@ kotlin {
             dependencies {
                 implementation(Libraries.Android.sqlDelight)
                 implementation(Libraries.Android.ktorClient)
+
+                implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
+                implementation("com.google.firebase:firebase-crashlytics:18.3.2")
+                implementation("com.google.firebase:firebase-perf:20.3.0")
+                implementation("com.google.firebase:firebase-messaging:23.1.1")
+                implementation("com.google.firebase:firebase-auth-ktx:21.1.0")
             }
         }
         val androidTest by getting {
