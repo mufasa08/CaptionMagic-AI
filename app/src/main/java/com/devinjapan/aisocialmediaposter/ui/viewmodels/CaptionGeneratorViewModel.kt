@@ -134,7 +134,8 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     fun clearGeneratedText() {
         state = state.copy(
-            textCompletion = null
+            textCompletion = null,
+            modifiedText = null
         )
     }
 
@@ -143,8 +144,13 @@ class CaptionGeneratorViewModel @Inject constructor(
     }
 
     fun resetEverything() {
-        val recentList = state.recentList
-        state = GeneratorScreenState(recentList = recentList)
+        state = state.copy(
+            image = null,
+            textCompletion = null,
+            modifiedText = null
+        )
+        state.loadedTags.clear()
+        state.recentList.clear()
     }
 
     fun updateSelectedSocialMedia(socialMedia: SocialMedia) {

@@ -7,9 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,14 +39,6 @@ fun OnBoarding(viewModel: CaptionGeneratorViewModel, analyticsTracker: Analytics
     val pageState = rememberPagerState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TopSection(
-            onBackClick = {
-                if (pageState.currentPage + 1 > 1) scope.launch {
-                    pageState.scrollToPage(pageState.currentPage - 1)
-                }
-            }
-        )
-
         HorizontalPager(
             count = items.size,
             state = pageState,
@@ -65,21 +57,6 @@ fun OnBoarding(viewModel: CaptionGeneratorViewModel, analyticsTracker: Analytics
                 viewModel.finishOnBoarding()
                 analyticsTracker.logEvent("walkthrough_finished", null)
             })
-    }
-}
-
-@ExperimentalPagerApi
-@Composable
-fun TopSection(onBackClick: () -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-    ) {
-        // Back button
-        IconButton(onClick = onBackClick, modifier = Modifier.align(Alignment.CenterStart)) {
-            Icon(imageVector = Icons.Outlined.KeyboardArrowLeft, contentDescription = null)
-        }
     }
 }
 
@@ -180,6 +157,7 @@ fun OnBoardingItem(items: OnBoardingItems) {
             color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
+            modifier = Modifier.padding(10.dp),
             letterSpacing = 1.sp
         )
         Spacer(modifier = Modifier.height(8.dp))

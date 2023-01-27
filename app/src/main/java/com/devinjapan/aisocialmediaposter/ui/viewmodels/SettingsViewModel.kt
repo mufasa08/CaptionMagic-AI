@@ -122,4 +122,8 @@ class SettingsViewModel @Inject constructor(
     fun openSourceLicensesClicked() {
         analyticsTracker.logEvent("oss_licenses_viewed", null)
     }
+
+    fun openPrivacyPolicyClicked() {
+        analyticsTracker.logEvent("privacy_policy_viewed", null)
+    }
 }

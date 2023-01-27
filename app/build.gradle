@@ -17,8 +17,8 @@ android {
         applicationId "com.devinjapan.aisocialmediaposter"
         minSdk 26
         targetSdk 33
-        versionCode 6
-        versionName "0.8"
+        versionCode 10
+        versionName "v0.84"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -122,8 +122,9 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
-    // Location Services
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    // Ads
+    implementation 'com.google.android.gms:play-services-ads:21.4.0'
+
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

@@ -85,4 +85,6 @@ object CustomColors {
 
     val EditTextLightBackground = blackAlpha8
     val EditTextDarkBackground = whiteAlpha5
+
+    val CloseButtonLight = blackAlpha8
 }

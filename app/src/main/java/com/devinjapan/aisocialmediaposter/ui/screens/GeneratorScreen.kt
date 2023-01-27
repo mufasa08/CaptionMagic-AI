@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,10 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
@@ -39,6 +42,7 @@ import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.data.error.ApiException
 import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
 import com.devinjapan.aisocialmediaposter.ui.components.ImagePicker
@@ -245,9 +249,16 @@ fun GeneratorScreen(
                     )
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = context.getString(R.string.generator_generate_post_button)
+                        text = context.getString(R.string.generator_generate_post_button),
+                        letterSpacing = 1.5.sp
                     )
                 }
+            }
+            if (viewModel.state.launchNumber > 1) {
+                BannerAd(
+                    Modifier.align(BottomCenter),
+                    adUnitId = context.getString(R.string.ads_banner_generator_screen_bottom)
+                )
             }
             if (viewModel.state.isLoading) {
                 GeneratingDialog()
@@ -390,7 +401,7 @@ fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .wrapContentHeight().testTag("keyword")
             ) {
                 TextField(
                     value = text,

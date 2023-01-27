@@ -29,6 +29,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
+import com.devinjapan.aisocialmediaposter.ui.components.loadInterstitial
+import com.devinjapan.aisocialmediaposter.ui.components.removeInterstitial
 import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
 import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
@@ -37,6 +39,7 @@ import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -64,6 +67,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         // askNotificationPermission()
+        MobileAds.initialize(this)
+        loadInterstitial(this)
 
         setContent {
             AISocialMediaPosterTheme {
@@ -89,6 +94,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        removeInterstitial()
+        super.onDestroy()
     }
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -37,7 +36,10 @@ import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
+import com.devinjapan.aisocialmediaposter.ui.components.showInterstitial
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
+import com.devinjapan.aisocialmediaposter.ui.utils.isLandscape
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import kotlinx.coroutines.launch
 
@@ -112,12 +114,15 @@ fun ShareScreen(
                         style = MaterialTheme.typography.body2
                     )
                     if (viewModel.state.image != null) {
+                        val isLandscape = viewModel.state.image?.isLandscape() == true
+                        val modifier = if (isLandscape) Modifier.fillMaxWidth()
+                            .wrapContentHeight() else Modifier
+                            .height(246.dp)
+                            .fillMaxWidth()
                         AsyncImage(
                             model = viewModel.state.image,
-                            modifier = Modifier
-                                .height(246.dp)
-                                .fillMaxWidth(),
-                            contentScale = ContentScale.Fit,
+                            modifier = modifier,
+                            contentScale = if (isLandscape) ContentScale.FillWidth else ContentScale.FillHeight,
                             contentDescription = "Selected image"
                         )
                     }
@@ -157,9 +162,11 @@ fun ShareScreen(
                 TextButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
-                        analyticsTracker.logEvent("start_over_pressed", null)
-                        viewModel.resetEverything()
-                        navController.navigateUp()
+                        showInterstitial(context) {
+                            analyticsTracker.logEvent("start_over_pressed", null)
+                            viewModel.resetEverything()
+                            navController.navigateUp()
+                        }
                     },
                     enabled = viewModel.state.loadedTags.isNotEmpty()
                 ) {
@@ -171,6 +178,10 @@ fun ShareScreen(
                     )
                 }
             }
+            BannerAd(
+                Modifier.align(Alignment.BottomCenter),
+                context.getString(R.string.ads_banner_share_screen_bottom)
+            )
         }
     }
 }
@@ -199,14 +210,10 @@ fun DescriptionInputTextField(viewModel: CaptionGeneratorViewModel) {
             value = text,
             onValueChange = {
                 text = it
+                viewModel.updateModifiedText(text)
             },
             textStyle = MaterialTheme.typography.body2,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    viewModel.updateModifiedText(text)
-                }
-            ),
             modifier = Modifier
                 .padding(0.dp)
                 .fillMaxWidth()
