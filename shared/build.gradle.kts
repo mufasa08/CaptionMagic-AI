@@ -1,8 +1,14 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+
+val key: String = gradleLocalProperties(rootDir).getProperty("OPEN_API_SECRET")
+
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
     kotlin("plugin.serialization")
+    id("com.codingfeline.buildkonfig")
 }
 
 kotlin {
@@ -28,6 +34,8 @@ kotlin {
                 implementation(Libraries.Common.Ktor.content)
                 implementation(Libraries.Common.Ktor.serializationJson)
                 implementation(Libraries.Common.Ktor.logging)
+                implementation("io.ktor:ktor-client-content-negotiation:2.2.1")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
                 implementation(Libraries.Common.sqlDelight)
                 implementation(Libraries.Common.sqlDelightExtension)
                 implementation(Libraries.Common.kotlinxSerializationCore)
@@ -93,5 +101,15 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 33
+    }
+}
+
+buildkonfig {
+    packageName = "com.devinjapan.aisocialmediaposter"
+    // run this
+    // ./gradlew generateBuildKonfig
+
+    defaultConfigs {
+        buildConfigField(STRING, "OpenApiSecret", key)
     }
 }

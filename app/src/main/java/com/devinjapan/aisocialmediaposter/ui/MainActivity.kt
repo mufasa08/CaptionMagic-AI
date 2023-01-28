@@ -2,7 +2,6 @@ package com.devinjapan.aisocialmediaposter.ui
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -23,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,29 +33,17 @@ import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
-import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.java.KoinJavaComponent.inject
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private var auth: FirebaseAuth by inject()
-    override fun onStart() {
-        super.onStart()
-        // Initialize Firebase Auth
-        // Should do this with Repository pattern tbh
-        auth = Firebase.auth
-        // signInIfNecessary(auth)
-    }
 
-    @Inject
-    lateinit var analyticsTracker: com.example.shared.AnalyticsTracker
+    val analyticsTracker: AnalyticsTracker by inject()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -73,7 +59,7 @@ class MainActivity : ComponentActivity() {
                 // This will cause re-composition on every network state change
                 val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+                val viewModel: CaptionGeneratorViewModel by viewModel()
 
                 Scaffold(scaffoldState = scaffoldState) {
                     val imageUri = shareImageHandleIntent()
@@ -199,13 +185,8 @@ fun Navigation(
 }
 
 fun preLoadInitialImageAndTags(
-    context: Context,
     viewModel: CaptionGeneratorViewModel,
     imageUri: Uri
 ) {
-    val imageBitmap =
-        BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
-    if (imageBitmap != null) {
-        viewModel.processBitmap(imageBitmap)
-    }
+    imageUri.encodedPath?.let { viewModel.processImage(it) }
 }

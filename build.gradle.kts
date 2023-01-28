@@ -9,6 +9,7 @@ buildscript {
         classpath("com.google.gms:google-services:4.3.14")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.2")
         classpath("com.google.android.gms:oss-licenses-plugin:0.10.6")
+        classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.13.3")
 
         classpath(Libraries.kotlin)
         classpath(Libraries.kotlinSerialization)

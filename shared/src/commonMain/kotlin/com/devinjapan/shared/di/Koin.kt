@@ -42,19 +42,23 @@ val repositoryModule = module {
     single<ImageDetectorRepository> { ImageDetectorRepositoryImpl(get(), get()) }
 
     single {
-        HttpClient {
+        HttpClient() {
             install(ContentNegotiation) {
                 json(
                     Json {
-                        ignoreUnknownKeys = true
                         prettyPrint = true
                         isLenient = true
+                        encodeDefaults = true
+                        ignoreUnknownKeys = true
                     }
                 )
             }
             install(Logging) {
                 logger = Logger.DEFAULT
-                level = LogLevel.ALL
+                level = LogLevel.HEADERS
+                filter { request ->
+                    request.url.host.contains("ktor.io")
+                }
             }
         }
     }

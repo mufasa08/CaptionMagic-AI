@@ -6,21 +6,24 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
-import com.devinjapan.aisocialmediaposter.ui.utils.*
+import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
+import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
 import com.devinjapan.shared.domain.repository.ImageDetectorRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
 import com.devinjapan.shared.domain.util.Resource
+import com.devinjapan.shared.domain.util.SELECTED_TONE
 import kotlinx.coroutines.launch
-import org.koin.core.component.inject
 
-class CaptionGeneratorViewModel : ViewModel() {
-    private val textCompletionRepository: TextCompletionRepository by inject()
-    private val imageDetectorRepository: ImageDetectorRepository by inject()
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl by inject()
-    private val analyticsTracker: AnalyticsTracker by inject()
-
+class CaptionGeneratorViewModel(
+    private val textCompletionRepository: TextCompletionRepository,
+    private val imageDetectorRepository: ImageDetectorRepository,
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val analyticsTracker: AnalyticsTracker
+) : ViewModel() {
     var state by mutableStateOf(GeneratorScreenState())
         private set
 
@@ -60,11 +63,12 @@ class CaptionGeneratorViewModel : ViewModel() {
                     )
                 }
                 is Resource.Error<*> -> {
-                    if (result.message != null) {
+                    val message = result.message
+                    if (message != null) {
                         state = state.copy(
                             textCompletion = null,
                             isLoading = false,
-                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+                            error = GeneratorScreenState.ErrorInfo(message, result.exception)
                         )
                     }
                 }
@@ -72,7 +76,7 @@ class CaptionGeneratorViewModel : ViewModel() {
         }
     }
 
-    fun processBitmap(imageUri: String) {
+    fun processImage(imageUri: String) {
         viewModelScope.launch {
             state = state.copy(
                 image = imageUri,
@@ -93,10 +97,11 @@ class CaptionGeneratorViewModel : ViewModel() {
                 }
                 is Resource.Error<*> -> {
                     state.loadedTags.clear()
-                    if (result.message != null) {
+                    val message = result.message
+                    if (message != null) {
                         state = state.copy(
                             isLoadingTags = false,
-                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+                            error = GeneratorScreenState.ErrorInfo(message, result.exception)
                         )
                     }
                 }

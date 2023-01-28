@@ -53,7 +53,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.3.2'
+        kotlinCompilerExtensionVersion '1.4.0'
     }
     packagingOptions {
         resources {
@@ -86,12 +86,17 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.3.3"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.0'
 
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
     // coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     // image component
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation "com.github.skydoves:landscapist-coil:2.1.0"
 
+    //ktor
+
+
+    implementation("io.ktor:ktor-client-core:2.2.1")
     // UI
     implementation 'com.github.compose-museum:SimpleTags:1.4.2'
     implementation "com.google.accompanist:accompanist-flowlayout:0.28.0"
@@ -117,12 +122,6 @@ dependencies {
 
     // Ads
     implementation 'com.google.android.gms:play-services-ads:21.4.0'
-
-
-    // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
-    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
 

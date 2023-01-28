@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
-import com.example.shared.AnalyticsTracker
+import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnBoarding(
     viewModel: CaptionGeneratorViewModel,
-    analyticsTracker: com.example.shared.AnalyticsTracker
+    analyticsTracker: AnalyticsTracker
 ) {
     val items = OnBoardingItems.getData()
     val scope = rememberCoroutineScope()
