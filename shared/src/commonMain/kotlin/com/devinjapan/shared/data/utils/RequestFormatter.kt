@@ -1,6 +1,6 @@
 package com.devinjapan.shared.data.utils
 
-import com.example.shared.domain.model.SocialMedia
+import com.devinjapan.shared.domain.model.SocialMedia
 
 // todo add support for multiple languages
 fun SocialMedia.toChatGPTUnderstandableString(

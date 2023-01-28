@@ -3,7 +3,7 @@ package com.devinjapan.shared.data.interceptors
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.core.content.getSystemService
-import com.example.shared.data.error.NoInternetException
+import com.devinjapan.shared.data.error.NoInternetException
 import okhttp3.Interceptor
 import okhttp3.Response
 

@@ -1,14 +1,11 @@
 package com.devinjapan.shared.data.error
 
-import com.squareup.moshi.JsonDataException
-import java.io.IOException
-import java.net.SocketException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
+import io.ktor.client.network.sockets.*
+import io.ktor.utils.io.errors.*
 
 class ApiException(
     val type: Type,
-    message: String? = type.name,
+    message: String = type.name,
     cause: Throwable? = null
 ) : IOException(message, cause) {
 
@@ -55,11 +52,8 @@ class ApiException(
 
             fun from(e: Throwable): Type {
                 return when (e) {
-                    is JsonDataException -> INVALID_RESPONSE
                     is NoInternetException -> NO_INTERNET_ERROR
                     is SocketTimeoutException,
-                    is UnknownHostException,
-                    is SocketException -> CONNECTION_ERROR
                     is IOException -> GENERAL_IO_ERROR
                     else -> UNKNOWN_ERROR
                 }

@@ -1,15 +1,14 @@
 package com.devinjapan.shared.data.repository
 
+import com.devinjapan.shared.analytics.AnalyticsTracker
+import com.devinjapan.shared.data.source.remote.AuthDataSource
 import com.devinjapan.shared.domain.model.AnonymousUser
 import com.devinjapan.shared.domain.repository.AuthRepository
 import com.devinjapan.shared.domain.util.Resource
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl(
-    private val auth: FirebaseAuth,
-    private val analyticsTracker: com.devinjapan.shared.analytics.AnalyticsTracker
+    private val auth: AuthDataSource,
+    private val analyticsTracker: AnalyticsTracker
 ) : AuthRepository {
 
     override suspend fun signOut() {
@@ -17,31 +16,14 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun getSignedInUserIfExists(): AnonymousUser? {
-        val currentUser =
-            auth.currentUser ?: return null
-        return currentUser.toAnonymousUser()
-    }
-
-    companion object {
-        fun FirebaseUser.toAnonymousUser(): AnonymousUser {
-            return AnonymousUser(
-                userId = this.uid
-            )
-        }
+        return auth.getSignedInUserIfExists()
     }
 
     override suspend fun signInAnonymously(): Resource<AnonymousUser> {
-        try {
-            auth.signInAnonymously().await()
-            val currentUser =
-                auth.currentUser ?: return Resource.Error("Problem signing in.")
-            analyticsTracker.logLogin(currentUser.uid)
-            return Resource.Success(currentUser.toAnonymousUser())
-        } catch (e: Exception) {
-            return Resource.Error(
-                message = e.message ?: "Something went wrong signing in.",
-                data = null
-            )
+        val response = auth.signInAnonymously()
+        if (response is Resource.Success) {
+            response.data?.userId?.let { analyticsTracker.logLogin(it) }
         }
+        return response
     }
 }

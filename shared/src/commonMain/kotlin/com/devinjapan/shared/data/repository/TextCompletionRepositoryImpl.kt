@@ -11,7 +11,9 @@ import com.devinjapan.shared.domain.model.SocialMedia
 import com.devinjapan.shared.domain.model.TextCompletion
 import com.devinjapan.shared.domain.repository.DataStoreRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
+import com.devinjapan.shared.domain.util.HIDE_PROMO_HASHTAGS
 import com.devinjapan.shared.domain.util.Resource
+import com.devinjapan.shared.domain.util.SELECTED_TONE
 
 class TextCompletionRepositoryImpl(
     private val authRepositoryImpl: AuthRepositoryImpl,

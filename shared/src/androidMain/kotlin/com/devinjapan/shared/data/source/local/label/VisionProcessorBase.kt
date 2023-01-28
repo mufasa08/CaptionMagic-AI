@@ -19,9 +19,9 @@ package com.devinjapan.shared.data.source.local.label
 import android.app.ActivityManager
 import android.content.Context
 import androidx.annotation.GuardedBy
-import com.devinjapan.aisocialmediaposter.data.utils.ScopedExecutor
-import com.devinjapan.aisocialmediaposter.ui.utils.FrameMetadata
-import com.example.shared.data.utils.DetectorType
+import com.devinjapan.shared.data.utils.DetectorType
+import com.devinjapan.shared.data.utils.FrameMetadata
+import com.devinjapan.shared.util.ScopedExecutor
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.android.gms.tasks.Tasks

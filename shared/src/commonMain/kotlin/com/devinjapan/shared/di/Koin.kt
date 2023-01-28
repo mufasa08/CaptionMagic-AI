@@ -2,9 +2,11 @@ package com.devinjapan.shared.di
 
 import com.devinjapan.shared.data.repository.AuthRepositoryImpl
 import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
+import com.devinjapan.shared.data.repository.ImageDetectorRepositoryImpl
 import com.devinjapan.shared.data.repository.TextCompletionRepositoryImpl
 import com.devinjapan.shared.domain.repository.AuthRepository
 import com.devinjapan.shared.domain.repository.DataStoreRepository
+import com.devinjapan.shared.domain.repository.ImageDetectorRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -31,8 +33,9 @@ fun initKoin() = initKoin {}
 
 val repositoryModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
-    single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
+    single<DataStoreRepository> { DataStoreRepositoryImpl() }
     single<TextCompletionRepository> { TextCompletionRepositoryImpl(get(), get(), get(), get()) }
+    single<ImageDetectorRepository> { ImageDetectorRepositoryImpl(get(), get()) }
 
     single {
         HttpClient {
@@ -51,8 +54,6 @@ val repositoryModule = module {
             }
         }
     }
-
-    single { "https://rickandmortyapi.com" }
 }
 
 val dispatcherModule = module {

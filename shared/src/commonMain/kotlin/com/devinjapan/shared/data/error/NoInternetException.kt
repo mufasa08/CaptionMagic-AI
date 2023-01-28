@@ -1,5 +1,5 @@
 package com.devinjapan.shared.data.error
 
-import java.io.IOException
+import io.ktor.utils.io.errors.*
 
 class NoInternetException : IOException("No Internet connection")

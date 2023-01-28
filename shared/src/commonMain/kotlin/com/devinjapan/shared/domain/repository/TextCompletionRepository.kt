@@ -1,8 +1,8 @@
 package com.devinjapan.shared.domain.repository
 
-import com.example.shared.domain.model.SocialMedia
-import com.example.shared.domain.model.TextCompletion
-import com.example.shared.domain.util.Resource
+import com.devinjapan.shared.domain.model.SocialMedia
+import com.devinjapan.shared.domain.model.TextCompletion
+import com.devinjapan.shared.domain.util.Resource
 
 interface TextCompletionRepository {
     suspend fun getReplyFromTextCompletionAPI(

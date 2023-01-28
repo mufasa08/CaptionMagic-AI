@@ -44,7 +44,7 @@ public class FrameMetadata {
     }
 
     /**
-     * Builder of {@link FrameMetadata}.
+     * Builder of {@link com.devinjapan.shared.data.utils.FrameMetadata}.
      */
     public static class Builder {
 
@@ -67,8 +67,8 @@ public class FrameMetadata {
             return this;
         }
 
-        public FrameMetadata build() {
-            return new FrameMetadata(width, height, rotation);
+        public com.devinjapan.shared.data.utils.FrameMetadata build() {
+            return new com.devinjapan.shared.data.utils.FrameMetadata(width, height, rotation);
         }
     }
 }

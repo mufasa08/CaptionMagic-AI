@@ -51,6 +51,10 @@ kotlin {
                 implementation("com.google.firebase:firebase-perf:20.3.0")
                 implementation("com.google.firebase:firebase-messaging:23.1.1")
                 implementation("com.google.firebase:firebase-auth-ktx:21.1.0")
+
+                // image detection
+                implementation("com.google.mlkit:image-labeling:17.0.7")
+                implementation("com.google.mlkit:image-labeling-custom:17.0.1")
             }
         }
         val androidTest by getting {
