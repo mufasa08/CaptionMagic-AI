@@ -6,8 +6,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'com.google.android.gms.oss-licenses-plugin'
-
-
+    id "org.jetbrains.kotlin.plugin.serialization"
 }
 
 android {
@@ -83,6 +82,15 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.0'
 
+    //
+
+
+    implementation("io.ktor:ktor-client-core:2.2.1")
+    implementation("io.ktor:ktor-client-okhttp:2.2.1")
+    implementation("io.ktor:ktor-client-logging:2.2.1")
+    implementation("io.ktor:ktor-client-content-negotiation:2.2.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
+
     // coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     // image component
@@ -125,11 +133,6 @@ dependencies {
     // Ads
     implementation 'com.google.android.gms:play-services-ads:21.4.0'
 
-
-    // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
-    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
 

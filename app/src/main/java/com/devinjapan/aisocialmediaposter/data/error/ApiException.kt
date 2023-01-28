@@ -1,6 +1,5 @@
 package com.devinjapan.aisocialmediaposter.data.error
 
-import com.squareup.moshi.JsonDataException
 import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -55,7 +54,6 @@ class ApiException(
 
             fun from(e: Throwable): Type {
                 return when (e) {
-                    is JsonDataException -> INVALID_RESPONSE
                     is NoInternetException -> NO_INTERNET_ERROR
                     is SocketTimeoutException,
                     is UnknownHostException,

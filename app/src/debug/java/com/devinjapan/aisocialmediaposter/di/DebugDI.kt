@@ -1,21 +1,18 @@
 package com.devinjapan.aisocialmediaposter.di
 
 import android.content.Context
-import com.devinjapan.aisocialmediaposter.BuildConfig
-import com.devinjapan.aisocialmediaposter.data.interceptors.AuthorizationInterceptor
-import com.devinjapan.aisocialmediaposter.data.interceptors.NetworkConnectivityInterceptor
-import com.devinjapan.aisocialmediaposter.data.source.remote.OpenAIApi
-import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -27,29 +24,34 @@ object DebugDI {
 
     @Singleton
     @Provides
-    fun makeOkHttpClient(
-        networkFlipperPlugin: NetworkFlipperPlugin,
+    fun makeKtorHttpClient(
         @ApplicationContext appContext: Context
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
+    ): HttpClient {
+        return HttpClient() {
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        encodeDefaults = true
+                        ignoreUnknownKeys = true
+                    }
+                )
+            }
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.HEADERS
+                filter { request ->
+                    request.url.host.contains("ktor.io")
+                }
+            }
+            /*return OkHttpClient.Builder()
             .addInterceptor(AuthorizationInterceptor(BuildConfig.OpenApiSecret))
             .addInterceptor(NetworkConnectivityInterceptor(appContext))
             .addInterceptor(
                 FlipperOkhttpInterceptor(networkFlipperPlugin)
             )
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideOpenAIApi(
-        client: OkHttpClient
-    ): OpenAIApi {
-        return Retrofit.Builder()
-            .baseUrl("https://api.openai.com/v1/")
-            .addConverterFactory(MoshiConverterFactory.create())
-            .client(client)
-            .build()
-            .create()
+            .build()*/
+        }
     }
 }
