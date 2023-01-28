@@ -6,19 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
-import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
-import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
+import com.devinjapan.shared.domain.util.HIDE_PROMO_HASHTAGS
+import com.devinjapan.shared.domain.util.SELECTED_TONE
 import kotlinx.coroutines.launch
-import org.koin.core.component.inject
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel(
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val analyticsTracker: AnalyticsTracker
+) : ViewModel() {
 
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl by inject()
-    private val analyticsTracker: AnalyticsTracker by inject()
     var state by mutableStateOf(SettingsState())
         private set
 

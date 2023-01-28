@@ -1,54 +1,44 @@
 package com.devinjapan.shared.data.repository
 
 import com.devinjapan.shared.domain.repository.DataStoreRepository
-import kotlinx.coroutines.flow.Flow
+import com.russhwolf.settings.Settings
 
-class DataStoreRepositoryImpl : DataStoreRepository {
+class DataStoreRepositoryImpl(private val settings: Settings) : DataStoreRepository {
     override suspend fun putList(key: String, value: List<String>) {
-        TODO("Not yet implemented")
+        if (value.isNotEmpty()) {
+            settings.putString(key, value.joinToString { "####" })
+        }
     }
 
     override suspend fun getList(key: String): List<String> {
-        TODO("Not yet implemented")
+        return settings.getString(key, "").split("####")
     }
 
     override suspend fun putString(key: String, value: String) {
-        TODO("Not yet implemented")
+        settings.putString(key, value)
     }
 
     override suspend fun putLong(key: String, value: Long) {
-        TODO("Not yet implemented")
+        settings.putLong(key, value)
     }
 
     override suspend fun putBoolean(key: String, value: Boolean) {
-        TODO("Not yet implemented")
+        settings.putBoolean(key, value)
     }
 
-    override suspend fun getString(key: String): String? {
-        TODO("Not yet implemented")
+    override suspend fun getString(key: String): String {
+        return settings.getString(key, "")
     }
 
-    override suspend fun getStringFlow(key: String): Flow<String> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getBooleanFlow(key: String): Flow<Boolean> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getLong(key: String): Long? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getLongFlow(key: String): Flow<Long?> {
-        TODO("Not yet implemented")
+    override suspend fun getLong(key: String): Long {
+        return settings.getLong(key, 1L)
     }
 
     override suspend fun clearPreferences(key: String) {
-        TODO("Not yet implemented")
+        settings.remove(key)
     }
 
-    override suspend fun getBoolean(key: String): Boolean? {
-        TODO("Not yet implemented")
+    override suspend fun getBoolean(key: String): Boolean {
+        return settings.getBoolean(key, false)
     }
 }

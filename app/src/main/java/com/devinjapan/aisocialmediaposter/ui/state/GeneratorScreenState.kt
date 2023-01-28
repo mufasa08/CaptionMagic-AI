@@ -1,12 +1,11 @@
 package com.devinjapan.aisocialmediaposter.ui.state
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
 import com.example.shared.domain.model.SocialMedia
 import com.example.shared.domain.model.TextCompletion
 
 data class GeneratorScreenState(
-    val image: Bitmap? = null,
+    val image: String? = null,
     val textCompletion: com.example.shared.domain.model.TextCompletion? = null,
     var modifiedText: String? = null,
     val loadedTags: MutableList<String> = mutableStateListOf(),

@@ -37,19 +37,17 @@ import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
-import com.example.shared.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.java.KoinJavaComponent.inject
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var auth: FirebaseAuth
+    private var auth: FirebaseAuth by inject()
     override fun onStart() {
         super.onStart()
         // Initialize Firebase Auth
@@ -169,7 +167,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigation(
     imageUri: Uri?,
-    analyticsTracker: com.example.shared.AnalyticsTracker,
+    analyticsTracker: AnalyticsTracker,
     viewModel: CaptionGeneratorViewModel
 ) {
     val context = LocalContext.current

@@ -8,6 +8,7 @@ import com.devinjapan.shared.domain.repository.AuthRepository
 import com.devinjapan.shared.domain.repository.DataStoreRepository
 import com.devinjapan.shared.domain.repository.ImageDetectorRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
+import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -32,8 +33,11 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
 fun initKoin() = initKoin {}
 
 val repositoryModule = module {
+
+    single { Settings() }
+
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
-    single<DataStoreRepository> { DataStoreRepositoryImpl() }
+    single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
     single<TextCompletionRepository> { TextCompletionRepositoryImpl(get(), get(), get(), get()) }
     single<ImageDetectorRepository> { ImageDetectorRepositoryImpl(get(), get()) }
 

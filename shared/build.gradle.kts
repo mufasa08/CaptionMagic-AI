@@ -33,6 +33,9 @@ kotlin {
                 implementation(Libraries.Common.kotlinxSerializationCore)
                 implementation(Libraries.Common.kotlinxCoroutinesCore)
                 implementation(Libraries.Common.koinCore)
+
+                // settings
+                implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
             }
         }
         val commonTest by getting {

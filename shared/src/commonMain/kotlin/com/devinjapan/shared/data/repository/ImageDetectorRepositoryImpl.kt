@@ -22,7 +22,7 @@ class ImageDetectorRepositoryImpl(
             resource
         } catch (e: Exception) {
             e.printStackTrace()
-            analyticsTracker.logApiCallError("getTagsFromImage", null)
+            analyticsTracker.logApiCallError("getTagsFromImage", null, null, null)
             Resource.Error(message = e.message ?: "", ImageDetectionException())
         }
     }

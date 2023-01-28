@@ -52,7 +52,8 @@ class TextCompletionRepositoryImpl(
             analyticsTracker.logApiCallError(
                 "getReplyFromTextCompletionAPI",
                 type.name,
-                apiException.type.name
+                apiException.type.name,
+                null
             )
             Resource.Error(message = e.message ?: "Something went wrong.", exception = apiException)
         }
