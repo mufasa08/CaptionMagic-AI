@@ -253,6 +253,9 @@ fun GeneratorScreen(
                         letterSpacing = 1.5.sp
                     )
                 }
+                if (viewModel.state.launchNumber > 1) {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
             }
             if (viewModel.state.launchNumber > 1) {
                 BannerAd(
