@@ -34,6 +34,7 @@ import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
 
                 val viewModel: CaptionGeneratorViewModel by viewModel()
 
+                val settingsViewModel: SettingsViewModel by viewModel()
                 Scaffold(scaffoldState = scaffoldState) {
                     val imageUri = shareImageHandleIntent()
 
@@ -73,7 +75,7 @@ class MainActivity : ComponentActivity() {
                         if (viewModel.state.launchNumber > 1) {
                             askNotificationPermission()
                         }
-                        Navigation(imageUri, analyticsTracker, viewModel)
+                        Navigation(imageUri, analyticsTracker, viewModel, settingsViewModel)
                     }
                 }
             }
@@ -154,7 +156,8 @@ class MainActivity : ComponentActivity() {
 fun Navigation(
     imageUri: Uri?,
     analyticsTracker: AnalyticsTracker,
-    viewModel: CaptionGeneratorViewModel
+    viewModel: CaptionGeneratorViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
@@ -179,7 +182,7 @@ fun Navigation(
             )
         }
         composable(context.getString(R.string.settings_screen)) {
-            SettingsScreen(navController = navController)
+            SettingsScreen(navController = navController, viewModel = settingsViewModel)
         }
     }
 }

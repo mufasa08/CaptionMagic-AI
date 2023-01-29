@@ -9,13 +9,13 @@ import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
 import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.shared.analytics.AnalyticsTracker
-import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
+import com.devinjapan.shared.domain.repository.DataStoreRepository
 import com.devinjapan.shared.domain.util.HIDE_PROMO_HASHTAGS
 import com.devinjapan.shared.domain.util.SELECTED_TONE
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val dataStoreRepository: DataStoreRepository,
     private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
@@ -32,7 +32,7 @@ class SettingsViewModel(
             isLoading = true
         )
         viewModelScope.launch {
-            val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE)
+            val selectedTone = dataStoreRepository.getString(SELECTED_TONE)
             state = state.copy(
                 selectedCaptionTone = selectedTone,
                 isLoading = false
@@ -45,7 +45,7 @@ class SettingsViewModel(
             isLoading = true
         )
         viewModelScope.launch {
-            val hidePromoHashtags = dataStoreRepositoryImpl.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
+            val hidePromoHashtags = dataStoreRepository.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
             state = state.copy(
                 hidePromoHashtags = hidePromoHashtags,
                 isLoading = false
@@ -56,7 +56,7 @@ class SettingsViewModel(
     fun clearRecentList() {
         analyticsTracker.logClearedRecentList()
         viewModelScope.launch {
-            dataStoreRepositoryImpl.clearPreferences(RECENT_KEYWORD_LIST)
+            dataStoreRepository.clearPreferences(RECENT_KEYWORD_LIST)
         }
     }
 
@@ -67,7 +67,7 @@ class SettingsViewModel(
             isLoading = true
         )
         viewModelScope.launch {
-            state.selectedCaptionTone?.let { dataStoreRepositoryImpl.putString(SELECTED_TONE, it) }
+            state.selectedCaptionTone?.let { dataStoreRepository.putString(SELECTED_TONE, it) }
             state = state.copy(
                 isLoading = false
             )
@@ -88,7 +88,7 @@ class SettingsViewModel(
 
         viewModelScope.launch {
             state.selectedCaptionTone?.let {
-                dataStoreRepositoryImpl.putBoolean(
+                dataStoreRepository.putBoolean(
                     HIDE_PROMO_HASHTAGS,
                     newSetting
                 )
@@ -105,7 +105,7 @@ class SettingsViewModel(
             state = state.copy(
                 isLoading = true
             )
-            dataStoreRepositoryImpl.putLong(
+            dataStoreRepository.putLong(
                 LAUNCH_COUNT,
                 1L
             )
