@@ -188,5 +188,5 @@ fun preLoadInitialImageAndTags(
     viewModel: CaptionGeneratorViewModel,
     imageUri: Uri
 ) {
-    imageUri.encodedPath?.let { viewModel.processImage(it) }
+    imageUri.toString()?.let { viewModel.processImage(it) }
 }

@@ -62,18 +62,17 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLi
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.*
+import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils.getBitmapFromContentUri
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.devinjapan.shared.data.error.ApiException
 import com.devinjapan.shared.data.error.ImageDetectionException
 import com.devinjapan.shared.domain.model.SocialMedia
-import com.devinjapan.shared.util.BitmapUtils
 import com.google.accompanist.flowlayout.FlowRow
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.launch
 import org.compose.museum.simpletags.SimpleTags
 
-@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GeneratorScreen(
@@ -121,7 +120,7 @@ fun GeneratorScreen(
             if (hasImage) {
                 analyticsTracker.logEvent("image_uploaded", null)
                 imageUri = uri
-                imageUri?.encodedPath?.let { viewModel.processImage(it) }
+                imageUri?.toString()?.let { viewModel.processImage(it) }
             }
         }
     )
@@ -203,7 +202,7 @@ fun GeneratorScreen(
                     } else {
                         val imageUri = viewModel.state.image
                         val imageBitmap =
-                            BitmapUtils.getBitmapFromContentUri(
+                            getBitmapFromContentUri(
                                 context.contentResolver,
                                 Uri.parse(imageUri)
                             )

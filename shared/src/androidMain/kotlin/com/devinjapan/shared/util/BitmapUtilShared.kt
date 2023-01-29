@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.devinjapan.aisocialmediaposter.ui.utils
+package com.devinjapan.shared.util
 
 import android.content.ContentResolver
 import android.graphics.*
@@ -32,7 +32,7 @@ import java.nio.ByteBuffer
 /**
  * Utils functions for bitmap conversions.
  */
-object BitmapUtils {
+object BitmapUtilShared {
     private const val TAG = "BitmapUtils"
 
     /**

@@ -23,9 +23,9 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
         modules(
+            platformModule(),
             repositoryModule,
-            dispatcherModule,
-            platformModule()
+            dispatcherModule
         )
     }
 
@@ -35,11 +35,6 @@ fun initKoin() = initKoin {}
 val repositoryModule = module {
 
     single { Settings() }
-
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
-    single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
-    single<TextCompletionRepository> { TextCompletionRepositoryImpl(get(), get(), get(), get()) }
-    single<ImageDetectorRepository> { ImageDetectorRepositoryImpl(get(), get()) }
 
     single {
         HttpClient() {
@@ -62,6 +57,10 @@ val repositoryModule = module {
             }
         }
     }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
+    single<TextCompletionRepository> { TextCompletionRepositoryImpl(get(), get(), get(), get()) }
+    single<ImageDetectorRepository> { ImageDetectorRepositoryImpl(get(), get()) }
 }
 
 val dispatcherModule = module {

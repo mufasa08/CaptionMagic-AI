@@ -11,7 +11,7 @@ import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import com.devinjapan.shared.analytics.AnalyticsTracker
-import com.devinjapan.shared.data.repository.DataStoreRepositoryImpl
+import com.devinjapan.shared.domain.repository.DataStoreRepository
 import com.devinjapan.shared.domain.repository.ImageDetectorRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
 import com.devinjapan.shared.domain.util.Resource
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class CaptionGeneratorViewModel(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val dataStoreRepository: DataStoreRepository,
     private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
     var state by mutableStateOf(GeneratorScreenState())
@@ -167,7 +167,7 @@ class CaptionGeneratorViewModel(
             )
             state.recentList.clear()
             val result =
-                dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
+                dataStoreRepository.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
             if (result.isNotEmpty()) {
                 state.recentList.addAll(result)
             }
@@ -182,7 +182,7 @@ class CaptionGeneratorViewModel(
             state = state.copy(
                 isLoading = true
             )
-            val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE) ?: "Cool"
+            val selectedTone = dataStoreRepository.getString(SELECTED_TONE) ?: "Cool"
             state = state.copy(
                 selectedCaptionTone = selectedTone,
                 isLoading = false
@@ -193,7 +193,7 @@ class CaptionGeneratorViewModel(
     private fun saveRecentList() {
         viewModelScope.launch {
             if (state.recentList.isNotEmpty()) {
-                dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+                dataStoreRepository.putList(RECENT_KEYWORD_LIST, state.recentList)
             }
         }
     }
@@ -219,8 +219,8 @@ class CaptionGeneratorViewModel(
 
     private fun checkLaunchCountAndIncrement() {
         viewModelScope.launch {
-            val launchCount = dataStoreRepositoryImpl.getLong(LAUNCH_COUNT) ?: 1L
-            dataStoreRepositoryImpl.putLong(LAUNCH_COUNT, launchCount + 1L)
+            val launchCount = dataStoreRepository.getLong(LAUNCH_COUNT) ?: 1L
+            dataStoreRepository.putLong(LAUNCH_COUNT, launchCount + 1L)
             state = state.copy(
                 isLoadingFirstLaunchCheck = false,
                 launchNumber = launchCount,

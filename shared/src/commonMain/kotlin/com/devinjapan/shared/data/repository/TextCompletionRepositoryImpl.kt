@@ -10,6 +10,7 @@ import com.devinjapan.shared.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
 import com.devinjapan.shared.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.shared.domain.model.SocialMedia
 import com.devinjapan.shared.domain.model.TextCompletion
+import com.devinjapan.shared.domain.repository.AuthRepository
 import com.devinjapan.shared.domain.repository.DataStoreRepository
 import com.devinjapan.shared.domain.repository.TextCompletionRepository
 import com.devinjapan.shared.domain.util.HIDE_PROMO_HASHTAGS
@@ -22,7 +23,7 @@ import io.ktor.http.*
 import io.ktor.util.reflect.*
 
 class TextCompletionRepositoryImpl(
-    private val authRepositoryImpl: AuthRepositoryImpl,
+    private val authRepository: AuthRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val client: HttpClient,
     private val analyticsTracker: AnalyticsTracker
@@ -35,7 +36,7 @@ class TextCompletionRepositoryImpl(
     ): Resource<TextCompletion> {
         return try {
             val selectedTone = dataStoreRepository.getString(SELECTED_TONE)
-            val user = authRepositoryImpl.getSignedInUserIfExists()
+            val user = authRepository.getSignedInUserIfExists()
             val hideHashTags = dataStoreRepository.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
             val prompt =
                 type.toChatGPTUnderstandableString(selectedTone, keywords).cleanPromptString()

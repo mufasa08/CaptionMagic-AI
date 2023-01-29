@@ -21,7 +21,7 @@ import android.net.Uri
 import android.util.Log
 import com.devinjapan.shared.data.source.local.ImageProcessorDataSource
 import com.devinjapan.shared.data.utils.DetectorType
-import com.devinjapan.shared.util.BitmapUtils
+import com.devinjapan.shared.util.BitmapUtilShared
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
@@ -95,7 +95,7 @@ actual class LabelDetectorProcessor(private val context: Context) :
 
     override suspend fun processImage(imageUri: String?): List<String> {
         val bitmap =
-            BitmapUtils.getBitmapFromContentUri(context.contentResolver, Uri.parse(imageUri))
+            BitmapUtilShared.getBitmapFromContentUri(context.contentResolver, Uri.parse(imageUri))
         val baseList = detectInImage(
             InputImage.fromBitmap(bitmap!!, 0),
             DetectorType.BASIC

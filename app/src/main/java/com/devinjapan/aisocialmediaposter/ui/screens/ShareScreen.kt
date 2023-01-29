@@ -38,11 +38,11 @@ import com.devinjapan.aisocialmediaposter.R
 import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.showInterstitial
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
+import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils.getBitmapFromContentUri
 import com.devinjapan.aisocialmediaposter.ui.utils.isLandscape
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.devinjapan.shared.domain.model.SocialMedia
-import com.devinjapan.shared.util.BitmapUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -118,7 +118,7 @@ fun ShareScreen(
                     if (viewModel.state.image != null) {
                         val imageUri = viewModel.state.image
                         val imageBitmap =
-                            BitmapUtils.getBitmapFromContentUri(
+                            getBitmapFromContentUri(
                                 context.contentResolver,
                                 Uri.parse(imageUri)
                             )

@@ -21,9 +21,7 @@ import android.content.Context
 import androidx.annotation.GuardedBy
 import com.devinjapan.shared.data.utils.DetectorType
 import com.devinjapan.shared.data.utils.FrameMetadata
-import com.devinjapan.shared.util.ScopedExecutor
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskExecutors
 import com.google.android.gms.tasks.Tasks
 import com.google.android.odml.image.MlImage
 import com.google.mlkit.common.MlKitException
@@ -48,9 +46,6 @@ abstract class VisionProcessorBase<T>(context: Context) {
     private var activityManager: ActivityManager =
         context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     private val fpsTimer = Timer()
-    private val executor = ScopedExecutor(TaskExecutors.MAIN_THREAD)
-
-    // Whether this processor is already shut down
     private var isShutdown = false
 
     // Used to calculate latency, running in the same thread, no sync needed.
@@ -94,7 +89,6 @@ abstract class VisionProcessorBase<T>(context: Context) {
     }
 
     fun stopProcess() {
-        executor.shutdown()
         isShutdown = true
         resetLatencyStats()
         fpsTimer.cancel()

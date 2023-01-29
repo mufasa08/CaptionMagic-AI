@@ -67,8 +67,8 @@ public class FrameMetadata {
             return this;
         }
 
-        public com.devinjapan.shared.data.utils.FrameMetadata build() {
-            return new com.devinjapan.shared.data.utils.FrameMetadata(width, height, rotation);
+        public FrameMetadata build() {
+            return new FrameMetadata(width, height, rotation);
         }
     }
 }
