@@ -35,7 +35,6 @@ import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
-import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
 import org.koin.android.ext.android.inject
@@ -43,7 +42,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val analyticsTracker: AnalyticsTracker by inject()
+    private val analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker by inject()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalPagerApi::class)
@@ -153,7 +152,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigation(
     imageUri: Uri?,
-    analyticsTracker: AnalyticsTracker,
+    analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker,
     viewModel: CaptionGeneratorViewModel,
     settingsViewModel: SettingsViewModel
 ) {

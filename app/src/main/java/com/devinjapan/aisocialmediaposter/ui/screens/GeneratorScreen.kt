@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.shared.data.error.ApiException
+import com.devinjapan.aisocialmediaposter.shared.data.error.ImageDetectionException
+import com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
@@ -62,10 +65,6 @@ import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.*
 import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils.getBitmapFromContentUri
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
-import com.devinjapan.shared.analytics.AnalyticsTracker
-import com.devinjapan.shared.data.error.ApiException
-import com.devinjapan.shared.data.error.ImageDetectionException
-import com.devinjapan.shared.domain.model.SocialMedia
 import com.google.accompanist.flowlayout.FlowRow
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.launch
@@ -77,7 +76,7 @@ fun GeneratorScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
     startingImageUri: Uri? = null,
-    analyticsTracker: AnalyticsTracker
+    analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) {
     val context = LocalContext.current
 

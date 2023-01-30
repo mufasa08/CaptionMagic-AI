@@ -44,7 +44,7 @@ public class FrameMetadata {
     }
 
     /**
-     * Builder of {@link com.devinjapan.shared.data.utils.FrameMetadata}.
+     * Builder of {@link com.devinjapan.aisocialmediaposter.shared.data.utils.FrameMetadata}.
      */
     public static class Builder {
 

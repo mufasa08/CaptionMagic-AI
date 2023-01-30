@@ -95,12 +95,9 @@ kotlin {
 }
 
 android {
-    namespace = "com.devinjapan.shared"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 26
-        targetSdk = 33
-    }
+    namespace = "com.devinjapan.aisocialmediaposter.shared"
+    compileSdk = Versions.compileSdk
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 }
 
 buildkonfig {

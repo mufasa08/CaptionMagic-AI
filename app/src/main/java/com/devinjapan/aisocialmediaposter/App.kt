@@ -2,10 +2,10 @@ package com.devinjapan.aisocialmediaposter
 
 import android.app.Application
 import com.devinjapan.aisocialmediaposter.di.viewModelModule
-import com.devinjapan.shared.di.dispatcherModule
-import com.devinjapan.shared.di.platformModule
-import com.devinjapan.shared.di.repositoryModule
-import com.devinjapan.shared.domain.repository.AuthRepository
+import com.devinjapan.aisocialmediaposter.shared.di.dispatcherModule
+import com.devinjapan.aisocialmediaposter.shared.di.platformModule
+import com.devinjapan.aisocialmediaposter.shared.di.repositoryModule
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.AuthRepository
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

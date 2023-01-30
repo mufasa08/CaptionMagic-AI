@@ -5,24 +5,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.DataStoreRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.ImageDetectorRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.TextCompletionRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.util.Resource
+import com.devinjapan.aisocialmediaposter.shared.domain.util.SELECTED_TONE
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
 import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
 import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
-import com.devinjapan.shared.analytics.AnalyticsTracker
-import com.devinjapan.shared.domain.repository.DataStoreRepository
-import com.devinjapan.shared.domain.repository.ImageDetectorRepository
-import com.devinjapan.shared.domain.repository.TextCompletionRepository
-import com.devinjapan.shared.domain.util.Resource
-import com.devinjapan.shared.domain.util.SELECTED_TONE
 import kotlinx.coroutines.launch
 
 class CaptionGeneratorViewModel(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
     private val dataStoreRepository: DataStoreRepository,
-    private val analyticsTracker: AnalyticsTracker
+    private val analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) : ViewModel() {
     var state by mutableStateOf(GeneratorScreenState())
         private set
@@ -153,7 +152,7 @@ class CaptionGeneratorViewModel(
         state.recentList.clear()
     }
 
-    fun updateSelectedSocialMedia(socialMedia: com.devinjapan.shared.domain.model.SocialMedia) {
+    fun updateSelectedSocialMedia(socialMedia: com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia) {
         state = state.copy(
             selectedSocialMedia = socialMedia
         )
