@@ -1,8 +1,9 @@
 package com.devinjapan.shared.data.request
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class TextCompletionDto(
     val created: Int = 0,
     val usage: Usage,
@@ -10,7 +11,7 @@ data class TextCompletionDto(
     val id: String = "",
     val choices: List<ChoicesItem>?
 ) {
-    @kotlinx.serialization.Serializable
+    @Serializable
     data class Usage(
         @SerialName("completion_tokens")
         val completionTokens: Int = 0,
@@ -20,7 +21,7 @@ data class TextCompletionDto(
         val totalTokens: Int = 0
     )
 
-    @kotlinx.serialization.Serializable
+    @Serializable
     data class ChoicesItem(
         val index: Int = 0,
         val text: String = ""

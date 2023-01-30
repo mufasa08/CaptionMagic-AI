@@ -4,7 +4,7 @@ object App {
 }
 
 object Versions {
-    const val kotlin         = "1.7.20"
+    const val kotlin         = "1.8.0"
     const val gradle         = "7.4"
     const val sqlDelight     = "1.5.4"
 

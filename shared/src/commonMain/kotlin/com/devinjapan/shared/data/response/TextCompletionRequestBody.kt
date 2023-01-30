@@ -1,8 +1,9 @@
 package com.devinjapan.shared.data.response
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class TextCompletionRequestBody(
     val model: String = "text-davinci-003",
     val prompt: String,

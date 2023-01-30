@@ -35,7 +35,6 @@ kotlin {
                 implementation(Libraries.Common.Ktor.serializationJson)
                 implementation(Libraries.Common.Ktor.logging)
                 implementation("io.ktor:ktor-client-content-negotiation:2.2.1")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
                 implementation(Libraries.Common.sqlDelight)
                 implementation(Libraries.Common.sqlDelightExtension)
                 implementation(Libraries.Common.kotlinxSerializationCore)

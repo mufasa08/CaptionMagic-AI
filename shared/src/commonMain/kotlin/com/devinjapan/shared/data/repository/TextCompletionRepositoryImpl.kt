@@ -4,8 +4,8 @@ import com.devinjapan.aisocialmediaposter.BuildKonfig
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.devinjapan.shared.data.error.toApiException
 import com.devinjapan.shared.data.mappers.toTextCompletion
+import com.devinjapan.shared.data.request.TextCompletionDto
 import com.devinjapan.shared.data.response.TextCompletionRequestBody
-import com.devinjapan.shared.data.source.remote.TextCompletionDto
 import com.devinjapan.shared.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
 import com.devinjapan.shared.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.shared.domain.model.SocialMedia

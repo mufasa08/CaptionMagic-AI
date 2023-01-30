@@ -27,4 +27,6 @@
 -keep class androidx.compose.ui.*
 
 # issue with serialized fields being obfuscated
--keepclassmembers class com.devinjapan.aisocialmediaposter.** { <fields>; }
+
+-keep class com.devinjapan.shared.data.response.TextCompletionRequestBody { *; }
+-keep class com.devinjapan.shared.data.request.TextCompletionDto { *; }

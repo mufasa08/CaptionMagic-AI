@@ -1,6 +1,6 @@
 package com.devinjapan.shared.data.mappers
 
-import com.devinjapan.shared.data.source.remote.TextCompletionDto
+import com.devinjapan.shared.data.request.TextCompletionDto
 import com.devinjapan.shared.domain.model.TextCompletion
 
 fun TextCompletionDto.toTextCompletion(hideHashTags: Boolean): TextCompletion {
