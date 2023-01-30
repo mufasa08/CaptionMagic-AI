@@ -27,8 +27,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -194,11 +192,11 @@ fun GeneratorScreen(
                             )
                         }
                     } else {
-                        val imageUri = viewModel.state.image
+                        val uri = viewModel.state.image
                         val imageBitmap =
                             getBitmapFromContentUri(
                                 context.contentResolver,
-                                Uri.parse(imageUri)
+                                Uri.parse(uri)
                             )
 
                         val isLandscape = imageBitmap?.isLandscape() == true
@@ -404,8 +402,6 @@ fun GetButton(
 fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val (focusRequester) = FocusRequester.createRefs()
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     var text by rememberSaveable { mutableStateOf("") }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()

@@ -32,7 +32,6 @@ import com.devinjapan.aisocialmediaposter.ui.utils.FEEDBACK_URL
 import com.devinjapan.aisocialmediaposter.ui.utils.PRIVACY_POLICY_URL
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -88,8 +87,6 @@ fun SettingsItems(viewModel: SettingsViewModel) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-
-    val currentFirebaseUid: String = FirebaseAuth.getInstance().currentUser?.uid ?: "no-id"
 
     SettingsGroup(title = { Text(text = context.getString(R.string.settings_customize)) }) {
         val list = listOf<String>(
