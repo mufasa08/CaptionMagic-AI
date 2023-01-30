@@ -2,6 +2,7 @@ package com.devinjapan.shared.di
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.ConnectivityManager
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.devinjapan.shared.base.executor.MainDispatcher
 import com.devinjapan.shared.data.source.local.ImageProcessorDataSource
@@ -10,11 +11,19 @@ import com.devinjapan.shared.data.source.remote.AuthDataSource
 import com.devinjapan.shared.data.source.remote.FirebaseAuthDataSourceImpl
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
+import io.ktor.client.*
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 @SuppressLint("MissingPermission")
 actual fun platformModule(): Module = module {
+    single {
+        val context = get<Context>()
+        val connectivityManager: ConnectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        httpClient(connectivityManager)
+    }
+
     single {
         val context = get<Context>()
         FirebaseAnalytics.getInstance(context)

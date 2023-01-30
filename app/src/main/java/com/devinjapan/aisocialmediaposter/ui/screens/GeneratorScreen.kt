@@ -82,15 +82,10 @@ fun GeneratorScreen(
     analyticsTracker: AnalyticsTracker
 ) {
     val context = LocalContext.current
-    val contentResolver = LocalContext.current.contentResolver
-
-    // 1
 
     var hasImage by remember {
         mutableStateOf(false)
     }
-
-    // 2
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -101,7 +96,6 @@ fun GeneratorScreen(
     }
 
     ObserveLifecycleEvent { event ->
-        // 検出したイベントに応じた処理を実装する。
         when (event) {
             Lifecycle.Event.ON_RESUME -> {
                 viewModel.getRecentList()

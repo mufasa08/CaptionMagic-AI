@@ -38,20 +38,18 @@ import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
 import com.devinjapan.shared.analytics.AnalyticsTracker
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    val analyticsTracker: AnalyticsTracker by inject()
+    private val analyticsTracker: AnalyticsTracker by inject()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
+    @OptIn(ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        // askNotificationPermission()
         MobileAds.initialize(this)
         loadInterstitial(this)
 
@@ -191,5 +189,5 @@ fun preLoadInitialImageAndTags(
     viewModel: CaptionGeneratorViewModel,
     imageUri: Uri
 ) {
-    imageUri.toString()?.let { viewModel.processImage(it) }
+    viewModel.processImage(imageUri.toString())
 }
