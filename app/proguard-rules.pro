@@ -28,3 +28,7 @@
 
 # issue with serialized fields being obfuscated
 -keepclassmembers class com.devinjapan.aisocialmediaposter.** { <fields>; }
+-keepclassmembers class com.devinjapan.aisocialmediaposter.shared.data.request.** { *; }
+-keepclassmembers class com.devinjapan.aisocialmediaposter.shared.data.response.** { *; }
+-keep class com.devinjapan.aisocialmediaposter.shared.data.response.TextCompletionRequestBody { *; }
+-keep class com.devinjapan.aisocialmediaposter.shared.data.request.TextCompletionDto { *; }

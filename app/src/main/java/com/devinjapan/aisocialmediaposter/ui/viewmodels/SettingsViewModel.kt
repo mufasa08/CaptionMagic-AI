@@ -5,21 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.DataStoreRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.util.HIDE_PROMO_HASHTAGS
+import com.devinjapan.aisocialmediaposter.shared.domain.util.SELECTED_TONE
 import com.devinjapan.aisocialmediaposter.ui.state.SettingsState
-import com.devinjapan.aisocialmediaposter.ui.utils.HIDE_PROMO_HASHTAGS
 import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
 import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
-import com.devinjapan.aisocialmediaposter.ui.utils.SELECTED_TONE
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
-    private val analyticsTracker: AnalyticsTracker
+class SettingsViewModel(
+    private val dataStoreRepository: DataStoreRepository,
+    private val analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) : ViewModel() {
 
     var state by mutableStateOf(SettingsState())
@@ -35,7 +31,7 @@ class SettingsViewModel @Inject constructor(
             isLoading = true
         )
         viewModelScope.launch {
-            val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE)
+            val selectedTone = dataStoreRepository.getString(SELECTED_TONE)
             state = state.copy(
                 selectedCaptionTone = selectedTone,
                 isLoading = false
@@ -48,7 +44,7 @@ class SettingsViewModel @Inject constructor(
             isLoading = true
         )
         viewModelScope.launch {
-            val hidePromoHashtags = dataStoreRepositoryImpl.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
+            val hidePromoHashtags = dataStoreRepository.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
             state = state.copy(
                 hidePromoHashtags = hidePromoHashtags,
                 isLoading = false
@@ -59,7 +55,7 @@ class SettingsViewModel @Inject constructor(
     fun clearRecentList() {
         analyticsTracker.logClearedRecentList()
         viewModelScope.launch {
-            dataStoreRepositoryImpl.clearPreferences(RECENT_KEYWORD_LIST)
+            dataStoreRepository.clearPreferences(RECENT_KEYWORD_LIST)
         }
     }
 
@@ -70,7 +66,7 @@ class SettingsViewModel @Inject constructor(
             isLoading = true
         )
         viewModelScope.launch {
-            state.selectedCaptionTone?.let { dataStoreRepositoryImpl.putString(SELECTED_TONE, it) }
+            state.selectedCaptionTone?.let { dataStoreRepository.putString(SELECTED_TONE, it) }
             state = state.copy(
                 isLoading = false
             )
@@ -91,7 +87,7 @@ class SettingsViewModel @Inject constructor(
 
         viewModelScope.launch {
             state.selectedCaptionTone?.let {
-                dataStoreRepositoryImpl.putBoolean(
+                dataStoreRepository.putBoolean(
                     HIDE_PROMO_HASHTAGS,
                     newSetting
                 )
@@ -108,7 +104,7 @@ class SettingsViewModel @Inject constructor(
             state = state.copy(
                 isLoading = true
             )
-            dataStoreRepositoryImpl.putLong(
+            dataStoreRepository.putLong(
                 LAUNCH_COUNT,
                 1L
             )

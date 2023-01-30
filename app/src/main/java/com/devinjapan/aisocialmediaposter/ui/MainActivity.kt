@@ -2,7 +2,6 @@ package com.devinjapan.aisocialmediaposter.ui
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -23,12 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.ui.components.loadInterstitial
 import com.devinjapan.aisocialmediaposter.ui.components.removeInterstitial
 import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
@@ -36,37 +33,22 @@ import com.devinjapan.aisocialmediaposter.ui.screens.GeneratorScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.SettingsScreen
 import com.devinjapan.aisocialmediaposter.ui.screens.ShareScreen
 import com.devinjapan.aisocialmediaposter.ui.theme.AISocialMediaPosterTheme
-import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
+import com.devinjapan.aisocialmediaposter.ui.viewmodels.SettingsViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.gms.ads.MobileAds
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var auth: FirebaseAuth
-    override fun onStart() {
-        super.onStart()
-        // Initialize Firebase Auth
-        // Should do this with Repository pattern tbh
-        auth = Firebase.auth
-        // signInIfNecessary(auth)
-    }
 
-    @Inject
-    lateinit var analyticsTracker: AnalyticsTracker
+    private val analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker by inject()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
+    @OptIn(ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        // askNotificationPermission()
         MobileAds.initialize(this)
         loadInterstitial(this)
 
@@ -75,8 +57,9 @@ class MainActivity : ComponentActivity() {
                 // This will cause re-composition on every network state change
                 val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-                val viewModel = hiltViewModel<CaptionGeneratorViewModel>()
+                val viewModel: CaptionGeneratorViewModel by viewModel()
 
+                val settingsViewModel: SettingsViewModel by viewModel()
                 Scaffold(scaffoldState = scaffoldState) {
                     val imageUri = shareImageHandleIntent()
 
@@ -89,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         if (viewModel.state.launchNumber > 1) {
                             askNotificationPermission()
                         }
-                        Navigation(imageUri, analyticsTracker, viewModel)
+                        Navigation(imageUri, analyticsTracker, viewModel, settingsViewModel)
                     }
                 }
             }
@@ -169,8 +152,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigation(
     imageUri: Uri?,
-    analyticsTracker: AnalyticsTracker,
-    viewModel: CaptionGeneratorViewModel
+    analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker,
+    viewModel: CaptionGeneratorViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
@@ -195,19 +179,14 @@ fun Navigation(
             )
         }
         composable(context.getString(R.string.settings_screen)) {
-            SettingsScreen(navController = navController)
+            SettingsScreen(navController = navController, viewModel = settingsViewModel)
         }
     }
 }
 
 fun preLoadInitialImageAndTags(
-    context: Context,
     viewModel: CaptionGeneratorViewModel,
     imageUri: Uri
 ) {
-    val imageBitmap =
-        BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
-    if (imageBitmap != null) {
-        viewModel.processBitmap(imageBitmap)
-    }
+    viewModel.processImage(imageUri.toString())
 }

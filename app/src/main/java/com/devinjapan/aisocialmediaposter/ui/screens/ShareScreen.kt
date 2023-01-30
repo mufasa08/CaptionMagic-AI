@@ -1,6 +1,7 @@
 package com.devinjapan.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -34,11 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.showInterstitial
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors
+import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils.getBitmapFromContentUri
 import com.devinjapan.aisocialmediaposter.ui.utils.isLandscape
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import kotlinx.coroutines.launch
@@ -49,7 +50,7 @@ import kotlinx.coroutines.launch
 fun ShareScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
-    analyticsTracker: AnalyticsTracker
+    analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
@@ -114,13 +115,20 @@ fun ShareScreen(
                         style = MaterialTheme.typography.body2
                     )
                     if (viewModel.state.image != null) {
-                        val isLandscape = viewModel.state.image?.isLandscape() == true
+                        val imageUri = viewModel.state.image
+                        val imageBitmap =
+                            getBitmapFromContentUri(
+                                context.contentResolver,
+                                Uri.parse(imageUri)
+                            )
+
+                        val isLandscape = imageBitmap?.isLandscape() == true
                         val modifier = if (isLandscape) Modifier.fillMaxWidth()
                             .wrapContentHeight() else Modifier
                             .height(246.dp)
                             .fillMaxWidth()
                         AsyncImage(
-                            model = viewModel.state.image,
+                            model = imageBitmap,
                             modifier = modifier,
                             contentScale = if (isLandscape) ContentScale.FillWidth else ContentScale.FillHeight,
                             contentDescription = "Selected image"

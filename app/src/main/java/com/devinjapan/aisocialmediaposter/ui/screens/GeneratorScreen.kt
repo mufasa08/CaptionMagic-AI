@@ -27,8 +27,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -38,10 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.error.ApiException
-import com.devinjapan.aisocialmediaposter.data.error.ImageDetectionException
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
+import com.devinjapan.aisocialmediaposter.shared.data.error.ApiException
+import com.devinjapan.aisocialmediaposter.shared.data.error.ImageDetectionException
+import com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.ui.components.BannerAd
 import com.devinjapan.aisocialmediaposter.ui.components.ErrorDialog
 import com.devinjapan.aisocialmediaposter.ui.components.GeneratingDialog
@@ -66,41 +63,36 @@ import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TintUnselectedLi
 import com.devinjapan.aisocialmediaposter.ui.theme.CustomColors.TopBarGray
 import com.devinjapan.aisocialmediaposter.ui.theme.ThemeColors
 import com.devinjapan.aisocialmediaposter.ui.utils.*
+import com.devinjapan.aisocialmediaposter.ui.utils.BitmapUtils.getBitmapFromContentUri
 import com.devinjapan.aisocialmediaposter.ui.viewmodels.CaptionGeneratorViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.launch
 import org.compose.museum.simpletags.SimpleTags
 
-@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GeneratorScreen(
     navController: NavController,
     viewModel: CaptionGeneratorViewModel,
     startingImageUri: Uri? = null,
-    analyticsTracker: AnalyticsTracker
+    analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) {
     val context = LocalContext.current
-    val contentResolver = LocalContext.current.contentResolver
-
-    // 1
 
     var hasImage by remember {
         mutableStateOf(false)
     }
-
-    // 2
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
 
     if (startingImageUri != null && imageUri == null) {
-        preLoadInitialImageAndTags(context, viewModel, startingImageUri)
+        preLoadInitialImageAndTags(viewModel, startingImageUri)
         imageUri = startingImageUri
     }
 
     ObserveLifecycleEvent { event ->
-        // 検出したイベントに応じた処理を実装する。
         when (event) {
             Lifecycle.Event.ON_RESUME -> {
                 viewModel.getRecentList()
@@ -119,11 +111,7 @@ fun GeneratorScreen(
             if (hasImage) {
                 analyticsTracker.logEvent("image_uploaded", null)
                 imageUri = uri
-                val imageBitmap =
-                    BitmapUtils.getBitmapFromContentUri(context.contentResolver, imageUri)
-                if (imageBitmap != null) {
-                    viewModel.processBitmap(imageBitmap)
-                }
+                imageUri?.toString()?.let { viewModel.processImage(it) }
             }
         }
     )
@@ -203,17 +191,26 @@ fun GeneratorScreen(
                             )
                         }
                     } else {
-                        val isLandscape = viewModel.state.image?.isLandscape() == true
+                        val uri = viewModel.state.image
+                        val imageBitmap =
+                            getBitmapFromContentUri(
+                                context.contentResolver,
+                                Uri.parse(uri)
+                            )
+
+                        val isLandscape = imageBitmap?.isLandscape() == true
                         val modifier = if (isLandscape) Modifier.fillMaxWidth()
                             .wrapContentHeight() else Modifier
                             .height(246.dp)
                             .fillMaxWidth()
-                        ImagePicker(
-                            modifier = modifier,
-                            viewModel,
-                            viewModel.state.image!!,
-                            isLandscape
-                        )
+                        if (imageBitmap != null) {
+                            ImagePicker(
+                                modifier = modifier,
+                                viewModel,
+                                imageBitmap,
+                                isLandscape
+                            )
+                        }
                     }
                 }
 
@@ -317,16 +314,29 @@ fun SelectSocialMedia(viewModel: CaptionGeneratorViewModel) {
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-                GetButton(viewModel, selectedItem, SocialMedia.TWITTER, R.drawable.ic_twitter)
+                GetButton(
+                    viewModel,
+                    selectedItem,
+                    SocialMedia.TWITTER,
+                    R.drawable.ic_twitter
+                )
                 Spacer(modifier = Modifier.padding(start = 8.dp))
-                GetButton(viewModel, selectedItem, SocialMedia.INSTAGRAM, R.drawable.ic_instagram)
+                GetButton(
+                    viewModel,
+                    selectedItem,
+                    SocialMedia.INSTAGRAM,
+                    R.drawable.ic_instagram
+                )
             }
         }
     }
 }
 
 @Composable
-fun getButtonIconTintColor(selectedItem: SocialMedia, socialMedia: SocialMedia): Color {
+fun getButtonIconTintColor(
+    selectedItem: SocialMedia,
+    socialMedia: SocialMedia
+): Color {
     return if (isSystemInDarkTheme()) {
         if (selectedItem == socialMedia) TintSelectedDark else TintUnselectedDark
     } else {
@@ -335,7 +345,10 @@ fun getButtonIconTintColor(selectedItem: SocialMedia, socialMedia: SocialMedia):
 }
 
 @Composable
-fun getButtonBackgroundColor(selectedItem: SocialMedia, socialMedia: SocialMedia): Color {
+fun getButtonBackgroundColor(
+    selectedItem: SocialMedia,
+    socialMedia: SocialMedia
+): Color {
     return if (isSystemInDarkTheme()) {
         if (selectedItem == socialMedia) ButtonBackgroundSelectedDark else ButtonBackgroundUnselectedDark
     } else {
@@ -388,8 +401,6 @@ fun GetButton(
 fun KeywordInputTextField(viewModel: CaptionGeneratorViewModel) {
     val context = LocalContext.current
     val (focusRequester) = FocusRequester.createRefs()
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     var text by rememberSaveable { mutableStateOf("") }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()

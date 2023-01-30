@@ -1,31 +1,28 @@
 package com.devinjapan.aisocialmediaposter.ui.viewmodels
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devinjapan.aisocialmediaposter.analytics.AnalyticsTracker
-import com.devinjapan.aisocialmediaposter.data.repository.DataStoreRepositoryImpl
-import com.devinjapan.aisocialmediaposter.domain.model.SocialMedia
-import com.devinjapan.aisocialmediaposter.domain.repository.ImageDetectorRepository
-import com.devinjapan.aisocialmediaposter.domain.repository.TextCompletionRepository
-import com.devinjapan.aisocialmediaposter.domain.util.Resource
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.DataStoreRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.ImageDetectorRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.repository.TextCompletionRepository
+import com.devinjapan.aisocialmediaposter.shared.domain.util.Resource
+import com.devinjapan.aisocialmediaposter.shared.domain.util.SELECTED_TONE
 import com.devinjapan.aisocialmediaposter.ui.state.GeneratorScreenState
-import com.devinjapan.aisocialmediaposter.ui.utils.*
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.devinjapan.aisocialmediaposter.ui.utils.LAUNCH_COUNT
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORDS
+import com.devinjapan.aisocialmediaposter.ui.utils.MAX_KEYWORD_LENGTH
+import com.devinjapan.aisocialmediaposter.ui.utils.RECENT_KEYWORD_LIST
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CaptionGeneratorViewModel @Inject constructor(
+class CaptionGeneratorViewModel(
     private val textCompletionRepository: TextCompletionRepository,
     private val imageDetectorRepository: ImageDetectorRepository,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
-    private val analyticsTracker: AnalyticsTracker
+    private val dataStoreRepository: DataStoreRepository,
+    private val analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) : ViewModel() {
-
     var state by mutableStateOf(GeneratorScreenState())
         private set
 
@@ -57,19 +54,20 @@ class CaptionGeneratorViewModel @Inject constructor(
                     type = state.selectedSocialMedia
                 )
             ) {
-                is Resource.Success -> {
+                is Resource.Success<*> -> {
                     state = state.copy(
                         textCompletion = result.data,
                         isLoading = false,
                         error = null
                     )
                 }
-                is Resource.Error -> {
-                    if (result.message != null) {
+                is Resource.Error<*> -> {
+                    val message = result.message
+                    if (message != null) {
                         state = state.copy(
                             textCompletion = null,
                             isLoading = false,
-                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+                            error = GeneratorScreenState.ErrorInfo(message, result.exception)
                         )
                     }
                 }
@@ -77,15 +75,15 @@ class CaptionGeneratorViewModel @Inject constructor(
         }
     }
 
-    fun processBitmap(resizedBitmap: Bitmap) {
+    fun processImage(imageUri: String) {
         viewModelScope.launch {
             state = state.copy(
-                image = resizedBitmap,
+                image = imageUri,
                 isLoadingTags = true,
                 error = null
             )
-            when (val result = imageDetectorRepository.getTagsFromImage(resizedBitmap)) {
-                is Resource.Success -> {
+            when (val result = imageDetectorRepository.getTagsFromImage(imageUri)) {
+                is Resource.Success<*> -> {
                     result.data?.let {
                         val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size
                         val list = it.take(availableTagSlots)
@@ -96,12 +94,13 @@ class CaptionGeneratorViewModel @Inject constructor(
                         )
                     }
                 }
-                is Resource.Error -> {
+                is Resource.Error<*> -> {
                     state.loadedTags.clear()
-                    if (result.message != null) {
+                    val message = result.message
+                    if (message != null) {
                         state = state.copy(
                             isLoadingTags = false,
-                            error = GeneratorScreenState.ErrorInfo(result.message, result.exception)
+                            error = GeneratorScreenState.ErrorInfo(message, result.exception)
                         )
                     }
                 }
@@ -153,7 +152,7 @@ class CaptionGeneratorViewModel @Inject constructor(
         state.recentList.clear()
     }
 
-    fun updateSelectedSocialMedia(socialMedia: SocialMedia) {
+    fun updateSelectedSocialMedia(socialMedia: com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia) {
         state = state.copy(
             selectedSocialMedia = socialMedia
         )
@@ -167,7 +166,7 @@ class CaptionGeneratorViewModel @Inject constructor(
             )
             state.recentList.clear()
             val result =
-                dataStoreRepositoryImpl.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
+                dataStoreRepository.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
             if (result.isNotEmpty()) {
                 state.recentList.addAll(result)
             }
@@ -182,7 +181,7 @@ class CaptionGeneratorViewModel @Inject constructor(
             state = state.copy(
                 isLoading = true
             )
-            val selectedTone = dataStoreRepositoryImpl.getString(SELECTED_TONE) ?: "Cool"
+            val selectedTone = dataStoreRepository.getString(SELECTED_TONE) ?: "Cool"
             state = state.copy(
                 selectedCaptionTone = selectedTone,
                 isLoading = false
@@ -193,7 +192,7 @@ class CaptionGeneratorViewModel @Inject constructor(
     private fun saveRecentList() {
         viewModelScope.launch {
             if (state.recentList.isNotEmpty()) {
-                dataStoreRepositoryImpl.putList(RECENT_KEYWORD_LIST, state.recentList)
+                dataStoreRepository.putList(RECENT_KEYWORD_LIST, state.recentList)
             }
         }
     }
@@ -219,8 +218,8 @@ class CaptionGeneratorViewModel @Inject constructor(
 
     private fun checkLaunchCountAndIncrement() {
         viewModelScope.launch {
-            val launchCount = dataStoreRepositoryImpl.getLong(LAUNCH_COUNT) ?: 1L
-            dataStoreRepositoryImpl.putLong(LAUNCH_COUNT, launchCount + 1L)
+            val launchCount = dataStoreRepository.getLong(LAUNCH_COUNT) ?: 1L
+            dataStoreRepository.putLong(LAUNCH_COUNT, launchCount + 1L)
             state = state.copy(
                 isLoadingFirstLaunchCheck = false,
                 launchNumber = launchCount,

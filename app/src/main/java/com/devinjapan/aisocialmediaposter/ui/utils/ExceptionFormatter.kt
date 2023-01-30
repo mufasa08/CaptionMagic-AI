@@ -3,7 +3,7 @@ package com.devinjapan.aisocialmediaposter.ui.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.devinjapan.aisocialmediaposter.R
-import com.devinjapan.aisocialmediaposter.data.error.ApiException
+import com.devinjapan.aisocialmediaposter.shared.data.error.ApiException
 
 @Composable
 fun ApiException.toUserUnderstandableMessage(): String {
