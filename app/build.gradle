@@ -16,8 +16,8 @@ android {
         applicationId "com.devinjapan.aisocialmediaposter"
         minSdk 26
         targetSdk 33
-        versionCode 16
-        versionName "v0.913"
+        versionCode 17
+        versionName "v0.92"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
