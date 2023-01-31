@@ -189,6 +189,8 @@ fun ShareScreen(
                         style = MaterialTheme.typography.body1
                     )
                 }
+
+                Spacer(modifier = Modifier.height(60.dp))
             }
             BannerAd(
                 Modifier.align(Alignment.BottomCenter),
