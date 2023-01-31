@@ -6,6 +6,8 @@ import com.devinjapan.aisocialmediaposter.shared.data.mappers.toTextCompletion
 import com.devinjapan.aisocialmediaposter.shared.data.request.TextCompletionDto
 import com.devinjapan.aisocialmediaposter.shared.data.response.TextCompletionRequestBody
 import com.devinjapan.aisocialmediaposter.shared.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
+import com.devinjapan.aisocialmediaposter.shared.data.utils.MAX_NUMBER_OF_TOKENS_TWITTER
+import com.devinjapan.aisocialmediaposter.shared.data.utils.makeTweetImpersonifyingString
 import com.devinjapan.aisocialmediaposter.shared.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia
 import com.devinjapan.aisocialmediaposter.shared.domain.model.TextCompletion
@@ -67,6 +69,50 @@ class TextCompletionRepositoryImpl(
             analyticsTracker.logApiCallError(
                 "getReplyFromTextCompletionAPI",
                 type.name,
+                apiException.type.name,
+                null
+            )
+            Resource.Error(message = e.message ?: "Something went wrong.", exception = apiException)
+        }
+    }
+
+    override suspend fun getTweetImpersonificationFromTextCompletionAPI(
+        keywords: List<String>,
+        selectedPersonality: String
+    ): Resource<TextCompletion> {
+        return try {
+            val user = authRepository.getSignedInUserIfExists()
+            val hideHashTags = dataStoreRepository.getBoolean(HIDE_PROMO_HASHTAGS) ?: false
+            val prompt =
+                makeTweetImpersonifyingString(selectedPersonality, keywords).cleanPromptString()
+            val body = TextCompletionRequestBody(
+                // fix magic number
+                maxTokens = MAX_NUMBER_OF_TOKENS_TWITTER,
+                prompt = prompt,
+                user = user?.userId ?: "not-signed-in"
+            )
+            val apiKey = BuildKonfig.OpenApiSecret
+            val responseData = client.post("https://api.openai.com/v1/completions") {
+                contentType(ContentType.Application.Json)
+                headers {
+                    bearerAuth(apiKey)
+                }
+                setBody(body, typeInfo<TextCompletionRequestBody>())
+            }
+
+            val data = responseData.body<TextCompletionDto>().toTextCompletion(hideHashTags)
+            val resource = Resource.Success(
+                data = data
+            )
+            analyticsTracker.logApiCall("getReplyFromTextCompletionAPI", selectedPersonality)
+            resource
+        } catch (e: Exception) {
+            e.printStackTrace()
+            val apiException = e.toApiException()
+
+            analyticsTracker.logApiCallError(
+                "getReplyFromTextCompletionAPI",
+                selectedPersonality,
                 apiException.type.name,
                 null
             )

@@ -19,3 +19,10 @@ fun SocialMedia.toChatGPTUnderstandableString(
         }
     }
 }
+
+fun makeTweetImpersonifyingString(
+    selectedPersonality: String?,
+    keywords: List<String>
+): String {
+    return "Make a twitter tweet like $selectedPersonality with keywords: ${keywords.joinToString()}}"
+}

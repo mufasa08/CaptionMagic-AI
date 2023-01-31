@@ -10,4 +10,9 @@ interface TextCompletionRepository {
         maxWords: Int,
         type: SocialMedia
     ): Resource<TextCompletion>
+
+    suspend fun getTweetImpersonificationFromTextCompletionAPI(
+        keywords: List<String>,
+        selectedPersonality: String
+    ): Resource<TextCompletion>
 }
