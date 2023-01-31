@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -79,6 +80,7 @@ fun GeneratorScreen(
     analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) {
     val context = LocalContext.current
+    val contentResolver = context.contentResolver
 
     var hasImage by remember {
         mutableStateOf(false)
@@ -103,7 +105,7 @@ fun GeneratorScreen(
     }
 
     val imagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             // 3
             hasImage = uri != null
@@ -111,7 +113,7 @@ fun GeneratorScreen(
             if (hasImage) {
                 analyticsTracker.logEvent("image_uploaded", null)
                 imageUri = uri
-                imageUri?.toString()?.let { viewModel.processImage(it) }
+                imageUri?.let { viewModel.processImage(it) }
             }
         }
     )
@@ -173,7 +175,7 @@ fun GeneratorScreen(
                     if (viewModel.state.image == null) {
                         TextButton(
                             onClick = {
-                                imagePicker.launch("image/*")
+                                imagePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                             },
                             modifier = Modifier.align(alignment = Alignment.Start)
                         ) {
@@ -192,22 +194,26 @@ fun GeneratorScreen(
                         }
                     } else {
                         val uri = viewModel.state.image
-                        val imageBitmap =
-                            getBitmapFromContentUri(
-                                context.contentResolver,
-                                Uri.parse(uri)
-                            )
+                        if (uri != null) {
+                            val isLandscape: Boolean = try {
+                                val imageBitmap =
+                                    getBitmapFromContentUri(
+                                        context.contentResolver,
+                                        uri
+                                    )
 
-                        val isLandscape = imageBitmap?.isLandscape() == true
-                        val modifier = if (isLandscape) Modifier.fillMaxWidth()
-                            .wrapContentHeight() else Modifier
-                            .height(246.dp)
-                            .fillMaxWidth()
-                        if (imageBitmap != null) {
+                                imageBitmap?.isLandscape() == true
+                            } catch (e: Exception) {
+                                false
+                            }
+                            val modifier = if (isLandscape) Modifier.fillMaxWidth()
+                                .wrapContentHeight() else Modifier
+                                .height(246.dp)
+                                .fillMaxWidth()
                             ImagePicker(
                                 modifier = modifier,
                                 viewModel,
-                                imageBitmap,
+                                uri,
                                 isLandscape
                             )
                         }

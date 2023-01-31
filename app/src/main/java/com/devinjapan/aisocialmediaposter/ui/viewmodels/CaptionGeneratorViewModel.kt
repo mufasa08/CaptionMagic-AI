@@ -1,5 +1,6 @@
 package com.devinjapan.aisocialmediaposter.ui.viewmodels
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -75,14 +76,14 @@ class CaptionGeneratorViewModel(
         }
     }
 
-    fun processImage(imageUri: String) {
+    fun processImage(imageUri: Uri) {
         viewModelScope.launch {
             state = state.copy(
                 image = imageUri,
                 isLoadingTags = true,
                 error = null
             )
-            when (val result = imageDetectorRepository.getTagsFromImage(imageUri)) {
+            when (val result = imageDetectorRepository.getTagsFromImage(imageUri.toString())) {
                 is Resource.Success<*> -> {
                     result.data?.let {
                         val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size

@@ -1,6 +1,6 @@
 package com.devinjapan.aisocialmediaposter.ui.components
 
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,14 +23,14 @@ fun ImagePicker(
     modifier: Modifier,
     // change this sometime.. don't pass viewmodel but pass a callback.
     viewModel: CaptionGeneratorViewModel,
-    imageBitmap: Bitmap,
+    imageUri: Uri,
     isLandscape: Boolean
 ) {
     Box(
         modifier = modifier
     ) {
         AsyncImage(
-            model = imageBitmap,
+            model = imageUri,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
