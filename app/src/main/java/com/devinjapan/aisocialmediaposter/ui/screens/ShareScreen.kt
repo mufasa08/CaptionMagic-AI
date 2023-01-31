@@ -174,6 +174,7 @@ fun ShareScreen(
                 TextButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
+                        viewModel.setLoading()
                         showInterstitial(context) {
                             analyticsTracker.logEvent("start_over_pressed", null)
                             viewModel.resetEverything()

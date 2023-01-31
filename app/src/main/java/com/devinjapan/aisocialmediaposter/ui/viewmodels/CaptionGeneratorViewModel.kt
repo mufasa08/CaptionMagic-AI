@@ -41,13 +41,17 @@ class CaptionGeneratorViewModel(
     }
 
     fun generateDescription() {
+        val list = state.recentList.toList()
         analyticsTracker.logEvent("generate_description", null)
         viewModelScope.launch {
             state = state.copy(
                 isLoading = true,
                 error = null
             )
-            saveRecentList()
+            // save recentList
+            if (state.recentList.isNotEmpty()) {
+                dataStoreRepository.putList(RECENT_KEYWORD_LIST, list)
+            }
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = state.loadedTags,
@@ -150,7 +154,6 @@ class CaptionGeneratorViewModel(
             modifiedText = null
         )
         state.loadedTags.clear()
-        state.recentList.clear()
     }
 
     fun updateSelectedSocialMedia(socialMedia: com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia) {
@@ -160,12 +163,11 @@ class CaptionGeneratorViewModel(
     }
 
     fun getRecentList() {
+        state.recentList.clear()
         viewModelScope.launch {
             state = state.copy(
-                isLoading = true,
                 error = null
             )
-            state.recentList.clear()
             val result =
                 dataStoreRepository.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
             if (result.isNotEmpty()) {
@@ -187,14 +189,6 @@ class CaptionGeneratorViewModel(
                 selectedCaptionTone = selectedTone,
                 isLoading = false
             )
-        }
-    }
-
-    private fun saveRecentList() {
-        viewModelScope.launch {
-            if (state.recentList.isNotEmpty()) {
-                dataStoreRepository.putList(RECENT_KEYWORD_LIST, state.recentList)
-            }
         }
     }
 
@@ -232,6 +226,12 @@ class CaptionGeneratorViewModel(
     fun finishOnBoarding() {
         state = state.copy(
             isFirstLaunch = false
+        )
+    }
+
+    fun setLoading() {
+        state = state.copy(
+            isLoading = true
         )
     }
 }
