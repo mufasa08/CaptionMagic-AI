@@ -188,5 +188,5 @@ fun preLoadInitialImageAndTags(
     viewModel: CaptionGeneratorViewModel,
     imageUri: Uri
 ) {
-    viewModel.processImage(imageUri.toString())
+    viewModel.processImage(imageUri)
 }

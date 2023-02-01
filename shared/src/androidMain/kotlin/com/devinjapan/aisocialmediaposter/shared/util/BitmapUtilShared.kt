@@ -113,7 +113,7 @@ object BitmapUtilShared {
             ExifInterface.ORIENTATION_UNDEFINED, ExifInterface.ORIENTATION_NORMAL -> {}
             else -> {}
         }
-        return rotateBitmap(decodedBitmap, rotationDegrees, flipX, flipY)
+        return decodedBitmap
     }
 
     @RequiresApi(api = VERSION_CODES.N)

@@ -1,5 +1,6 @@
 package com.devinjapan.aisocialmediaposter.ui.viewmodels
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,13 +41,17 @@ class CaptionGeneratorViewModel(
     }
 
     fun generateDescription() {
+        val list = state.recentList.toList()
         analyticsTracker.logEvent("generate_description", null)
         viewModelScope.launch {
             state = state.copy(
                 isLoading = true,
                 error = null
             )
-            saveRecentList()
+            // save recentList
+            if (state.recentList.isNotEmpty()) {
+                dataStoreRepository.putList(RECENT_KEYWORD_LIST, list)
+            }
             when (
                 val result = textCompletionRepository.getReplyFromTextCompletionAPI(
                     keywords = state.loadedTags,
@@ -75,14 +80,14 @@ class CaptionGeneratorViewModel(
         }
     }
 
-    fun processImage(imageUri: String) {
+    fun processImage(imageUri: Uri) {
         viewModelScope.launch {
             state = state.copy(
                 image = imageUri,
                 isLoadingTags = true,
                 error = null
             )
-            when (val result = imageDetectorRepository.getTagsFromImage(imageUri)) {
+            when (val result = imageDetectorRepository.getTagsFromImage(imageUri.toString())) {
                 is Resource.Success<*> -> {
                     result.data?.let {
                         val availableTagSlots = MAX_KEYWORDS - state.loadedTags.size
@@ -149,7 +154,6 @@ class CaptionGeneratorViewModel(
             modifiedText = null
         )
         state.loadedTags.clear()
-        state.recentList.clear()
     }
 
     fun updateSelectedSocialMedia(socialMedia: com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia) {
@@ -159,12 +163,11 @@ class CaptionGeneratorViewModel(
     }
 
     fun getRecentList() {
+        state.recentList.clear()
         viewModelScope.launch {
             state = state.copy(
-                isLoading = true,
                 error = null
             )
-            state.recentList.clear()
             val result =
                 dataStoreRepository.getList(RECENT_KEYWORD_LIST).filter { it.isNotEmpty() }
             if (result.isNotEmpty()) {
@@ -186,14 +189,6 @@ class CaptionGeneratorViewModel(
                 selectedCaptionTone = selectedTone,
                 isLoading = false
             )
-        }
-    }
-
-    private fun saveRecentList() {
-        viewModelScope.launch {
-            if (state.recentList.isNotEmpty()) {
-                dataStoreRepository.putList(RECENT_KEYWORD_LIST, state.recentList)
-            }
         }
     }
 
@@ -231,6 +226,12 @@ class CaptionGeneratorViewModel(
     fun finishOnBoarding() {
         state = state.copy(
             isFirstLaunch = false
+        )
+    }
+
+    fun setLoading() {
+        state = state.copy(
+            isLoading = true
         )
     }
 }

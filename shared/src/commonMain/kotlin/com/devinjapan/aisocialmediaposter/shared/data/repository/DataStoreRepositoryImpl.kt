@@ -6,12 +6,14 @@ import com.russhwolf.settings.Settings
 class DataStoreRepositoryImpl(private val settings: Settings) : DataStoreRepository {
     override suspend fun putList(key: String, value: List<String>) {
         if (value.isNotEmpty()) {
-            settings.putString(key, value.joinToString { "####" })
+            val stringList = value.joinToString("####")
+            settings.putString(key, stringList)
         }
     }
 
     override suspend fun getList(key: String): List<String> {
-        return settings.getString(key, "").split("####")
+        val list = settings.getString(key, "").split("####")
+        return list
     }
 
     override suspend fun putString(key: String, value: String) {

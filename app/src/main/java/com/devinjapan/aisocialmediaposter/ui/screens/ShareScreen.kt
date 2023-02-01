@@ -1,7 +1,7 @@
 package com.devinjapan.aisocialmediaposter.ui.screens
 
 import android.annotation.SuppressLint
-import android.net.Uri
+import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -114,13 +114,17 @@ fun ShareScreen(
                         },
                         style = MaterialTheme.typography.body2
                     )
-                    if (viewModel.state.image != null) {
-                        val imageUri = viewModel.state.image
-                        val imageBitmap =
+
+                    val imageUri = viewModel.state.image
+                    if (imageUri != null) {
+                        val imageBitmap: Bitmap? = try {
                             getBitmapFromContentUri(
                                 context.contentResolver,
-                                Uri.parse(imageUri)
+                                imageUri
                             )
+                        } catch (e: Exception) {
+                            null
+                        }
 
                         val isLandscape = imageBitmap?.isLandscape() == true
                         val modifier = if (isLandscape) Modifier.fillMaxWidth()
@@ -170,6 +174,7 @@ fun ShareScreen(
                 TextButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
+                        viewModel.setLoading()
                         showInterstitial(context) {
                             analyticsTracker.logEvent("start_over_pressed", null)
                             viewModel.resetEverything()
@@ -185,6 +190,8 @@ fun ShareScreen(
                         style = MaterialTheme.typography.body1
                     )
                 }
+
+                Spacer(modifier = Modifier.height(60.dp))
             }
             BannerAd(
                 Modifier.align(Alignment.BottomCenter),
