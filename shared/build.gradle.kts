@@ -9,7 +9,7 @@ plugins {
     id("com.android.library")
     kotlin("plugin.serialization")
     id("com.codingfeline.buildkonfig")
-    id("io.kotest.multiplatform") version "5.0.2"
+    id("io.kotest.multiplatform") version "5.5.4"
 }
 
 kotlin {
@@ -48,11 +48,15 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation("io.kotest:kotest-framework-engine:5.0.2")
-                implementation("'io.kotest:kotest-assertions-core:5.0.2")
-                implementation("io.kotest:kotest-property:5.0.2")
+                implementation("io.kotest:kotest-framework-engine:5.5.4")
+                implementation("'io.kotest:kotest-assertions-core:5.5.4")
+                implementation("io.kotest:kotest-property:5.5.4")
+
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
             }
         }
+
         val androidMain by getting {
             dependencies {
                 implementation(Libraries.Android.sqlDelight)
