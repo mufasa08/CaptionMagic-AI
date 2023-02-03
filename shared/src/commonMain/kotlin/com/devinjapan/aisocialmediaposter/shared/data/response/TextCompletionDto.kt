@@ -1,4 +1,4 @@
-package com.devinjapan.aisocialmediaposter.shared.data.request
+package com.devinjapan.aisocialmediaposter.shared.data.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

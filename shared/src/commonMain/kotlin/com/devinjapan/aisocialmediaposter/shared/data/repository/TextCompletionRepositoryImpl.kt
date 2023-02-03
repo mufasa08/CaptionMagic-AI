@@ -3,8 +3,8 @@ package com.devinjapan.aisocialmediaposter.shared.data.repository
 import com.devinjapan.aisocialmediaposter.BuildKonfig
 import com.devinjapan.aisocialmediaposter.shared.data.error.toApiException
 import com.devinjapan.aisocialmediaposter.shared.data.mappers.toTextCompletion
-import com.devinjapan.aisocialmediaposter.shared.data.request.TextCompletionDto
-import com.devinjapan.aisocialmediaposter.shared.data.response.TextCompletionRequestBody
+import com.devinjapan.aisocialmediaposter.shared.data.request.TextCompletionRequestBody
+import com.devinjapan.aisocialmediaposter.shared.data.response.TextCompletionDto
 import com.devinjapan.aisocialmediaposter.shared.data.utils.MAX_NUMBER_OF_TOKENS_CHAT_GPT
 import com.devinjapan.aisocialmediaposter.shared.data.utils.toChatGPTUnderstandableString
 import com.devinjapan.aisocialmediaposter.shared.domain.model.SocialMedia

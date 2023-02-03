@@ -1,6 +1,6 @@
 package com.devinjapan.aisocialmediaposter.shared.data.mappers
 
-import com.devinjapan.aisocialmediaposter.shared.data.request.TextCompletionDto
+import com.devinjapan.aisocialmediaposter.shared.data.response.TextCompletionDto
 import com.devinjapan.aisocialmediaposter.shared.domain.model.TextCompletion
 
 fun TextCompletionDto.toTextCompletion(hideHashTags: Boolean): TextCompletion {
