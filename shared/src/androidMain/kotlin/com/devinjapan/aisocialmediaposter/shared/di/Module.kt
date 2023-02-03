@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 @SuppressLint("MissingPermission")
 actual fun platformModule(): Module = module {
-    single {
+    single(createdAtStart = true) {
         val context = get<Context>()
         val connectivityManager: ConnectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
