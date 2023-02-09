@@ -8,13 +8,11 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import java.util.concurrent.TimeUnit
 
 fun httpClient(connectivityManager: ConnectivityManager) = HttpClient(OkHttp) {
     engine {
         config {
             retryOnConnectionFailure(true)
-            connectTimeout(0, TimeUnit.SECONDS)
         }
     }
 

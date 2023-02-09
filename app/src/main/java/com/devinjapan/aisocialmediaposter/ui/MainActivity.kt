@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devinjapan.aisocialmediaposter.R
+import com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 import com.devinjapan.aisocialmediaposter.ui.components.loadInterstitial
 import com.devinjapan.aisocialmediaposter.ui.components.removeInterstitial
 import com.devinjapan.aisocialmediaposter.ui.onboarding.OnBoarding
@@ -42,7 +43,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker by inject()
+    private val analyticsTracker: AnalyticsTracker by inject()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalPagerApi::class)

@@ -80,7 +80,6 @@ fun GeneratorScreen(
     analyticsTracker: com.devinjapan.aisocialmediaposter.shared.analytics.AnalyticsTracker
 ) {
     val context = LocalContext.current
-    val contentResolver = context.contentResolver
 
     var hasImage by remember {
         mutableStateOf(false)
@@ -89,7 +88,7 @@ fun GeneratorScreen(
         mutableStateOf<Uri?>(null)
     }
 
-    if (startingImageUri != null && imageUri == null) {
+    if (startingImageUri != null) {
         preLoadInitialImageAndTags(viewModel, startingImageUri)
         imageUri = startingImageUri
     }
